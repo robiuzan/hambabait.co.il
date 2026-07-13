@@ -33,6 +33,8 @@ export const siteConfig = {
   phoneE164: manifest.contact.phoneE164,
   whatsapp: manifest.contact.whatsappE164.replace(/\D/g, ""),
   email: manifest.contact.email,
+  /** Web3Forms PUBLIC access key (per-site UUID). Delivery inbox = email. null until provisioned. */
+  formAccessKey: (manifest.contact as { formAccessKey?: string | null }).formAccessKey ?? null,
   serviceArea: manifest.schema.areaServed ?? "",
 
   /** Business hours (authored — confirm with client). */
