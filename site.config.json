@@ -1,0 +1,42 @@
+{
+  "_comment": "Normalized per-site manifest. SYNCED FROM THE HUB: 'Israeli services sites'/roster/sites/hambabait.json. Edit there (the canonical roster) and sync here. Conforms to @ishub/site-kit SiteManifest.",
+  "domain": "hambabait.co.il",
+  "url": "https://hambabait.co.il",
+  "brandName": "חם בבית",
+  "brandNameEn": "Cham BaBait",
+  "legalName": "חם בבית",
+  "locale": "he-IL",
+  "dir": "rtl",
+  "foundedYear": null,
+  "tagline": "מומחים לתיקון דודים – שירות מהיר, מקצועי ואמין לכל סוגי הדודים",
+  "shortPitch": "תיקון דודים בכל הארץ — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. אבחון מהיר, עבודה מקצועית ומחיר הוגן, עם אחריות על העבודה.",
+  "contact": {
+    "phoneDisplay": "055-6601006",
+    "phoneE164": "+972556601006",
+    "whatsappE164": "+972556601006",
+    "email": "info@hambabait.co.il",
+    "phoneOverride": false
+  },
+  "brand": {
+    "themeColor": "#344256",
+    "primary": "#344256",
+    "secondary": "#3B5B7A",
+    "accent": "#61CE70",
+    "fontHeading": "Rubik",
+    "fontBody": "Heebo"
+  },
+  "schema": {
+    "type": "Plumber",
+    "priceRange": "₪₪",
+    "areaServed": "שירות בכל הארץ",
+    "openingHours": [
+      { "days": ["su", "mo", "tu", "we", "th"], "opens": "08:00", "closes": "18:00" },
+      { "days": ["fr"], "opens": "08:00", "closes": "14:00" }
+    ],
+    "sameAs": []
+  },
+  "analytics": {
+    "gtmId": "GTM-5K3WQN8W",
+    "googleSiteVerification": null
+  }
+}
