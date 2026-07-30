@@ -32,6 +32,7 @@ export function generateMetadata({ params }: { params: { service: string } }): M
   const card = findCard(params.service);
   if (!card) return {};
   return {
+    alternates: { canonical: `/services/${card.slug}/` },
     title: `${card.name} | ${siteConfig.name}`,
     description: card.description,
   };

@@ -7,6 +7,7 @@ import { TrustBar } from "@/components/marketing/TrustBar";
 import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/אודות/" },
   title: "אודות חם בבית",
   description:
     "חם בבית — מומחים לתיקון דודים בכל הארץ: דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. אבחון מהיר, עבודה מקצועית, מחיר הוגן ואחריות על העבודה.",

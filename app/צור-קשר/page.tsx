@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { LeadForm } from "@/components/forms/LeadForm";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/צור-קשר/" },
   title: "צור קשר",
   description:
     "צרו קשר עם חם בבית לתיקון דודים בכל הארץ. טלפון, וואטסאפ או טופס — נחזור אליכם ונתאם הגעת טכנאי.",

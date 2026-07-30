@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/הצהרת-נגישות/" },
   title: "הצהרת נגישות",
   description: "הצהרת הנגישות של אתר חם בבית בהתאם לתקן הישראלי.",
 };

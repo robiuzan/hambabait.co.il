@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/מדיניות-פרטיות/" },
   title: "מדיניות פרטיות",
   description: "מדיניות הפרטיות של אתר חם בבית.",
 };

@@ -4,6 +4,7 @@ import { ServicesGrid } from "@/components/marketing/ServicesGrid";
 import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/שירותים/" },
   title: "השירותים שלנו",
   description:
     "שירותי תיקון דודים: תיקון דוד שמש, תיקון דוד חשמל, החלפת תרמוסטט, תיקון נזילות, החלפת אלמנט חימום והחלפת דוד — עם אחריות על העבודה ומחיר הוגן.",

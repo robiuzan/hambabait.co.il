@@ -23,6 +23,7 @@ export function generateMetadata({ params }: { params: { city: string } }): Meta
   const loc = findLocation(params.city);
   if (!loc) return {};
   return {
+    alternates: { canonical: `/locations/${loc.slug}/` },
     title: `תיקון דודים ב${loc.name} | ${siteConfig.name}`,
     description: `תיקון דודים ב${loc.name} — דוד שמש, דוד חשמל, תרמוסטט ונזילות. שירות מהיר, אבחון מקצועי, מחיר הוגן ואחריות על העבודה.`,
   };

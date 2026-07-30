@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/Section";
 import { PricingTeaser } from "@/components/marketing/PricingTeaser";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/מחירון/" },
   title: "מחירון תיקון דודים",
   description:
     "כמה עולה תיקון דוד? המחיר נקבע לפי סוג הדוד, מהות התקלה והחלקים הנדרשים — הצעת מחיר שקופה ניתנת לאחר אבחון, לפני תחילת העבודה.",
