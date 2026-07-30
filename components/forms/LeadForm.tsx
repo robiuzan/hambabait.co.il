@@ -5,6 +5,7 @@ import { Check, MessageCircle, Send } from "lucide-react";
 import { siteConfig, whatsappHref, services } from "@/lib/site-config";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@ishub/site-kit/analytics";
 
 /**
  * Primary lead/quote form (brief G1). Low-friction: name + phone required.
@@ -82,6 +83,8 @@ export function LeadForm({ className }: { className?: string }) {
       const result: { success?: boolean } = await res.json();
       if (!res.ok || !result.success) throw new Error("bad status");
       setStatus("done");
+      // GTM conversion hook: fires only on a CONFIRMED send (the dev simulation above does not).
+      trackEvent("lead_submit", { form: "lead" });
     } catch {
       // Fall back to WhatsApp so the lead is never lost.
       setStatus("error");
