@@ -25,18 +25,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "הצהרת-נגישות",
   ];
 
+  /**
+   * `encodeURI` percent-escapes the Hebrew static-page slugs. The sitemap protocol
+   * requires escaped URLs, and Cloudflare Pages only matches the escaped asset key — it
+   * 404s a path sent as raw UTF-8 bytes. Escaping also makes `loc` byte-identical to the
+   * page's canonical. The English service/location slugs pass through unchanged.
+   */
+  const url = (path: string) => encodeURI(path ? `${base}/${path}/` : `${base}/`);
+
   const staticEntries: MetadataRoute.Sitemap = staticPaths.map((path) => ({
-    url: path ? `${base}/${path}/` : `${base}/`,
+    url: url(path),
     lastModified: now,
   }));
 
   const serviceEntries: MetadataRoute.Sitemap = services.map((s) => ({
-    url: `${base}/services/${s.slug}/`,
+    url: url(`services/${s.slug}`),
     lastModified: now,
   }));
 
   const locationEntries: MetadataRoute.Sitemap = locations.map((c) => ({
-    url: `${base}/locations/${c.slug}/`,
+    url: url(`locations/${c.slug}`),
     lastModified: now,
   }));
 
