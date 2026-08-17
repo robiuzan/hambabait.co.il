@@ -31,13 +31,39 @@
     "priceRange": "₪₪",
     "areaServed": "שירות בכל הארץ",
     "openingHours": [
-      { "days": ["su", "mo", "tu", "we", "th"], "opens": "08:00", "closes": "18:00" },
-      { "days": ["fr"], "opens": "08:00", "closes": "14:00" }
+      {
+        "days": ["su", "mo", "tu", "we", "th"],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      {
+        "days": ["fr"],
+        "opens": "08:00",
+        "closes": "14:00"
+      }
     ],
     "sameAs": []
   },
   "analytics": {
     "gtmId": "GTM-KWGGH438",
     "googleSiteVerification": null
+  },
+  "images": {
+    "mediaHost": "imgquarry.com",
+    "defaultQuality": 80,
+    "og": {
+      "key": "hambabait/og.jpg",
+      "sha256": "1922efb4868b0605bb33d26b8651eb4ae31843fa7f1ac445b2e600e0f676204c",
+      "alt": "Cham BaBait - share card",
+      "altHe": "חם בבית - מומחים לתיקון דודים – שירות מהיר, מקצועי ואמין לכל סוגי הדודים",
+      "width": 1200,
+      "height": 630,
+      "bytes": 39026,
+      "kind": "raster",
+      "focal": null,
+      "legacySrc": null
+    },
+    "badges": [],
+    "gallery": null
   }
 }
