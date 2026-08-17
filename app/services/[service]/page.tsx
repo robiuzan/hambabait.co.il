@@ -7,6 +7,7 @@ import {
   type ServiceSlug,
   siteConfig,
   manifest,
+  locations,
   telHref,
   whatsappHref,
 } from "@/lib/site-config";
@@ -153,6 +154,37 @@ export default function ServicePage({ params }: { params: { service: string } })
                 </Link>
               </li>
             ))}
+          </ul>
+        </div>
+
+        {/* Service → location cross-links. The mesh was one-directional: every city page
+            links all six services, but no service page linked a single city, so no equity
+            flowed back into the location silo from the strongest pages on the site. Fixed
+            editorial set — the eight largest cities (array order), stable across builds. */}
+        <div className="mt-14 border-t border-gray-100 pt-10">
+          <h2 className="font-heading text-xl font-bold text-primary">
+            השירות זמין בכל הארץ
+          </h2>
+          <ul className="mt-5 flex flex-wrap gap-2.5">
+            {locations.slice(0, 8).map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/locations/${c.slug}`}
+                  className="inline-flex min-h-11 items-center rounded-lg border border-gray-100 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:border-secondary hover:text-secondary"
+                >
+                  תיקון דודים ב{c.name}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/איזורי-שירות"
+                className="inline-flex min-h-11 items-center gap-1 px-2 py-2 text-sm font-semibold text-secondary hover:underline"
+              >
+                לכל אזורי השירות
+                <ChevronLeft className="h-4 w-4" aria-hidden />
+              </Link>
+            </li>
           </ul>
         </div>
       </Section>
