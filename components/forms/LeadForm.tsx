@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Check, MessageCircle, Phone, Send, TriangleAlert } from "lucide-react";
 import { siteConfig, whatsappHref, telHref, services } from "@/lib/site-config";
 import { Button } from "@/components/ui/Button";
@@ -49,6 +50,7 @@ export function LeadForm({
   /** Placement tag for the WhatsApp/call affordances in this instance. */
   ctaPlacement?: string;
 }) {
+  const router = useRouter();
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [whatsappFallback, setWhatsappFallback] = useState<string>("");
@@ -129,7 +131,12 @@ export function LeadForm({
       if (!res.ok || !result.success) throw new Error("bad status");
       setStatus("done");
       // GTM conversion hook: fires only on a CONFIRMED send (the dev simulation above does not).
+      // The dataLayer push is synchronous and client-side navigation does not unload the page,
+      // so the event survives the redirect.
       trackEvent("lead_submit", { form: "lead" });
+      // /תודה/ gives GA4/Ads a destination-URL conversion; the inline card below is the
+      // fallback that shows for the instant before navigation completes.
+      router.push("/תודה/");
     } catch {
       // Never silent, and never an auto-popup: render a WhatsApp hand-off the user clicks.
       setWhatsappFallback(buildWhatsapp(data));

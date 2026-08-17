@@ -29,8 +29,8 @@ The build succeeding does not mean the output is correct. Verify the artifact.
 ### Route count
 
 ```bash
-find out -name index.html | wc -l      # expect 33 = 32 indexable + out/404
-grep -c '<loc>' out/sitemap.xml        # expect 32
+find out -name index.html | wc -l      # expect 34 = 32 indexable + out/404 + out/תודה (noindex)
+grep -c '<loc>' out/sitemap.xml        # expect 32 — תודה is deliberately NOT in the sitemap
 ```
 
 32 = 1 home + 7 Hebrew static + 6 services + 18 locations. If either number moves, a route was added
