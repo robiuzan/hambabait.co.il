@@ -32,10 +32,7 @@ export default function HomePage() {
       <ServiceAreas />
 
       <Section id="faq" tone="white">
-        <SectionHeading
-          eyebrow="שאלות נפוצות"
-          title="כל מה שרציתם לדעת על תיקון דודים"
-        />
+        <SectionHeading eyebrow="שאלות נפוצות" title="כל מה שרציתם לדעת על תיקון דודים" />
         <Faq items={faqs} />
       </Section>
 

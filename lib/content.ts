@@ -8,13 +8,7 @@
  */
 import { services, type ServiceSlug } from "@/lib/site-config";
 
-export type IconName =
-  | "Sun"
-  | "Zap"
-  | "Thermometer"
-  | "Droplets"
-  | "Wrench"
-  | "Flame";
+export type IconName = "Sun" | "Zap" | "Thermometer" | "Droplets" | "Wrench" | "Flame";
 
 interface ServiceMeta {
   tagline: string;
