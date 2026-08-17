@@ -1,0 +1,32 @@
+# Build-only CI. This repo's CI does NOT deploy anything:
+# production is Cloudflare Pages (project "hambabait"), shipped by direct wrangler
+# upload from the hub's ops/deploy-site.ps1. The previous workflow here kept
+# publishing to a dead GitHub Pages origin on every push — green checkmarks that
+# proved nothing about the public site. Retired 2026-08-17, past the roster's
+# 2026-08-09 rollback deadline for the old origins.
+#
+# A green run here means the full gate passed — nothing more.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # The full gate, not just build — lint/type/format errors used to ship
+      # silently because the old workflow ran `npm run build` alone.
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm run build

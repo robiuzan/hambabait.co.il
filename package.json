@@ -15,7 +15,6 @@
   "dependencies": {
     "@ishub/site-kit": "file:vendor/ishub-site-kit-0.0.0.tgz",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.3.31",
     "lucide-react": "^0.439.0",
     "next": "^14.2.13",
     "react": "^18.3.1",

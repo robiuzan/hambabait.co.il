@@ -1,6 +1,6 @@
 ---
 name: deploy-hambabait
-description: Ship hambabait to production — ops/deploy-site.ps1 dry-run then -Confirm (wrangler direct upload to the Cloudflare Pages project "hambabait"), why the green GitHub Actions run publishes to a dead origin, the npm file: tarball and .next cache traps, the out.prev rollback, and post-deploy verification against the live site. Use when publishing. Triggers: "deploy", "ship it", "publish the site", "go live", "roll back", "why isn't my change live", "did the deploy work".
+description: Ship hambabait to production — ops/deploy-site.ps1 dry-run then -Confirm (wrangler direct upload to the Cloudflare Pages project "hambabait"), why a green CI run deploys nothing, the npm file: tarball and .next cache traps, the out.prev rollback, and post-deploy verification against the live site. Use when publishing. Triggers: "deploy", "ship it", "publish the site", "go live", "roll back", "why isn't my change live", "did the deploy work".
 ---
 
 # Deploy
@@ -9,16 +9,14 @@ description: Ship hambabait to production — ops/deploy-site.ps1 dry-run then -
 
 ## The one thing to get right
 
-There are **two** deploy paths wired to this repo and only one of them changes the public site.
+There is exactly **one** deploy path: `ops/deploy-site.ps1` (wrangler direct upload) from a
+workstation to the Cloudflare Pages project `hambabait`. **Nothing in this repo deploys.**
+`.github/workflows/ci.yml` runs the build gate on every push and PR — a green run means the gate
+passed, not that production changed.
 
-| Path                                           | Trigger                    | Lands on                             | Serves the apex? |
-| ---------------------------------------------- | -------------------------- | ------------------------------------ | ---------------- |
-| `ops/deploy-site.ps1` (wrangler direct upload) | manual, from a workstation | Cloudflare Pages project `hambabait` | ✅ **yes**       |
-| `.github/workflows/deploy.yml`                 | every push to `main`       | GitHub Pages origin                  | ❌ no            |
-
-The Actions run still fires, still succeeds, and still shows a green checkmark. It publishes to an
-origin that no longer answers for `hambabait.co.il`. **A green CI run is not evidence that anything
-changed publicly** — this is the exact failure mode the fleet script was written to prevent.
+(Until 2026-08-17 a second workflow, `deploy.yml`, published every push to the dead GitHub Pages
+origin, going green while changing nothing public. It was removed along with `public/CNAME` and
+`public/.htaccess`. If an older doc mentions it, it predates that cleanup.)
 
 Verify who is serving before you debug anything:
 
@@ -63,8 +61,8 @@ The script handles both. If you deploy by hand, you own them.
 
 ## Before you ship — the gate
 
-Run the full gate, not just the build. **CI runs only `npm run build`**, so lint, type and format
-errors ship unless you catch them here.
+Run the full gate locally. CI (`ci.yml`) runs the same four commands, but the deploy script builds
+from **your working tree**, not from CI — so what you ship is what your local gate checked.
 
 ```
 npm run lint && npm run typecheck && npm run format:check && npm run build
@@ -107,22 +105,11 @@ will commit an entire duplicate site export.
 
 ## What is NOT the deploy mechanism
 
-- **`public/.htaccess`** — Apache directives. Neither GitHub Pages nor Cloudflare Pages interprets
-  them. It is copied into the export and served as an ordinary static file.
-- **`public/CNAME`** — the GitHub Pages custom-domain binding. Vestigial now that the apex points at
-  Cloudflare; on Pages it is just a static file.
-- **`public/_headers` / `public/_redirects`** — do not exist in this repo. Cloudflare Pages _would_
-  honour them, so they are the correct place to add redirects if ever needed. See
-  `web-security-headers` before assuming headers can be set from here.
+- **`public/_headers`** — response headers on Cloudflare Pages, honoured at the project level. It
+  exists here (immutable caching for `/_next/static/*`) but zone-level rules can still override it —
+  verify live headers after deploying. See `web-security-headers`.
+- **`public/_redirects`** — does not exist yet. Cloudflare Pages would honour it; it is the correct
+  place for path redirects if ever needed (mind the Hebrew percent-encoding).
 - **Next `redirects()` / `headers()`** — unavailable under `output: "export"`.
-
-## Housekeeping the migration left behind
-
-The fleet migration note set a cleanup deadline of **2026-08-09** for the old origins. The GitHub
-Actions workflow and `public/CNAME` are both still armed past it. Until someone removes them, expect:
-
-- a green Actions run on every push that means nothing;
-- `https://hambabait.co.il/CNAME` and `/.htaccess` returning 200 as public static files.
-
-Raise it; don't silently delete the workflow — that is an owner decision, and the GitHub Pages origin
-is nominally still a rollback target.
+- **`public/CNAME` / `public/.htaccess`** — removed 2026-08-17. They were vestiges of the GitHub
+  Pages and cPanel eras; if they reappear, someone restored them by mistake.

@@ -115,8 +115,9 @@ the apex.** The Actions run still goes green. A green checkmark is not evidence.
 Verify with headers: the live apex returns `Server: cloudflare` + `CF-RAY`. See the
 `deploy-hambabait` skill.
 
-`public/.htaccess` is dead on both hosts. `public/CNAME` is the GitHub Pages custom-domain mechanism
-and is vestigial here. There is no `public/_headers` or `public/_redirects`.
+`public/_headers` sets immutable caching for `/_next/static/*` (Cloudflare Pages honours it; zone
+rules may override — verify live). `public/CNAME` and `public/.htaccess` were removed 2026-08-17
+along with the dead GitHub Pages deploy workflow; CI (`ci.yml`) is build-gate-only.
 
 ## Known defects you will trip over
 

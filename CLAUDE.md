@@ -44,9 +44,9 @@
 3. **Never edit `site.config.json` directly.** It is synced downstream from
    `Israeli services sites/roster/sites/hambabait.json`. Edit the roster, then sync. The file says so
    in its own `_comment`.
-4. **Pushing to `main` does not update production.** Production is **Cloudflare Pages**. The
-   `.github/workflows/deploy.yml` GitHub Pages deploy still runs and still goes green — into an origin
-   that no longer serves the apex. See §10 before you believe a checkmark.
+4. **Pushing to `main` does not update production.** Production is **Cloudflare Pages**.
+   `.github/workflows/ci.yml` runs the build gate only — it deploys nothing, so a green run means
+   the gate passed and nothing more. See §10 for the real deploy path.
 5. **A GTM snippet in the HTML proves nothing.** Whenever a container id changes, assert
    `https://www.googletagmanager.com/gtm.js?id=<ID>` returns **200**. Two fabricated ids
    (`GTM-5K3WQN8W`, `GTM-KW8VTDZR`) cost the IL fleet 18 days of zero analytics across every site.
@@ -218,9 +218,9 @@ See the `hebrew-rtl` skill for the full rule set.
 npm run lint && npm run typecheck && npm run format:check && npm run build
 ```
 
-All four must pass before any deploy. **CI runs only `npm run build`** — lint, typecheck and
-format:check are never executed by `.github/workflows/deploy.yml`, so a formatting or type error
-ships silently. The `qa-build-gate` skill adds the output assertions on `out/` (route count, unique
+All four must pass before any deploy. `.github/workflows/ci.yml` runs the same four on every push
+and PR (since 2026-08-17 — before that, CI ran only `build` and a formatting or type error shipped
+silently). The `qa-build-gate` skill adds the output assertions on `out/` (route count, unique
 titles, one H1, canonical presence, JSON-LD presence, sitemap parity).
 
 ---
@@ -243,15 +243,12 @@ The script does the drift check, busts the two staleness traps (npm caches `file
 caches under `.next/`), gates the output, preserves `out.prev/` for rollback, and logs the deploy.
 **Deploying is a production mutation — always ask first.** See the `deploy-hambabait` skill.
 
-**Two live traps:**
-
-- `.github/workflows/deploy.yml` still fires on every push to `main` and still goes green. It
-  publishes to the **GitHub Pages** origin, which no longer serves the apex. A green checkmark is not
-  evidence that anything changed publicly. The roster's own migration note set a cleanup deadline of
-  2026-08-09; the workflow and `public/CNAME` are still armed past it.
-- `public/.htaccess` is **dead on both hosts** — Apache directives that neither GitHub Pages nor
-  Cloudflare Pages interprets. It is merely copied into the export and served as a static file.
-  `public/CNAME` is the GitHub Pages custom-domain mechanism and is likewise vestigial here.
+**History worth knowing:** until 2026-08-17 this repo carried a `deploy.yml` that published to the
+dead **GitHub Pages** origin on every push to `main`, going green while changing nothing public —
+plus a vestigial `public/CNAME` and `public/.htaccess` from two previous hosts. All three were
+removed once the roster's 2026-08-09 rollback deadline had passed. If a checklist or an older doc
+tells you "the workflow still fires", it predates that cleanup. The GitHub Pages origin itself
+still exists at the host and simply no longer receives deploys.
 
 ---
 

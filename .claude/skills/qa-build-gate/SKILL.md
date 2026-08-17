@@ -1,12 +1,12 @@
 ---
 name: qa-build-gate
-description: The release gate before any deploy for hambabait — clean lint, typecheck, format:check and build (none of which CI runs except build), plus assertions on out/ for route count, unique non-doubled titles, one H1, canonical presence and sitemap parity, and the auditor sweep. Use before every deploy or when asked whether the site is ready to ship. Triggers: "run the build gate", "is this ready to ship", "pre-deploy check", "QA the site", "verify the build", "did I break anything".
+description: The release gate before any deploy for hambabait — clean lint, typecheck, format:check and build (CI runs the same four, but deploys build from the working tree), plus assertions on out/ for route count, unique non-doubled titles, one H1, canonical presence and sitemap parity, and the auditor sweep. Use before every deploy or when asked whether the site is ready to ship. Triggers: "run the build gate", "is this ready to ship", "pre-deploy check", "QA the site", "verify the build", "did I break anything".
 ---
 
 # Build gate
 
-Nothing ships on a red gate. **CI is not a substitute** — `.github/workflows/deploy.yml` runs only
-`npm run build`, so lint, type and formatting errors reach production unless caught here.
+Nothing ships on a red gate. `.github/workflows/ci.yml` runs the same four commands on every push
+and PR, but production deploys from the working tree via ops/ — so run the gate locally anyway.
 
 ## 1. The four commands
 
@@ -20,7 +20,7 @@ All four must pass. Notes specific to this repo:
   dynamic routes return `T | undefined` and must be narrowed — this is where it fails.
 - **`format:check`** has failed on uncommitted work before (`app/layout.tsx`). Run `npm run format`
   to fix, then re-check.
-- **`build`** is the only step CI runs, so a green Actions run tells you nothing about the other three.
+- CI (`ci.yml`) runs all four since 2026-08-17, but a green run still deploys nothing — see `deploy-hambabait`.
 
 ## 2. Output assertions on `out/`
 
@@ -103,7 +103,7 @@ not a bug. Check `docs/business-facts.md` before doing anything else.
 
 ```bash
 du -sh out
-ls out/.htaccess out/CNAME 2>/dev/null   # both ship as inert static files — expected, not a failure
+ls out/.htaccess out/CNAME 2>/dev/null   # must be ABSENT — both were removed 2026-08-17
 ```
 
 ## 3. The auditor sweep
