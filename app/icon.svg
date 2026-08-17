@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Brand slate tile + green droplet (hot-water motif). Hexes mirror the @theme tokens in
+       app/globals.css — an SVG asset cannot read CSS variables from the page. -->
+  <rect width="64" height="64" rx="14" fill="#344256"/>
+  <path d="M32 9c8.5 10.5 16 18 16 27.5a16 16 0 1 1-32 0C16 27 23.5 19.5 32 9z" fill="#61ce70"/>
+  <path d="M32 27c4.2 5.2 8 9 8 13.7a8 8 0 1 1-16 0C24 36 27.8 32.2 32 27z" fill="#ffffff"/>
+</svg>

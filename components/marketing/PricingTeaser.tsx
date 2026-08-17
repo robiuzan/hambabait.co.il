@@ -40,7 +40,7 @@ export function PricingTeaser() {
       </p>
 
       <div className="mt-8 flex justify-center">
-        <Button href="/צור-קשר" variant="accent" size="lg">
+        <Button href="/צור-קשר" data-cta="pricing-quote" variant="accent" size="lg">
           <ClipboardCheck className="h-5 w-5" aria-hidden />
           קבלו הצעת מחיר
         </Button>

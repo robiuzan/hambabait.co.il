@@ -68,7 +68,7 @@ export function Hero() {
             השאירו פרטים ונחזור אליכם עם פתרון — ללא התחייבות.
           </p>
           <div className="mt-5">
-            <LeadForm />
+            <LeadForm ctaPlacement="hero-form" />
           </div>
         </div>
       </Container>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { PricingTeaser } from "@/components/marketing/PricingTeaser";
+import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/מחירון/" },
@@ -28,6 +29,7 @@ export default function PricingPage() {
           תחילת העבודה.
         </p>
       </Section>
+      <FinalCta />
     </>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
+import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/הצהרת-נגישות/" },
@@ -40,6 +41,7 @@ export default function AccessibilityPage() {
           </p>
         </div>
       </Section>
+      <FinalCta />
     </>
   );
 }

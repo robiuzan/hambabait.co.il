@@ -8,6 +8,7 @@ import { serviceJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { FinalCta } from "@/components/marketing/FinalCta";
+import { LeadForm } from "@/components/forms/LeadForm";
 
 export function generateStaticParams(): { city: LocationSlug }[] {
   return locations.map((c) => ({ city: c.slug }));
@@ -96,6 +97,19 @@ export default function LocationPage({ params }: { params: { city: string } }) {
               </li>
             ))}
           </ul>
+        </div>
+      </Section>
+
+      {/* Lead form on the local landing page itself — the whole silo previously had none. */}
+      <Section tone="muted">
+        <div className="mx-auto max-w-xl">
+          <h2 className="text-center font-heading text-2xl font-bold text-primary">
+            קבלו הצעת מחיר ב{loc.name}
+          </h2>
+          <p className="mt-2 text-center text-gray-600">
+            השאירו פרטים ונחזור אליכם בהקדם.
+          </p>
+          <LeadForm className="mt-6" ctaPlacement="location-form" />
         </div>
       </Section>
 

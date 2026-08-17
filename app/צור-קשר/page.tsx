@@ -4,6 +4,7 @@ import { siteConfig, telHref, whatsappHref } from "@/lib/site-config";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { LeadForm } from "@/components/forms/LeadForm";
+import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/צור-קשר/" },
@@ -32,7 +33,12 @@ export default function ContactPage() {
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
                   <Phone className="h-5 w-5" aria-hidden />
                 </span>
-                <a href={telHref} className="font-medium hover:text-primary" dir="ltr">
+                <a
+                  href={telHref}
+                  data-cta="contact-call"
+                  className="font-medium hover:text-primary"
+                  dir="ltr"
+                >
                   {siteConfig.phone}
                 </a>
               </li>
@@ -42,6 +48,7 @@ export default function ContactPage() {
                 </span>
                 <a
                   href={whatsappHref("היי, אני מעוניין/ת בשירות תיקון דוד")}
+                  data-cta="contact-whatsapp"
                   className="font-medium hover:text-primary"
                 >
                   וואטסאפ
@@ -53,6 +60,7 @@ export default function ContactPage() {
                 </span>
                 <a
                   href={`mailto:${siteConfig.email}`}
+                  data-cta="contact-email"
                   className="font-medium hover:text-primary"
                   dir="ltr"
                 >
@@ -89,11 +97,12 @@ export default function ContactPage() {
             </h2>
             <p className="mt-1 text-sm text-gray-600">השאירו פרטים ונחזור אליכם בהקדם.</p>
             <div className="mt-5">
-              <LeadForm />
+              <LeadForm ctaPlacement="contact-form" />
             </div>
           </div>
         </div>
       </Section>
+      <FinalCta />
     </>
   );
 }

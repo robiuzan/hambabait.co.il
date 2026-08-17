@@ -105,6 +105,16 @@
   }
 }
 
+@layer base {
+  /* Visible keyboard focus on every interactive element. currentColor keeps the ring legible
+     on white, on the dark-primary footer and on the accent-green band alike. Components that
+     draw their own focus-visible ring (Button) override this via utility specificity. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
 @layer utilities {
   /* Isolate latin/LTR snippets (phone, email, URLs) inside RTL Hebrew text. */
   .ltr {

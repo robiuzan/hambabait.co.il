@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { ogImageMeta } from "@ishub/site-kit";
 import { Heebo, Rubik } from "next/font/google";
 import { siteConfig, manifest } from "@/lib/site-config";
 import { Header } from "@/components/layout/Header";
@@ -33,10 +34,16 @@ export const metadata: Metadata = {
   },
   description: siteConfig.tagline,
   openGraph: {
+    images: ogImageMeta(manifest.images),
     type: "website",
     locale: "he_IL",
     siteName: siteConfig.name,
   },
+};
+
+export const viewport: Viewport = {
+  // Browser-chrome tint from the manifest (brand slate). Next emits <meta name="theme-color">.
+  themeColor: manifest.brand?.themeColor ?? undefined,
 };
 
 /** Shared GTM loader — inert (renders nothing) until analytics.gtmId is set in the manifest. */
@@ -48,7 +55,23 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="he" dir="rtl" className={`${heebo.variable} ${rubik.variable}`}>
+      <head>
+        {manifest.images?.mediaHost && (
+          <link
+            rel="preconnect"
+            href={`https://${manifest.images.mediaHost}`}
+            crossOrigin=""
+          />
+        )}
+      </head>
       <body className="flex min-h-screen flex-col font-sans">
+        {/* Keyboard users otherwise tab the whole header nav on every page. Visible on focus. */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-primary focus:shadow-lg"
+        >
+          דילוג לתוכן הראשי
+        </a>
         {gtmNoScript && (
           <noscript>
             <iframe
@@ -60,9 +83,13 @@ export default function RootLayout({
             />
           </noscript>
         )}
-        {gtmHead && <script id="gtm-init" dangerouslySetInnerHTML={{ __html: gtmHead }} />}
+        {gtmHead && (
+          <script id="gtm-init" dangerouslySetInnerHTML={{ __html: gtmHead }} />
+        )}
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1">
+          {children}
+        </main>
         <Footer />
         {/* Spacer so the fixed mobile CTA bar never overlaps footer content. */}
         <div className="h-16 lg:hidden" aria-hidden />

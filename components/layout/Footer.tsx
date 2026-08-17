@@ -31,6 +31,7 @@ export function Footer() {
               <Mail className="h-4 w-4 text-accent-400" aria-hidden />
               <a
                 href={`mailto:${siteConfig.email}`}
+                data-cta="footer-email"
                 className="hover:text-white"
                 dir="ltr"
               >
@@ -60,7 +61,7 @@ export function Footer() {
               <li key={s.slug}>
                 <Link
                   href={`/services/${s.slug}`}
-                  className="text-white/70 hover:text-white"
+                  className="inline-block py-1 text-white/70 hover:text-white"
                 >
                   {s.name}
                 </Link>
@@ -79,7 +80,7 @@ export function Footer() {
               <li key={c.slug}>
                 <Link
                   href={`/locations/${c.slug}`}
-                  className="text-white/70 hover:text-white"
+                  className="inline-block py-1 text-white/70 hover:text-white"
                 >
                   {c.name}
                 </Link>
@@ -93,37 +94,58 @@ export function Footer() {
           <p className="font-semibold text-white">קישורים</p>
           <ul className="mt-4 space-y-2 text-sm">
             <li>
-              <Link href="/שירותים" className="text-white/70 hover:text-white">
+              <Link
+                href="/שירותים"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 השירותים שלנו
               </Link>
             </li>
             <li>
-              <Link href="/איזורי-שירות" className="text-white/70 hover:text-white">
+              <Link
+                href="/איזורי-שירות"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 אזורי שירות
               </Link>
             </li>
             <li>
-              <Link href="/מחירון" className="text-white/70 hover:text-white">
+              <Link
+                href="/מחירון"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 מחירון
               </Link>
             </li>
             <li>
-              <Link href="/אודות" className="text-white/70 hover:text-white">
+              <Link
+                href="/אודות"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 אודות
               </Link>
             </li>
             <li>
-              <Link href="/צור-קשר" className="text-white/70 hover:text-white">
+              <Link
+                href="/צור-קשר"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 צור קשר
               </Link>
             </li>
             <li>
-              <Link href="/מדיניות-פרטיות" className="text-white/70 hover:text-white">
+              <Link
+                href="/מדיניות-פרטיות"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 מדיניות פרטיות
               </Link>
             </li>
             <li>
-              <Link href="/הצהרת-נגישות" className="text-white/70 hover:text-white">
+              <Link
+                href="/הצהרת-נגישות"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
                 הצהרת נגישות
               </Link>
             </li>

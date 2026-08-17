@@ -1,0 +1,14 @@
+# Cloudflare Pages response headers (honoured by Pages; GitHub Pages ignores this file).
+#
+# NOTE: several headers on the live apex come from ZONE-level rules, not from here —
+# HSTS, X-Frame-Options and Permissions-Policy are absent on hambabait.pages.dev and
+# present on the apex. Do not duplicate them here; verify live headers after every
+# deploy rather than trusting this file alone. Zone settings are Sys Admin territory.
+
+# Content-hashed build assets are immutable by construction. Without this, the zone's
+# 4-hour browser-cache TTL (observed: max-age=14400, must-revalidate) makes repeat
+# visitors revalidate the entire JS/CSS/font set every 4 hours. If the live response
+# still shows max-age=14400 after a deploy, the zone's Browser Cache TTL override is
+# winning and this needs a zone-level fix instead.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
