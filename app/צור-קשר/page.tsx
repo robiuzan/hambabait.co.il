@@ -19,6 +19,7 @@ export default function ContactPage() {
         title="צור קשר"
         subtitle="מענה מהיר, אבחון ראשוני והצעת מחיר ללא התחייבות."
         crumbs={[{ label: "בית", href: "/" }, { label: "צור קשר" }]}
+        currentPath="/צור-קשר/"
       />
 
       <Section tone="white">

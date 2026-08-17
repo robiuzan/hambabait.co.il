@@ -15,6 +15,7 @@ export default function AccessibilityPage() {
       <PageHeader
         title="הצהרת נגישות"
         crumbs={[{ label: "בית", href: "/" }, { label: "הצהרת נגישות" }]}
+        currentPath="/הצהרת-נגישות/"
       />
       <Section tone="white">
         <div className="mx-auto max-w-3xl space-y-4 text-gray-700">

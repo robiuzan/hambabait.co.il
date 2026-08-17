@@ -8,7 +8,8 @@ import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/אודות/" },
-  title: "אודות חם בבית",
+  // The root `template` appends "| חם בבית" — don't repeat the brand inside the title.
+  title: "אודות",
   description:
     "חם בבית — מומחים לתיקון דודים בכל הארץ: דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. אבחון מהיר, עבודה מקצועית, מחיר הוגן ואחריות על העבודה.",
 };
@@ -29,6 +30,7 @@ export default function AboutPage() {
         title="אודות חם בבית"
         subtitle="מומחים לתיקון דודים — כדי שיהיו לכם מים חמים, מתי שאתם צריכים."
         crumbs={[{ label: "בית", href: "/" }, { label: "אודות" }]}
+        currentPath="/אודות/"
       />
 
       <Section tone="white">

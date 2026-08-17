@@ -17,6 +17,7 @@ export default function ServicesPage() {
         title="השירותים שלנו"
         subtitle="פתרון לכל תקלה בדוד — משמש וחשמל ועד תרמוסטט, אלמנט ונזילות, עם אבחון מהיר ואחריות על העבודה."
         crumbs={[{ label: "בית", href: "/" }, { label: "השירותים שלנו" }]}
+        currentPath="/שירותים/"
       />
       <ServicesGrid />
       <FinalCta />

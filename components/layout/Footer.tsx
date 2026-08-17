@@ -18,7 +18,12 @@ export function Footer() {
           <ul className="mt-5 space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-accent-400" aria-hidden />
-              <a href={telHref} data-cta="footer-call" className="hover:text-white" dir="ltr">
+              <a
+                href={telHref}
+                data-cta="footer-call"
+                className="hover:text-white"
+                dir="ltr"
+              >
                 {siteConfig.phone}
               </a>
             </li>
@@ -68,7 +73,9 @@ export function Footer() {
         <nav aria-label="אזורי שירות">
           <p className="font-semibold text-white">אזורי שירות</p>
           <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            {locations.slice(0, 12).map((c) => (
+            {/* All 18 — a .slice(0, 12) here left six cities reachable in one click only from
+              the homepage. The footer is the orphan-insurance surface; it must be complete. */}
+            {locations.map((c) => (
               <li key={c.slug}>
                 <Link
                   href={`/locations/${c.slug}`}

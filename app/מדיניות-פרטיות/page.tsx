@@ -15,6 +15,7 @@ export default function PrivacyPage() {
       <PageHeader
         title="מדיניות פרטיות"
         crumbs={[{ label: "בית", href: "/" }, { label: "מדיניות פרטיות" }]}
+        currentPath="/מדיניות-פרטיות/"
       />
       <Section tone="white">
         <div className="mx-auto max-w-3xl space-y-4 text-gray-700">

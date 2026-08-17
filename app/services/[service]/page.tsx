@@ -33,7 +33,8 @@ export function generateMetadata({ params }: { params: { service: string } }): M
   if (!card) return {};
   return {
     alternates: { canonical: `/services/${card.slug}/` },
-    title: `${card.name} | ${siteConfig.name}`,
+    // No brand suffix here — the root `template` in app/layout.tsx already appends "| חם בבית".
+    title: card.name,
     description: card.description,
   };
 }
@@ -49,7 +50,8 @@ export default function ServicePage({ params }: { params: { service: string } })
   const card = findCard(params.service);
   if (!card) notFound();
 
-  const others = serviceCards.filter((c) => c.slug !== card.slug).slice(0, 4);
+  // All five siblings — a `.slice(0, 4)` here used to silently drop one service per page.
+  const others = serviceCards.filter((c) => c.slug !== card.slug);
   const jsonLd = serviceJsonLd(manifest, {
     name: card.name,
     description: card.description,
@@ -70,6 +72,7 @@ export default function ServicePage({ params }: { params: { service: string } })
           { label: "השירותים שלנו", href: "/שירותים" },
           { label: card.name },
         ]}
+        currentPath={`/services/${card.slug}/`}
       />
 
       <Section tone="white">

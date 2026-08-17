@@ -20,6 +20,7 @@ export default function AreasPage() {
         title="אזורי שירות"
         subtitle="נותנים שירות תיקון דודים בכל הארץ — מהצפון ועד הדרום. בחרו את העיר שלכם."
         crumbs={[{ label: "בית", href: "/" }, { label: "אזורי שירות" }]}
+        currentPath="/איזורי-שירות/"
       />
 
       <Section tone="white">

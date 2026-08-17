@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { locations, type LocationSlug, siteConfig } from "@/lib/site-config";
+import { locations, type LocationSlug, siteConfig, manifest } from "@/lib/site-config";
 import { serviceCards } from "@/lib/content";
+import { serviceJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { FinalCta } from "@/components/marketing/FinalCta";
@@ -24,7 +25,8 @@ export function generateMetadata({ params }: { params: { city: string } }): Meta
   if (!loc) return {};
   return {
     alternates: { canonical: `/locations/${loc.slug}/` },
-    title: `תיקון דודים ב${loc.name} | ${siteConfig.name}`,
+    // No brand suffix here — the root `template` in app/layout.tsx already appends "| חם בבית".
+    title: `תיקון דודים ב${loc.name}`,
     description: `תיקון דודים ב${loc.name} — דוד שמש, דוד חשמל, תרמוסטט ונזילות. שירות מהיר, אבחון מקצועי, מחיר הוגן ואחריות על העבודה.`,
   };
 }
@@ -33,8 +35,26 @@ export default function LocationPage({ params }: { params: { city: string } }) {
   const loc = findLocation(params.city);
   if (!loc) notFound();
 
+  // A city-scoped Service joined to the single #business node — NOT a per-city LocalBusiness,
+  // which would fabricate 18 branches that do not exist. The kit's serviceJsonLd always takes
+  // areaServed from the manifest ("שירות בכל הארץ") with no override, so the city scope is
+  // applied on top of the builder's output. A proper `areaServed` option belongs upstream in
+  // the hub's site-kit rather than a local fork.
+  const jsonLd = {
+    ...serviceJsonLd(manifest, {
+      name: `תיקון דודים ב${loc.name}`,
+      description: `תיקון והחלפת דודים ב${loc.name} — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות.`,
+      url: `${manifest.url}/locations/${loc.slug}/`,
+    }),
+    areaServed: { "@type": "City", name: loc.name },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
+      />
       <PageHeader
         title={`תיקון דודים ב${loc.name}`}
         subtitle={`שירות תיקון דודים ב${loc.name} והסביבה — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. הגעה מהירה, מחיר הוגן ואחריות על העבודה.`}
@@ -43,20 +63,21 @@ export default function LocationPage({ params }: { params: { city: string } }) {
           { label: "אזורי שירות", href: "/איזורי-שירות" },
           { label: loc.name },
         ]}
+        currentPath={`/locations/${loc.slug}/`}
       />
 
       <Section tone="white">
         <div className="mx-auto max-w-3xl">
           <p className="text-lg leading-relaxed text-gray-700">
             הדוד שלכם ב{loc.name} לא מחמם, מטפטף או שהמים רותחים מדי? ב{siteConfig.name}
-            מאבחנים ומתקנים כל סוג של דוד — שמש, חשמל, משולב ולחץ — בבית פרטי, בדירה ובעסק.
-            אנחנו מגיעים במהירות, מאתרים את מקור התקלה ומתקנים במקום, עם חלקים מתאימים
-            ובעבודה נקייה.
+            מאבחנים ומתקנים כל סוג של דוד — שמש, חשמל, משולב ולחץ — בבית פרטי, בדירה
+            ובעסק. אנחנו מגיעים במהירות, מאתרים את מקור התקלה ומתקנים במקום, עם חלקים
+            מתאימים ובעבודה נקייה.
           </p>
           <p className="mt-4 text-gray-700">
             תיקון דוד הוא לרוב עניין דחוף, ולכן אנחנו משתדלים להגיע ל{loc.name} מהר ככל
-            האפשר — במקרים דחופים אף באותו יום. לפני שמתחילים תקבלו הצעת מחיר ברורה, ועל כל
-            תיקון וכל חלק שאנחנו מחליפים ניתנת אחריות.
+            האפשר — במקרים דחופים אף באותו יום. לפני שמתחילים תקבלו הצעת מחיר ברורה, ועל
+            כל תיקון וכל חלק שאנחנו מחליפים ניתנת אחריות.
           </p>
 
           <h2 className="mt-10 font-heading text-xl font-bold text-primary">
