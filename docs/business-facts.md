@@ -182,15 +182,28 @@ The policy now _discloses_, but nothing _gates_:
 
 See the `consent-mode` skill. Roughly half the fix is container-side and belongs to the owner.
 
-### 4.2 ⬜ Accessibility statement asserts conformance with no audit — still open
+### 4.2 ✅ Accessibility statement — rewritten honestly 2026-08-25
 
-`app/הצהרת-נגישות/page.tsx:25` claims conformance work per **ת״י 5568** and **WCAG 2.0 AA**. There is
-no audit behind it, and a grep for `עודכן|תאריך|רכז נגישות` over that file returns **0** — no statement
-date and no named accessibility coordinator, both of which Israeli practice expects.
+**Previously** it claimed conformance work per **ת״י 5568** and **WCAG 2.0 AA** with no audit, no
+statement date and no contact, and listed "alt text for meaningful images" on a site that ships **no
+images at all**.
 
-Fix order: run the real audit (`perf-a11y-auditor`), fix what it finds, **then** rewrite the statement
-to say what was tested, when, by whom, and the known limitations. See the `responsive-accessibility`
-skill before touching this page.
+**Now** it states what was actually verified against the built output — one H1 per page and correct
+heading order, the skip link and `<main>` landmark, keyboard navigation in the mobile menu including
+Escape returning focus to the toggle, `aria-current` in the nav, `<label for>` on every form field,
+full RTL with `dir="ltr"` isolation for phone and email, and the primary colour's contrast on white
+(`#16833e`, 4.83:1).
+
+It also names the **known limitations** in plain Hebrew: no external audit, no real screen-reader
+testing (NVDA / JAWS / VoiceOver), not every colour pair checked, and components that may have been
+missed. A statement date is rendered and lives in a `STATEMENT_DATE` constant.
+
+> **Do not re-add a conformance claim without a real audit to point at.** The page is now defensible
+> precisely because it claims less than it used to.
+
+⬜ **Still open:** Israeli practice also expects a **named accessibility coordinator**. The page gives
+the business phone and email instead, which are real. Naming a person is an owner decision — never
+invent one.
 
 ---
 
