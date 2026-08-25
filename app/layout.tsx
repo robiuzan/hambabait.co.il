@@ -9,7 +9,8 @@ import { gtmHeadSnippet, gtmNoScriptSrc } from "@ishub/site-kit/analytics";
 import "./globals.css";
 
 // Body font — Heebo (clean, legible Hebrew). Heading font — Rubik (modern Hebrew).
-// Exposed as CSS variables consumed by tailwind.config.ts (font-sans / font-heading).
+// Exposed as CSS variables consumed by the @theme block in app/globals.css
+// (font-sans / font-heading). Tailwind v4 is CSS-first here — there is no tailwind.config.ts.
 const heebo = Heebo({
   subsets: ["hebrew", "latin"],
   variable: "--font-heebo",
@@ -39,6 +40,16 @@ export const metadata: Metadata = {
     locale: "he_IL",
     siteName: siteConfig.name,
   },
+  // Search Console ownership. The manifest field existed for months with no `verification`
+  // block to consume it, so setting it in the roster silently did nothing. Guarded on
+  // presence — an empty verification meta is worse than none.
+  ...(manifest.analytics?.googleSiteVerification
+    ? {
+        verification: {
+          google: manifest.analytics.googleSiteVerification,
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {

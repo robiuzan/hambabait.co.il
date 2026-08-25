@@ -10,6 +10,10 @@
 # next.js
 /.next/
 /out/
+# Rollback copy written by ops/deploy-site.ps1, and manifest backups. Both are
+# untracked debris a careless `git add -A` would commit as a duplicate site export.
+/out.prev/
+*.bak
 
 # production
 /build

@@ -11,8 +11,8 @@ import {
   telHref,
   whatsappHref,
 } from "@/lib/site-config";
-import { serviceCards, processSteps } from "@/lib/content";
-import { serviceJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
+import { serviceCards, serviceDepth } from "@/lib/content";
+import { serviceJsonLd, faqJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
@@ -41,30 +41,42 @@ export function generateMetadata({ params }: { params: { service: string } }): M
   };
 }
 
-const triggers = [
-  "אין מים חמים או שהמים מתחממים לאט",
-  "הדוד מטפטף, נוזל או יש שלולית מתחתיו",
-  "מפסק הפחת קופץ כשמדליקים את הדוד",
-  "המים רותחים מדי או שהחימום לא נפסק",
-];
-
 export default function ServicePage({ params }: { params: { service: string } }) {
   const card = findCard(params.service);
   if (!card) notFound();
 
   // All five siblings — a `.slice(0, 4)` here used to silently drop one service per page.
   const others = serviceCards.filter((c) => c.slug !== card.slug);
+
+  // Per-service depth. This replaced a module-level `triggers` array that rendered
+  // IDENTICALLY on all six pages — six pages sharing one symptom list is a
+  // find-and-replace away from being one page. See docs/content-standards.md §0.
+  const depth = serviceDepth[card.slug];
+  const related = depth.related
+    .map((r) => {
+      const target = serviceCards.find((c) => c.slug === r.slug);
+      return target ? { ...r, name: target.name } : null;
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+
   const jsonLd = serviceJsonLd(manifest, {
     name: card.name,
     description: card.description,
     slug: card.slug,
   });
+  // FAQPage per service page — never one site-wide node, and the Q&A text must match
+  // the rendered text exactly. docs/schema-graph.md §5.
+  const faqLd = faqJsonLd(depth.faqs);
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqLd) }}
       />
       <PageHeader
         title={card.name}
@@ -82,33 +94,116 @@ export default function ServicePage({ params }: { params: { service: string } })
           <div className="lg:col-span-2">
             <p className="text-lg leading-relaxed text-gray-700">{card.description}</p>
 
+            {/* Answer block: question-form H2 followed immediately by a 40–60 word
+                self-contained answer. This is the block answer engines lift, and an
+                answer that needs the next paragraph to make sense gets skipped. */}
             <h2 className="mt-10 font-heading text-xl font-bold text-primary">
-              מתי כדאי לפנות אלינו?
+              {depth.answer.question}
             </h2>
-            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {triggers.map((t) => (
-                <li key={t} className="flex items-start gap-2 text-gray-700">
-                  <Check className="mt-1 h-4 w-4 shrink-0 text-accent-600" aria-hidden />
-                  {t}
-                </li>
-              ))}
-            </ul>
+            <p className="mt-3 text-lg leading-relaxed text-gray-800">
+              {depth.answer.body}
+            </p>
+
+            {/* Symptom → likely cause. Real <table> markup: it is lifted far more
+                reliably than prose. docs/content-standards.md §4. */}
+            <h2 className="mt-10 font-heading text-xl font-bold text-primary">
+              {depth.symptomsHeading}
+            </h2>
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full min-w-[30rem] border-collapse text-start text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th
+                      scope="col"
+                      className="py-3 pe-4 text-start font-bold text-primary"
+                    >
+                      מה אתם רואים
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-3 ps-4 text-start font-bold text-primary"
+                    >
+                      הסיבה הסבירה
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {depth.symptoms.map((row) => (
+                    <tr key={row.symptom} className="border-b border-gray-100 align-top">
+                      <td className="py-3 pe-4 font-medium text-gray-800">
+                        {row.symptom}
+                      </td>
+                      <td className="py-3 ps-4 text-gray-600">{row.cause}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             <h2 className="mt-10 font-heading text-xl font-bold text-primary">
-              איך אנחנו עובדים
+              מה הטכנאי עושה באתר
             </h2>
             <ol className="mt-4 space-y-3">
-              {processSteps.map((step, i) => (
-                <li key={step.title} className="flex gap-3">
+              {depth.onSite.map((step, i) => (
+                <li key={step} className="flex gap-3">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
                     {i + 1}
                   </span>
-                  <span className="text-gray-700">
-                    <strong className="text-primary">{step.title}.</strong> {step.body}
-                  </span>
+                  <span className="text-gray-700">{step}</span>
                 </li>
               ))}
             </ol>
+
+            {/* Repair vs replace. Builds more trust than any badge, and is safe to write
+                because it is technical judgement rather than a promise. */}
+            <h2 className="mt-10 font-heading text-xl font-bold text-primary">
+              לתקן או להחליף?
+            </h2>
+            <p className="mt-3 leading-relaxed text-gray-700">{depth.repairVsReplace}</p>
+
+            {/* Contextual cross-links on a SHARED SYMPTOM — not "here are the other five".
+                This is the cannibalisation guard made visible: it says which page covers
+                which fault. docs/topical-map.md §2. */}
+            {related.length > 0 && (
+              <div className="mt-10 rounded-2xl border border-gray-100 bg-gray-50 p-6">
+                <h2 className="font-heading text-lg font-bold text-primary">
+                  תסמינים שמובילים לשירות אחר
+                </h2>
+                <ul className="mt-4 space-y-3">
+                  {related.map((r) => (
+                    <li key={r.slug} className="flex items-start gap-2 text-gray-700">
+                      <Check
+                        className="mt-1 h-4 w-4 shrink-0 text-accent-600"
+                        aria-hidden
+                      />
+                      <span>
+                        {r.reason} —{" "}
+                        <Link
+                          href={`/services/${r.slug}`}
+                          className="font-semibold text-secondary hover:underline"
+                        >
+                          {r.name}
+                        </Link>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Per-service FAQ. Question-form H3s, answer-first, matched item for item
+                to the FAQPage node emitted above. */}
+            <h2 className="mt-10 font-heading text-xl font-bold text-primary">
+              שאלות נפוצות על {card.name}
+            </h2>
+            <dl className="mt-4 space-y-6">
+              {depth.faqs.map((f) => (
+                <div key={f.q}>
+                  <dt className="font-heading text-base font-bold text-primary">{f.q}</dt>
+                  <dd className="mt-2 leading-relaxed text-gray-700">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
 
           {/* Sticky CTA card */}
@@ -159,14 +254,17 @@ export default function ServicePage({ params }: { params: { service: string } })
 
         {/* Service → location cross-links. The mesh was one-directional: every city page
             links all six services, but no service page linked a single city, so no equity
-            flowed back into the location silo from the strongest pages on the site. Fixed
-            editorial set — the eight largest cities (array order), stable across builds. */}
+            flowed back into the location silo from the strongest pages on the site.
+            This linked `locations.slice(0, 8)` — which left cities 9-18 (bnei-brak through
+            ashkelon) with no inbound link from any service page, an asymmetry that followed
+            array order rather than anything meaningful. Now all 18: the set is small enough
+            to render in full, and the location silo is the surface that needs the equity. */}
         <div className="mt-14 border-t border-gray-100 pt-10">
           <h2 className="font-heading text-xl font-bold text-primary">
             השירות זמין בכל הארץ
           </h2>
           <ul className="mt-5 flex flex-wrap gap-2.5">
-            {locations.slice(0, 8).map((c) => (
+            {locations.map((c) => (
               <li key={c.slug}>
                 <Link
                   href={`/locations/${c.slug}`}

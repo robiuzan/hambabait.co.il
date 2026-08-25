@@ -14,10 +14,35 @@
 
 ## אזורי שירות
 
-- https://hambabait.co.il/איזורי-שירות/ — 18 ערים, מתל אביב ועד באר שבע
+- https://hambabait.co.il/איזורי-שירות/ — מדד כל אזורי השירות
+
+- https://hambabait.co.il/locations/tel-aviv/ — תיקון דודים בתל אביב
+- https://hambabait.co.il/locations/jerusalem/ — תיקון דודים בירושלים
+- https://hambabait.co.il/locations/haifa/ — תיקון דודים בחיפה
+- https://hambabait.co.il/locations/rishon-lezion/ — תיקון דודים בראשון לציון
+- https://hambabait.co.il/locations/petah-tikva/ — תיקון דודים בפתח תקווה
+- https://hambabait.co.il/locations/netanya/ — תיקון דודים בנתניה
+- https://hambabait.co.il/locations/ashdod/ — תיקון דודים באשדוד
+- https://hambabait.co.il/locations/beer-sheva/ — תיקון דודים בבאר שבע
+- https://hambabait.co.il/locations/holon/ — תיקון דודים בחולון
+- https://hambabait.co.il/locations/bnei-brak/ — תיקון דודים בבני ברק
+- https://hambabait.co.il/locations/ramat-gan/ — תיקון דודים ברמת גן
+- https://hambabait.co.il/locations/rehovot/ — תיקון דודים ברחובות
+- https://hambabait.co.il/locations/herzliya/ — תיקון דודים בהרצליה
+- https://hambabait.co.il/locations/kfar-saba/ — תיקון דודים בכפר סבא
+- https://hambabait.co.il/locations/modiin/ — תיקון דודים במודיעין
+- https://hambabait.co.il/locations/bat-yam/ — תיקון דודים בבת ים
+- https://hambabait.co.il/locations/raanana/ — תיקון דודים ברעננה
+- https://hambabait.co.il/locations/ashkelon/ — תיקון דודים באשקלון
 
 ## מידע
 
 - https://hambabait.co.il/מחירון/ — איך נקבע המחיר (הצעת מחיר לאחר אבחון; אין מחירון קבוע)
 - https://hambabait.co.il/אודות/ — על העסק
 - https://hambabait.co.il/צור-קשר/ — יצירת קשר
+
+## הערות
+
+- העסק פועל כנותן שירות נייד ואין לו כתובת פיזית או סניפים.
+- אין באתר מחירון קבוע. המחיר נקבע לאחר אבחון.
+- אין באתר דירוגים או חוות דעת.

@@ -25,7 +25,9 @@ export const siteConfig = {
   /** One-line elevator pitch. */
   tagline: manifest.tagline ?? "",
   domain: manifest.url,
-  founded: manifest.foundedYear ?? 0,
+  // Stays null when unknown — never 0. A numeric fallback makes `2026 - siteConfig.founded`
+  // render "2026 שנות ניסיון", fabricating the one claim this site has never made.
+  founded: manifest.foundedYear ?? null,
 
   // ── Contact ──────────────────────────────────────────────────────────────
   phone: manifest.contact.phoneDisplay,
