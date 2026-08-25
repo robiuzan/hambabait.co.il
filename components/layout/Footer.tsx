@@ -111,6 +111,14 @@ export function Footer() {
             </li>
             <li>
               <Link
+                href="/מדריכים"
+                className="inline-block py-1 text-white/70 hover:text-white"
+              >
+                מדריכים
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/מחירון"
                 className="inline-block py-1 text-white/70 hover:text-white"
               >

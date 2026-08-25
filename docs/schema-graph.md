@@ -7,32 +7,57 @@ All nodes are built with `@ishub/site-kit/seo`. **Never hand-write JSON-LD.**
 
 ---
 
-## 1. Current state — 32 of 32 indexable pages emit JSON-LD
+## 1. Current state — 45 of 45 indexable pages emit JSON-LD
 
 **Verified 2026-08-25 against a fresh `out/`.**
 
-| Route                  | Count | Emits today                                | Target                                   |
-| ---------------------- | ----- | ------------------------------------------ | ---------------------------------------- |
-| `/`                    | 1     | `Plumber` + `FAQPage`                      | + `WebSite`                              |
-| `/services/<slug>/`    | 6     | `Service` + `BreadcrumbList`               | + per-service `FAQPage`                  |
-| `/locations/<slug>/`   | 18    | `Service` (area-scoped) + `BreadcrumbList` | + per-city `FAQPage`                     |
-| 7 Hebrew static routes | 7     | `BreadcrumbList`                           | `FAQPage` where FAQs render              |
-| `/מחירון/`             | —     | `BreadcrumbList`                           | `Offer` **without a price**, or nothing  |
-| `/מדריכים/<slug>/`     | 0     | route does not exist yet                   | `Article` + `BreadcrumbList` + `FAQPage` |
-| `/תודה/`               | 1     | nothing                                    | nothing (correct — noindex)              |
-| `out/404`              | 1     | nothing                                    | nothing (correct)                        |
+| Route                  | Count | Emits today                                            |
+| ---------------------- | ----- | ------------------------------------------------------ |
+| `/`                    | 1     | `Plumber` + `FAQPage`                                  |
+| `/services/<slug>/`    | 6     | `Service` + `FAQPage` + `BreadcrumbList`               |
+| `/locations/<slug>/`   | 18    | `Service` (area-scoped) + `FAQPage` + `BreadcrumbList` |
+| `/מדריכים/`            | 1     | `BreadcrumbList`                                       |
+| `/מדריכים/<slug>/`     | 12    | `Article` + `FAQPage` + `BreadcrumbList`               |
+| 7 Hebrew static routes | 7     | `BreadcrumbList`                                       |
+| `/תודה/`               | 1     | nothing (correct — noindex)                            |
+| `out/404`              | 1     | nothing (correct)                                      |
 
 ```bash
 npm run build
-find out -name index.html | wc -l                                  # 34
-grep -rl 'application/ld+json' out --include=index.html | wc -l    # 32
+find out -name index.html | wc -l                                  # 47
+grep -rl 'application/ld+json' out --include=index.html | wc -l    # 45
+grep -o '<loc>' out/sitemap.xml | wc -l                            # 45
 ```
 
 The only two pages without JSON-LD are the 404 and `/תודה/`, **both correct**.
 
-**The coverage gap is closed.** What remains is depth, not presence: per-service and per-city
-`FAQPage` nodes, `Article` for the knowledge hub, and the three honest data gaps in §2 — which are
-owner problems, not markup problems.
+**Coverage and depth are both done.** What remains are the three honest data gaps in §2 — no
+`address`, no `geo`, empty `sameAs` — and those are owner problems, not markup problems.
+
+### The `Article` node
+
+The kit exports **no `articleJsonLd`**, so `app/מדריכים/[slug]/page.tsx` assembles the node inline —
+the same pattern the location route uses for its `areaServed` override, and with the same caveat: a
+proper builder belongs upstream in `@ishub/site-kit`, not in a local fork.
+
+```
+@type              Article
+headline           ← guide.heading
+datePublished      ← guide.published
+dateModified       ← guide.updated
+inLanguage         he-IL
+author             { @id: https://hambabait.co.il/#business }
+publisher          { @id: https://hambabait.co.il/#business }
+mainEntityOfPage   { @type: WebPage, @id: <canonical> }
+```
+
+> **`author` and `publisher` are the BUSINESS, never a person.** There is no named author anywhere on
+> this site and no evidence any specific technician exists. A byline would be a fabricated
+> credential — see [business-facts.md](business-facts.md) §3.5.
+
+All three nodes ship in **one** `<script type="application/ld+json">` as an array, so a guide page has
+exactly one schema block. The route deliberately does **not** pass `currentPath` to `PageHeader`
+(which would emit a second `BreadcrumbList`); the hub index does, and relies on `PageHeader` for its.
 
 ---
 

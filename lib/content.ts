@@ -1029,6 +1029,7 @@ export const cityContent: Record<LocationSlug, CityContent> = {
 export const navItems = [
   { label: "השירותים שלנו", href: "/שירותים" },
   { label: "אזורי שירות", href: "/איזורי-שירות" },
+  { label: "מדריכים", href: "/מדריכים" },
   { label: "מחירון", href: "/מחירון" },
   { label: "אודות", href: "/אודות" },
   { label: "צור קשר", href: "/צור-קשר" },

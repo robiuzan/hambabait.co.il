@@ -4,19 +4,20 @@
 > line. **This is the research file; `lib/content.ts` is where the finished copy lives.**
 >
 > Cited by `city-research`, `new-city`, `hebrew-copywriter`, `editorial-reviewer`.
-> Compiled 2026-08-25. **Status: scaffold — research pending (Phase 2, Track D).**
+> Compiled 2026-08-25. **Status: all 18 written — see §6.**
 
 ---
 
 ## 0. Why this file exists
 
-All 18 location pages render from one template. `app/locations/[city]/page.tsx` substitutes `loc.name`
-into the H1, the subtitle, two body paragraphs, one H2 and the form heading; everything else is
-byte-identical across all 18, including the meta description. `lib/site-config.ts` holds `locations`
-as a flat `{slug, name}` array — **there is no per-city content map anywhere in the repo.**
+Until 2026-08-25, all 18 location pages rendered from one template: `app/locations/[city]/page.tsx`
+substituted `loc.name` into the H1, the subtitle, two body paragraphs, one H2 and the form heading,
+and everything else was byte-identical across all 18 — including the meta description. There was no
+per-city content map anywhere in the repo.
 
-The output of this file becomes a typed `cityContent` map in `lib/content.ts`, keyed by
-`LocationSlug`.
+That is fixed. The output of this file is the typed `cityContent` map in `lib/content.ts`, keyed by
+`LocationSlug`. **This file remains the source of record for _why_ each city says what it says** —
+edit it first, then the copy.
 
 ---
 

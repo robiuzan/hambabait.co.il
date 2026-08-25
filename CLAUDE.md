@@ -109,6 +109,8 @@ app/
   icon.svg                # favicon
   services/[service]/     # 6 pages — Service + BreadcrumbList JSON-LD
   locations/[city]/       # 18 pages — area-scoped Service + BreadcrumbList
+  מדריכים/                # knowledge hub index
+  מדריכים/[slug]/         # 12 guides — Article + FAQPage + BreadcrumbList
   שירותים/ איזורי-שירות/ מחירון/ אודות/ צור-קשר/
   מדיניות-פרטיות/ הצהרת-נגישות/
   תודה/                   # noindex conversion destination — NOT in the sitemap
@@ -120,7 +122,8 @@ components/
   forms/       LeadForm
 lib/
   site-config.ts   # ⭐ NAP, services[6], locations[18], telHref, whatsappHref
-  content.ts       # ⭐ all Hebrew copy
+  content.ts       # ⭐ Hebrew copy: serviceDepth[6], cityContent[18], faqs, nav
+  guides.ts        # ⭐ the 12 knowledge-hub guides, as typed blocks
   utils.ts         # cn()
 site.config.json   # SiteManifest — SYNCED FROM THE ROSTER, do not edit here
 docs/              # the acceptance bars every agent cites

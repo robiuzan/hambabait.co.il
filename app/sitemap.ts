@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig, services, locations } from "@/lib/site-config";
+import { guides } from "@/lib/guides";
 
 /**
  * Generates /sitemap.xml from the static routes + the service and location matrices.
@@ -23,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "צור-קשר",
     "מדיניות-פרטיות",
     "הצהרת-נגישות",
+    "מדריכים",
   ];
 
   /**
@@ -48,5 +50,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: now,
   }));
 
-  return [...staticEntries, ...serviceEntries, ...locationEntries];
+  /** Hub guides. `encodeURI` escapes the Hebrew parent segment; the slugs are English. */
+  const guideEntries: MetadataRoute.Sitemap = guides.map((g) => ({
+    url: url(`מדריכים/${g.slug}`),
+    lastModified: new Date(g.updated),
+  }));
+
+  return [...staticEntries, ...serviceEntries, ...locationEntries, ...guideEntries];
 }

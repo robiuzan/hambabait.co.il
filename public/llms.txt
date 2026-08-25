@@ -35,6 +35,34 @@
 - https://hambabait.co.il/locations/raanana/ — תיקון דודים ברעננה
 - https://hambabait.co.il/locations/ashkelon/ — תיקון דודים באשקלון
 
+## מדריכים
+
+- https://hambabait.co.il/מדריכים/ — מדד המדריכים
+
+תקלות ותסמינים:
+
+- https://hambabait.co.il/מדריכים/no-hot-water/ — אין מים חמים בכלל: איך מאתרים את הסיבה
+- https://hambabait.co.il/מדריכים/lukewarm-water/ — המים רק פושרים: מה גורם לחימום חלקי
+- https://hambabait.co.il/מדריכים/tripping-breaker/ — הדוד מפיל את הפחת ומה זה אומר
+- https://hambabait.co.il/מדריכים/leaking-boiler/ — הדוד מטפטף: מאיפה מגיעה הנזילה
+- https://hambabait.co.il/מדריכים/noisy-boiler/ — רעשים מהדוד: נקישות ואבנית
+
+השוואות והחלטות:
+
+- https://hambabait.co.il/מדריכים/solar-vs-electric/ — דוד שמש או דוד חשמל
+- https://hambabait.co.il/מדריכים/repair-or-replace/ — לתקן או להחליף דוד
+
+איך זה עובד:
+
+- https://hambabait.co.il/מדריכים/what-is-anode/ — מה זו אנודה בדוד
+- https://hambabait.co.il/מדריכים/how-thermostat-works/ — מה עושה תרמוסטט בדוד
+- https://hambabait.co.il/מדריכים/how-solar-boiler-works/ — איך עובד דוד שמש
+
+לפי עונה:
+
+- https://hambabait.co.il/מדריכים/winter-boiler-check/ — בדיקת דוד לפני החורף
+- https://hambabait.co.il/מדריכים/why-boilers-fail-in-winter/ — למה דודים מתקלקלים בחורף
+
 ## מידע
 
 - https://hambabait.co.il/מחירון/ — איך נקבע המחיר (הצעת מחיר לאחר אבחון; אין מחירון קבוע)
