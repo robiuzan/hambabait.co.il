@@ -82,9 +82,19 @@ export default function PrivacyPage() {
           <h2 className="font-heading text-lg font-bold text-primary">
             עוגיות (Cookies)
           </h2>
+          {/* Kept accurate on purpose: the site now ships Consent Mode v2 with everything
+              denied by default, so the policy has to say that rather than imply tracking
+              starts on arrival. If the consent behaviour changes, this paragraph changes
+              in the same commit. */}
           <p>
-            האתר עושה שימוש בעוגיות לצורכי מדידה וסטטיסטיקה באמצעות כלי Google. ניתן לחסום
-            או למחוק עוגיות בהגדרות הדפדפן — האתר ימשיך לעבוד כרגיל.
+            האתר עושה שימוש בעוגיות לצורכי מדידה וסטטיסטיקה באמצעות כלי Google.{" "}
+            <strong>כברירת מחדל המדידה מושבתת</strong> עד שתאשרו אותה: בכניסה הראשונה תוצג
+            הודעה שבה אפשר לבחור לאשר מדידה או להמשיך בלעדיה. הבחירה נשמרת בדפדפן שלכם
+            בלבד.
+          </p>
+          <p>
+            כדי לשנות את הבחירה, נקו את נתוני האתר בהגדרות הדפדפן וההודעה תוצג שוב. בכל
+            מקרה ניתן גם לחסום או למחוק עוגיות בהגדרות הדפדפן — האתר ימשיך לעבוד כרגיל.
           </p>
 
           <h2 className="font-heading text-lg font-bold text-primary">הזכויות שלכם</h2>

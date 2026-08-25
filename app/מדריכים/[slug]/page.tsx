@@ -9,6 +9,7 @@ import { faqJsonLd, breadcrumbJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { GuideBody } from "@/components/marketing/GuideBody";
+import { GuideDiagram } from "@/components/marketing/GuideDiagram";
 import { FinalCta } from "@/components/marketing/FinalCta";
 
 export function generateStaticParams(): { slug: string }[] {
@@ -111,6 +112,11 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           <p className="mt-3 text-lg leading-relaxed text-gray-800">
             {guide.answer.body}
           </p>
+
+          {/* Inline SVG — explains the mechanism the answer just described. No network
+              request, so it costs nothing against LCP, and it is technical rather than
+              photographic, so it makes no claim about the business. */}
+          {guide.diagram && <GuideDiagram name={guide.diagram} />}
 
           <GuideBody blocks={guide.blocks} />
 

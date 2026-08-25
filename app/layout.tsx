@@ -5,6 +5,8 @@ import { siteConfig, manifest } from "@/lib/site-config";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileCtaBar } from "@/components/layout/MobileCtaBar";
+import { ConsentBanner } from "@/components/layout/ConsentBanner";
+import { consentDefaultSnippet } from "@/lib/consent";
 import { gtmHeadSnippet, gtmNoScriptSrc } from "@ishub/site-kit/analytics";
 import "./globals.css";
 
@@ -67,6 +69,17 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl" className={`${heebo.variable} ${rubik.variable}`}>
       <head>
+        {/* Consent Mode v2 default — everything denied until the visitor chooses.
+            MUST stay ABOVE the container: the GTM loader below lives in <body>, and
+            scripts run in document order, so a default emitted here is guaranteed to
+            beat it. Move this after the loader and tags fire unconsented while the page
+            still looks compliant. See lib/consent.ts. */}
+        {gtmHead && (
+          <script
+            id="consent-default"
+            dangerouslySetInnerHTML={{ __html: consentDefaultSnippet }}
+          />
+        )}
         {manifest.images?.mediaHost && (
           <link
             rel="preconnect"
@@ -105,6 +118,7 @@ export default function RootLayout({
         {/* Spacer so the fixed mobile CTA bar never overlaps footer content. */}
         <div className="h-16 lg:hidden" aria-hidden />
         <MobileCtaBar />
+        <ConsentBanner />
       </body>
     </html>
   );

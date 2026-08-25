@@ -39,6 +39,11 @@ export type GuideBlock =
 
 export type GuideCluster = "symptom" | "comparison" | "definition" | "seasonal";
 
+/** Inline SVG illustrations. Technical diagrams only — never a photograph of work or
+ *  people, which would be a business claim rendered as an image. docs/media-assets.md §4. */
+export type GuideDiagramName =
+  "solar-system" | "leak-origin" | "anode-wear" | "thermostat-vs-element";
+
 export interface Guide {
   slug: string;
   /** Pre-template. The layout already appends "| חם בבית" — never append it here. */
@@ -53,6 +58,8 @@ export interface Guide {
   updated: string;
   /** Question-form H2 + 40–60 self-contained words. The block answer engines lift. */
   answer: { question: string; body: string };
+  /** Rendered after the answer block, where it explains rather than decorates. */
+  diagram?: GuideDiagramName;
   blocks: GuideBlock[];
   faqs: Faq[];
   /** Every guide must route to a commercial page. A guide with no way out is a dead end. */
@@ -81,6 +88,7 @@ export const guides: Guide[] = [
       question: "למה אין מים חמים בכלל?",
       body: "כשאין מים חמים כלל, יש שלושה חשודים מרכזיים: גוף חימום שרוף, תרמוסטט שאינו סוגר מעגל, וניתוק בהזנת החשמל — מפסק שקפץ או פחת שירד. בדוד שמש מצטרפת אפשרות רביעית: המערכת נשענת על הקולט בלבד מפני שגוף החימום החשמלי אינו פועל.",
     },
+    diagram: "thermostat-vs-element",
     blocks: [
       {
         kind: "heading",
@@ -321,6 +329,7 @@ export const guides: Guide[] = [
       question: "מאיפה הדוד דולף?",
       body: "נזילה בדוד מגיעה מאחד משלושה מקומות, והמקום קובע הכול: חיבורים ורקורדים, ברז ביטחון או שסתום, או גוף המיכל עצמו. שני הראשונים הם תיקון פשוט ומשתלם. נזילה מהמיכל אינה ניתנת לתיקון שמחזיק, מפני שהמתכת נשחקה מבפנים החוצה.",
     },
+    diagram: "leak-origin",
     blocks: [
       {
         kind: "heading",
@@ -620,6 +629,7 @@ export const guides: Guide[] = [
       question: "מה זו אנודה בדוד?",
       body: "האנודה היא מוט מתכת בתוך מיכל הדוד שנועד להיאכל במקום דפנות המיכל. היא עשויה ממתכת פעילה יותר, ולכן הקורוזיה תוקפת אותה קודם. כל עוד היא קיימת, המיכל מוגן. כשהיא מתכלה לגמרי, ההגנה נפסקת והדופן עצמה מתחילה להישחק.",
     },
+    diagram: "anode-wear",
     blocks: [
       {
         kind: "heading",
@@ -756,6 +766,7 @@ export const guides: Guide[] = [
       question: "איך עובד דוד שמש?",
       body: "מערכת שמש בנויה משלושה חלקים: קולט על הגג שסופג קרינה ומחמם נוזל, מיכל מבודד שאוגר את המים החמים, וגוף חימום חשמלי שמשלים את החום כשהשמש אינה מספיקה. הזרימה בין הקולט למיכל מתרחשת ברוב המערכות הביתיות באופן טבעי, בלי משאבה.",
     },
+    diagram: "solar-system",
     blocks: [
       {
         kind: "heading",
