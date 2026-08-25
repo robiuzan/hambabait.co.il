@@ -4,28 +4,32 @@
 > effort and an acceptance test. Anything unverified is marked **[needs confirmation]** rather than
 > asserted.
 >
-> **Re-baselined 2026-08-25** (previous compile: 2026-08-16). Track A shipped in the interim and
-> closed most of the P0–P2 block. Re-verify before working an item — run `/baseline`.
+> **Re-baselined 2026-08-25**, then updated the same day after the content build-out landed.
+> Re-verify before working an item.
 
 Effort: **S** ≤1h · **M** a few hours · **L** a day or more.
 
 ---
 
-## Verified state of the built output — 2026-08-25
+## Verified state of the built output — 2026-08-25 (post content build-out)
 
 ```
-find out -name index.html                                    → 34   (32 indexable + 404 + /תודה/)
-grep -rl 'application/ld+json' out --include=index.html      → 32
-grep -rl 'rel="canonical"' out --include=index.html          → 32
-grep -o '<loc>' out/sitemap.xml                              → 32
-grep -rl 'חם בבית | חם בבית' out --include=index.html        → 0
-grep -rEo '"(aggregateRating|review|ratingValue|reviewCount|foundingDate|warrantyPromise)"' out → (empty)
+find out -name index.html                                    → 47   (45 indexable + 404 + /תודה/)
+grep -rl 'application/ld+json' out --include=index.html      → 45
+grep -rl 'rel="canonical"' out --include=index.html          → 45
+grep -o '<loc>' out/sitemap.xml                              → 45
+<title> tags: 47 total, 47 unique, 0 doubled brand
+<meta description>: 47 total, 47 unique
+<h1>: exactly 1 on every page
+banned schema props (aggregateRating|review|ratingValue|reviewCount|foundingDate|warrantyPromise) → none
+banned RTL utilities (pl-|pr-|ml-|mr-|left-|right-|text-left|text-right) → none
 ```
 
 The only two pages without JSON-LD are `out/404/index.html` and `out/תודה/index.html` — **both
-correct by design.** Sitemap, canonical and JSON-LD coverage are in full parity.
+correct by design.**
 
-**The technical SEO layer is in good shape. The remaining work is content, trust and off-site.**
+**Technical SEO, schema and content depth are all done.** What remains is consent, accessibility
+truthfulness, images, and the off-site work that lives outside this repo.
 
 ---
 
@@ -40,7 +44,7 @@ correct by design.** Sitemap, canonical and JSON-LD coverage are in full parity.
 | P1-4 · `BreadcrumbList` never emitted               | **Fixed.** `breadcrumbJsonLd` fires from `components/layout/PageHeader.tsx`, so every nested route ships it.                 |
 | P2-1 · CI ran only `npm run build`                  | **Fixed.** `.github/workflows/ci.yml` runs lint → typecheck → format:check → build.                                          |
 | P2-2 · GitHub Actions deployed to a dead origin     | **Fixed.** `deploy.yml` retired 2026-08-17; `ci.yml` is the only workflow. `public/CNAME` and `public/.htaccess` are gone.   |
-| P4-3 · No service → location cross-links            | **Fixed, partially** — see P2-3 below for what remains.                                                                      |
+| P4-3 · No service → location cross-links            | **Fixed.** Service pages link all 18 cities, and cities link 2–4 neighbours.                                                 |
 | P5 · `framer-motion` dead dependency                | **Fixed.** Absent from `package.json`.                                                                                       |
 | P5 · No favicon                                     | **Fixed.** `app/icon.svg` ships.                                                                                             |
 | P5 · No `theme-color`                               | **Fixed.** `viewport.themeColor` reads `manifest.brand.themeColor`.                                                          |
@@ -80,128 +84,79 @@ to say what was tested, when, by whom, and the known limitations.
 
 ---
 
-## P1 — content debt · the site's largest remaining gap
+## ✅ Closed 2026-08-25 — the content build-out
 
-### P1-1 · All 18 location pages fail the doorway test · L
-
-**Evidence:** `app/locations/[city]/page.tsx` is one template. The only variable is `loc.name`,
-substituted into the H1, subtitle, two body paragraphs, one H2 and the form heading. The 6-service
-list, the form and `FinalCta` are byte-identical across all 18. `lib/site-config.ts:76-95` is a flat
-`{slug, name}` array — **there is no per-city content map anywhere in the repo.**
-
-The meta description is likewise one string with the city interpolated, identical on all 18.
-
-**Impact:** near-duplicate pages compete with each other and get filtered from the index; and each tells
-a specific city it gets fast local service with no address, geo or coverage data behind it.
-
-**Fix:** a typed `cityContent` map in `lib/content.ts` keyed by `LocationSlug`, filled from
-`docs/city-briefs.md`. See the `city-research` and `new-city` skills.
-
-**Accept:** every city page has ≥2 paragraphs that could not be written about another city. If a city
-has nothing truthful and specific, **removing it is the preferred outcome over padding.**
+| Was                                                 | Now                                                                                                                                                                                                                                                                                                                      |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 18 city pages failed the doorway test               | **Fixed.** `cityContent` in `lib/content.ts` gives each city an answer block, 2 city-specific paragraphs, 1–2 FAQs and nearby-city links. Measured 15–17 unique text blocks per city vs the union of the other 17. Research basis in [city-briefs.md](city-briefs.md).                                                   |
+| Service pages shared one identical `triggers` array | **Fixed.** `serviceDepth` gives each of the 6 an answer block, a distinct symptom→cause table, on-site steps, repair-vs-replace and 3 FAQs. ~35 unique blocks each.                                                                                                                                                      |
+| The informational cluster was unserved              | **Fixed.** `/מדריכים/` + 12 guides across symptom, comparison, definition and seasonal clusters, with `Article` + `FAQPage` + `BreadcrumbList`.                                                                                                                                                                          |
+| No per-service or per-city `FAQPage`                | **Fixed.** 25 pages emit `FAQPage`.                                                                                                                                                                                                                                                                                      |
+| `googleSiteVerification` wired to nothing           | **Fixed.** `verification` block in `app/layout.tsx`, guarded on presence.                                                                                                                                                                                                                                                |
+| `llms.txt` omitted the 18 city URLs                 | **Fixed.** All cities and all 12 guides now listed.                                                                                                                                                                                                                                                                      |
+| Service pages linked `locations.slice(0, 8)`        | **Fixed.** All 18 linked; cities 9–18 are no longer cut off from the service silo.                                                                                                                                                                                                                                       |
+| No city→city links anywhere                         | **Fixed.** Each city links 2–4 nearby cities.                                                                                                                                                                                                                                                                            |
+| No dates or authorship anywhere                     | **Partly fixed.** Guides carry `datePublished`/`dateModified` and a visible "עודכן" line, attributed to the business. Service and city pages remain undated, which is fine for commercial pages.                                                                                                                         |
+| `founded` fell back to `0`                          | **Fixed.** Stays `null`.                                                                                                                                                                                                                                                                                                 |
+| `out.prev/` and `*.bak` untracked                   | **Fixed.** Both gitignored.                                                                                                                                                                                                                                                                                              |
+| Stale `tailwind.config.ts` comment                  | **Fixed.**                                                                                                                                                                                                                                                                                                               |
+| Warranty asserted on 32 built pages                 | **Softened to 1.** Hero, ServicesGrid, FinalCta, `/אודות/`, `/שירותים/`, the city template, the differentiator, the process step, the trust stat and the FAQ were all reframed onto the verifiable half — the terms are stated before work starts. Same-day arrival and the "כשעה עד שעתיים" duration are gone entirely. |
 
 ---
 
-### P1-2 · Service pages are thin and share one hardcoded symptom list · M
+## P1 — what is left
 
-**Evidence:** `app/services/[service]/page.tsx:44-49` defines a module-level `triggers` array of 4
-items rendered **identically on all 6 service pages**. The only genuinely per-service copy in the repo
-is one ~45-word paragraph each in `serviceMeta` (`lib/content.ts:20-57`).
+### P1-1 · Unsourced claims — the last carrier is the manifest · M
 
-`lib/content.ts` holds roughly **685 words for the entire 33-page site.**
+**Evidence:** the sitewide warranty claim was softened everywhere in the repo, but
+`site.config.json` `shortPitch` still ends `…עם אחריות על העבודה`, and `@ishub/site-kit` uses
+`shortPitch` verbatim as the JSON-LD `description`. So the claim still ships as structured data on
+the homepage.
 
-`docs/content-standards.md` §3 sets the bar at ~500 substantive Hebrew words per service page, covering
-fault → symptoms → what happens on site → repair vs replace → 3–5 FAQs.
+**Fix:** this is **a roster edit plus a sync, not a repo change.** Edit
+`Israeli services sites/roster/sites/hambabait.json`, then sync. Never edit `site.config.json`
+directly.
 
-**Fix:** per-service symptom data and FAQs in `lib/content.ts`; delete the shared `triggers` array;
-emit `FAQPage` per service page.
-
-**Accept:** no two service pages share a symptom list; each clears the §3 bar.
-
----
-
-### P1-3 · The entire informational keyword cluster is unserved · L
-
-**Evidence:** there is no articles route. `app/` contains no `מדריכים/` or equivalent. Queries like
-"למה הדוד לא מתחמם", "דוד שמש או דוד חשמל", "מה זה אנודה" have no home on this site.
-
-**Impact:** `docs/keyword-map.md` §7 names this the biggest keyword gap. It is also the safest content
-to build — these topics are technical and need **no business fact**, so they carry none of the claims
-risk that warranty, timing and price content carries.
-
-**Fix:** stand up `/מדריכים/[slug]/` with a typed block model, `Article` + `FAQPage` +
-`BreadcrumbList`, author and date. See the `new-article` skill.
+**Accept:** `grep -rl "אחריות על העבודה" out --include=index.html` returns nothing.
 
 ---
 
-### P1-4 · Unsourced claims across ~15 surfaces, one already in schema · M
+### P1-2 · The site ships zero images · M
 
-**Evidence:** `docs/business-facts.md` §3. The warranty is asserted sitewide with no term anywhere;
-`site.config.json:12` `shortPitch` ends with it and the kit uses `shortPitch` as the JSON-LD
-`description` — so **it already ships as structured data.**
+**Evidence:** `public/` contains only `_headers` and `llms.txt`. No hero, no logo, no service
+imagery, no local `og.jpg` — OG points at an external host via the manifest.
 
-Also: same-day arrival (`lib/content.ts:84`, `:186-187`, all 18 city pages), the "כשעה עד שעתיים"
-duration (`lib/content.ts:167` — the only hard number on the site), and the free-call-out ambiguity.
+**Impact:** no visual E-E-A-T, nothing for `ImageObject`, and every social/chat preview depends on a
+third party.
 
-**Fix:** get owner answers; until then soften the copy. **Never promote any of it into schema.**
-Fixing the `shortPitch` means editing the roster manifest, not the code.
+**Caution:** the current LCP is **text**, which is close to optimal — a hero image can only make it
+worse. Budget for it explicitly. Use the kit's `SiteImage` (still unused); never hand-roll an `<img>`.
+**Never** stock photography of technicians or work: `business-facts.md` §3.5 records there is no
+evidence any technician exists, so a stock photo is a staffing claim rendered as an image.
 
----
-
-## P2 — structure and reach
-
-### P2-1 · `googleSiteVerification` is still wired to nothing · S
-
-**Evidence:** the manifest carries the field. `app/layout.tsx` exports `metadata` with `metadataBase`,
-`alternates`, `title`, `description` and `openGraph` — and **no `verification` block**. Setting the
-value in the roster today silently does nothing.
-
-**Fix:** add `verification: manifest.analytics?.googleSiteVerification ? { google: … } : undefined`.
-
-**Accept:** `grep -o 'google-site-verification[^>]*' out/index.html` returns the tag.
+See [media-assets.md](media-assets.md).
 
 ---
 
-### P2-2 · `llms.txt` omits all 18 city URLs · S
+### P1-3 · No consent affordance on the lead form · S
 
-**Evidence:** `public/llms.txt` lists the 6 service URLs, 3 info URLs and the areas index described as
-"18 ערים" — but **not one city URL individually.** An answer engine reading the file cannot reach the
-location silo from it.
+**Evidence:** `LeadForm.tsx` renders a passive disclosure paragraph linking the policy, but there is
+no checkbox and no gate.
 
-**Fix:** list all 18 city URLs and, once built, every hub guide.
-
----
-
-### P2-3 · Service pages link only the first 8 cities · S
-
-**Evidence:** `app/services/[service]/page.tsx:164-189` renders `locations.slice(0, 8)`. Cities 9–18 —
-bnei-brak, ramat-gan, rehovot, herzliya, kfar-saba, modiin, bat-yam, raanana, ashkelon — receive **no
-inbound link from any service page.** Their only inbound links are the footer, the homepage
-`ServiceAreas` and the areas index.
-
-**Impact:** the service↔location mesh is bidirectional but asymmetric, and the asymmetry follows array
-order rather than anything meaningful.
-
-**Fix:** link all 18, or select by relevance rather than by `slice`. Also consider nearby-city links,
-which do not exist at all today.
+**Note:** this is a **conversion-affecting** change — an extra required interaction before submit.
+Worth doing, but the owner should know it is a trade, not a free win.
 
 ---
 
-### P2-4 · The site ships zero images · M
+## P2 — depth that would pay next
 
-**Evidence:** `public/` contains only `_headers` and `llms.txt`. No hero, no logo, no service imagery,
-no local `og.jpg` — OG points at an external host via the manifest.
-
-**Impact:** no visual E-E-A-T, nothing for `ImageObject`, and a social/chat preview dependent on a third
-party.
-
-**Caution:** the current LCP is **text**, which is close to optimal. Adding a hero image can only make
-LCP worse — it may still be worth it, but budget for it explicitly. Use the kit's `SiteImage` (which
-ships unused today); never hand-roll an `<img>`. **Never** stock photography of technicians or work —
-that is a staffing claim rendered as an image, and §3.5 records there is no evidence any technician
-exists.
-
----
+| Item                                         | Why                                                                                                                                                                | Effort |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| **Deepen `rehovot`, `raanana`, `kfar-saba`** | the three weakest city entries; all lean on the same low-rise/private-roof pattern and differ mainly in coastal distance. See [city-briefs.md](city-briefs.md) §6. | M      |
+| **`WebSite` node on the homepage**           | the only node in [schema-graph.md](schema-graph.md) still unbuilt                                                                                                  | S      |
+| **More guides**                              | the hub's 12 cover the main clusters; symptom long-tail is far from exhausted                                                                                      | L      |
+| **Inline SVG diagrams**                      | the one honest visual asset class — see [media-assets.md](media-assets.md) §5                                                                                      | M      |
+| **Author byline**                            | a real named person would be a genuine E-E-A-T upgrade. **Owner action** — never invent one                                                                        | —      |
 
 ## P3 — robustness
 
