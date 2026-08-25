@@ -74,7 +74,8 @@ call site.
 | Static    | the page's noun               | מחירון \| חם בבית                      |
 
 **The layout template already appends `| חם בבית`. Never append it yourself.** Both dynamic routes
-currently do, shipping the brand twice on 24 of 33 pages — the site's most visible on-page defect.
+once did, shipping the brand twice on 24 of 33 pages. That is **fixed** — `out/` now contains zero
+doubled titles — and the build gate asserts it stays fixed.
 
 Descriptions: 140–160 chars, unique, service + place first, action last, **and no claim the body does
 not make**. Service descriptions are re-emitted as JSON-LD `Service.description`, so an unsourced
@@ -117,16 +118,27 @@ Watch these existing adjacencies, which are close enough to blur if copy drifts:
 
 ---
 
-## 7. Unserved intent worth building
+## 7. Unserved intent — the knowledge hub
 
-Ranked by value, all currently with no home on the site:
+All of the below currently have **no home on the site**. The target route is `/מדריכים/<slug>/`, which
+does not exist yet. Full cluster structure in [topical-map.md](topical-map.md) §4.
 
-1. **Symptom queries** — "אין מים חמים", "מים פושרים", "הדוד מפיל את החשמל", "הדוד מטפטף". A
-   symptom → likely cause table is the single highest-value asset the site could build, and it feeds
-   the service pages internally.
-2. **Comparison queries** — דוד שמש vs דוד חשמל; repair vs replace.
-3. **Definition queries** — מה זה אנודה, מה עושה תרמוסטט, איך עובד דוד שמש.
-4. **Seasonal** — winter demand spikes for boiler failure.
+| Rank | Cluster        | Example queries                                                           | Target                   |
+| ---- | -------------- | ------------------------------------------------------------------------- | ------------------------ |
+| 1    | **Symptom**    | אין מים חמים · מים פושרים · הדוד מפיל את החשמל · הדוד מטפטף · רעשים מהדוד | `/מדריכים/<symptom>/`    |
+| 2    | **Comparison** | דוד שמש או דוד חשמל · תיקון או החלפה                                      | `/מדריכים/<comparison>/` |
+| 3    | **Definition** | מה זה אנודה · מה עושה תרמוסטט · איך עובד דוד שמש                          | `/מדריכים/<term>/`       |
+| 4    | **Seasonal**   | בדיקת דוד לפני החורף · למה דודים מתקלקלים בחורף                           | `/מדריכים/<seasonal>/`   |
+
+**A symptom → likely cause table is the single highest-value asset the site could build.** It is
+lifted by answer engines far more reliably than prose, and it feeds the service pages internally.
 
 All of these are **technical**, which makes them safe: they need no business fact, so they carry none
-of the claims risk that warranty, timing and price content carries. See `aeo-answer-content`.
+of the claims risk that warranty, timing and price content carries. See `aeo-answer-content` and
+`new-article`.
+
+**Every hub page must route to a commercial page.** A symptom guide that does not link the service
+page fixing that symptom is a dead end. And each hub URL must be added to `app/sitemap.ts`,
+`public/llms.txt`, the Header nav and the Footer when it ships.
+
+⚠️ **No prices in a comparison guide.** The business publishes no price list; any figure is invented.

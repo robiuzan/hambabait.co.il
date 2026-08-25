@@ -7,24 +7,32 @@ All nodes are built with `@ishub/site-kit/seo`. **Never hand-write JSON-LD.**
 
 ---
 
-## 1. Current state — 7 of 33 pages emit anything
+## 1. Current state — 32 of 32 indexable pages emit JSON-LD
 
-| Route                  | Count | Emits today           | Target                                        |
-| ---------------------- | ----- | --------------------- | --------------------------------------------- |
-| `/`                    | 1     | `Plumber` + `FAQPage` | + `WebSite`                                   |
-| `/services/<slug>/`    | 6     | `Service`             | + `BreadcrumbList`                            |
-| `/locations/<slug>/`   | 18    | **nothing**           | `Service` (area-scoped) + `BreadcrumbList`    |
-| 7 Hebrew static routes | 7     | **nothing**           | `BreadcrumbList`; `FAQPage` where FAQs render |
-| `/מחירון/`             | —     | nothing               | `Offer` **without a price**, or nothing       |
-| `out/404`              | 1     | nothing               | nothing (correct)                             |
+**Verified 2026-08-25 against a fresh `out/`.**
+
+| Route                  | Count | Emits today                                | Target                                   |
+| ---------------------- | ----- | ------------------------------------------ | ---------------------------------------- |
+| `/`                    | 1     | `Plumber` + `FAQPage`                      | + `WebSite`                              |
+| `/services/<slug>/`    | 6     | `Service` + `BreadcrumbList`               | + per-service `FAQPage`                  |
+| `/locations/<slug>/`   | 18    | `Service` (area-scoped) + `BreadcrumbList` | + per-city `FAQPage`                     |
+| 7 Hebrew static routes | 7     | `BreadcrumbList`                           | `FAQPage` where FAQs render              |
+| `/מחירון/`             | —     | `BreadcrumbList`                           | `Offer` **without a price**, or nothing  |
+| `/מדריכים/<slug>/`     | 0     | route does not exist yet                   | `Article` + `BreadcrumbList` + `FAQPage` |
+| `/תודה/`               | 1     | nothing                                    | nothing (correct — noindex)              |
+| `out/404`              | 1     | nothing                                    | nothing (correct)                        |
 
 ```bash
 npm run build
-grep -rl 'application/ld+json' out --include=index.html | wc -l    # 7
+find out -name index.html | wc -l                                  # 34
+grep -rl 'application/ld+json' out --include=index.html | wc -l    # 32
 ```
 
-The 18-page location silo — **56% of indexable URLs and the entire local-SEO surface** — ships bare.
-That is the largest single gap.
+The only two pages without JSON-LD are the 404 and `/תודה/`, **both correct**.
+
+**The coverage gap is closed.** What remains is depth, not presence: per-service and per-city
+`FAQPage` nodes, `Article` for the knowledge hub, and the three honest data gaps in §2 — which are
+owner problems, not markup problems.
 
 ---
 
@@ -91,14 +99,15 @@ therefore reaches structured data by design — see §6.
 
 ---
 
-## 4. BreadcrumbList — the cheapest win available
+## 4. BreadcrumbList — shipped
 
-`breadcrumbJsonLd` is exported by the kit and **imported by nothing**.
+`breadcrumbJsonLd` is imported and called in `components/layout/PageHeader.tsx`, which also renders
+the visible `<nav aria-label="פירורי לחם">` trail. It fires whenever a route passes both `crumbs` and
+`currentPath` — which every nested route does.
 
-Meanwhile every nested route already builds a complete crumb array and passes it to
-`components/layout/PageHeader.tsx`, which renders it as visible `<nav aria-label="פירורי לחם">` HTML.
-
-**The data exists. Only the emitter is missing.** Wiring it covers 31 nested routes at once.
+So `BreadcrumbList` ships on all 6 service pages, all 18 location pages and all 7 Hebrew static
+routes. It correctly does **not** ship on the homepage, the 404 or `/תודה/`, none of which render
+`PageHeader`.
 
 ```
 בית  ›  אזורי שירות  ›  תל אביב

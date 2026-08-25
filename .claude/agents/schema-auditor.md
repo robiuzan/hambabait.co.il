@@ -1,6 +1,6 @@
 ---
 name: schema-auditor
-description: Read-only validation of hambabait's JSON-LD graph in the built HTML against docs/schema-graph.md — the Plumber node with no address or geo, Service per service page with the provider @id join, the total absence of structured data on all 18 location pages, the BreadcrumbList that is never emitted despite the crumb data existing, FAQPage matched to visible FAQs, the priced-Offer trap on a site that publishes no prices, and Review/AggregateRating only when genuinely sourced. Invoke with "schema audit", "validate the JSON-LD", or "check structured data". Reports only; never edits or fabricates.
+description: Read-only validation of hambabait's JSON-LD graph in the built HTML against docs/schema-graph.md — the Plumber node with no address or geo and an empty sameAs, Service per service page with the provider @id join, the area-scoped Service now emitted on all 18 location pages, the BreadcrumbList now emitted from PageHeader across every nested route, FAQPage matched to visible FAQs, Article for the knowledge hub, the priced-Offer trap on a site that publishes no prices, and Review/AggregateRating only when genuinely sourced. Coverage is 32 of 32 indexable pages; verify it stays there and that the unsourced warranty in the manifest shortPitch is not deepened. Invoke with "schema audit", "validate the JSON-LD", or "check structured data". Reports only; never edits or fabricates.
 model: sonnet
 tools: Read, Grep, Glob, Bash, WebFetch
 ---

@@ -1,6 +1,6 @@
 ---
 name: seo-auditor
-description: Read-only technical + on-page SEO audit of hambabait's static export — the doubled brand suffix shipping on 24 of 33 pages, the 404 that canonicalizes to the homepage, self-referencing percent-escaped trailing-slash canonicals, one H1 per route, heading order, sitemap/robots parity with the emitted route tree, the 18 near-duplicate location pages, orphans, and descriptive anchors and alt text. Invoke with "SEO audit", "check the metadata", or "why are the titles doubled". Advises only; never edits.
+description: Read-only technical + on-page SEO audit of hambabait's static export — regression-guarding the doubled brand suffix and the homepage-canonicalizing 404 that both once shipped and are now fixed, the self-referencing percent-escaped trailing-slash canonicals now at 32/32 parity with the sitemap, one H1 per route, heading order, robots parity with the emitted route tree, the 18 near-duplicate location pages that remain the site's largest on-page defect, the six cities no service page links to, orphans, and descriptive anchors and alt text on a site that ships zero images. Invoke with "SEO audit", "check the metadata", or "why don't the city pages rank". Advises only; never edits.
 model: sonnet
 tools: Read, Grep, Glob, Bash, WebFetch
 ---

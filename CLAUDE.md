@@ -56,10 +56,13 @@
 7. **No page ships under the content bar in [docs/content-standards.md](docs/content-standards.md).**
    A location or service page a find-and-replace could regenerate is a doorway page, and 18 of the 32
    URLs are currently one template.
-8. **The two legal pages are code, not decoration.** `/מדיניות-פרטיות/` currently states that details
-   are not passed to third parties while every lead transits `api.web3forms.com` and GTM loads on
-   first paint. `/הצהרת-נגישות/` asserts ת״י 5568 + WCAG 2.0 AA conformance with no audit behind it.
-   Do not deepen either claim; fix the gap or narrow the wording.
+8. **The two legal pages are code, not decoration.** `/מדיניות-פרטיות/` now names its real processors
+   — Web3Forms, Google (Tag Manager / Analytics) and WhatsApp/Meta — and discloses cookie use. Keep it
+   true: any new data flow must land there in the same change. **But disclosure is not consent** — GTM
+   still loads unconditionally with no Consent Mode default and the lead form has no consent
+   affordance. `/הצהרת-נגישות/` still asserts ת״י 5568 + WCAG 2.0 AA conformance with no audit, no
+   statement date and no named accessibility coordinator. Do not deepen either claim; fix the gap or
+   narrow the wording.
 9. **Never edit generated or vendored output** — `node_modules/`, `vendor/`, `.next/`, `out/`,
    `out.prev/`.
 10. **Tailwind v4 is CSS-first here.** There is no `tailwind.config.ts` and there must not be. Tokens
@@ -103,10 +106,12 @@ app/
   page.tsx                # homepage — Plumber + FAQPage JSON-LD
   sitemap.ts robots.ts    # /sitemap.xml, /robots.txt
   not-found.tsx           # 404
-  services/[service]/     # 6 pages — Service JSON-LD
-  locations/[city]/       # 18 pages — NO JSON-LD today (see docs/schema-graph.md)
+  icon.svg                # favicon
+  services/[service]/     # 6 pages — Service + BreadcrumbList JSON-LD
+  locations/[city]/       # 18 pages — area-scoped Service + BreadcrumbList
   שירותים/ איזורי-שירות/ מחירון/ אודות/ צור-קשר/
   מדיניות-פרטיות/ הצהרת-נגישות/
+  תודה/                   # noindex conversion destination — NOT in the sitemap
 components/
   ui/          Button Container Section SectionHeading Reveal
   layout/      Header Footer PageHeader MobileCtaBar
@@ -195,20 +200,27 @@ See the `hebrew-rtl` skill for the full rule set.
 
 - **One `<h1>` per page**, matched to search intent. Everything else `<h2>`/`<h3>`, no skipped levels.
 - **Titles:** the root `template` in `app/layout.tsx` already appends `| חם בבית`. A page's own
-  `title` must therefore **never append the brand again**. Both dynamic routes currently do, shipping
-  `… | חם בבית | חם בבית` on **24 of 33 pages**. See the `seo-metadata` skill.
+  `title` must therefore **never append the brand again**. This once shipped `… | חם בבית | חם בבית`
+  on **24 of 33 pages**; it is fixed, and the build gate asserts it stays fixed. See the
+  `seo-metadata` skill.
 - **Canonicals:** self-referencing, trailing slash, percent-escaped so they are byte-identical to the
   `sitemap.xml` `<loc>`. `app/sitemap.ts` uses `encodeURI` for exactly this reason.
 - **JSON-LD** is built with `@ishub/site-kit/seo` — `localBusinessJsonLd`, `serviceJsonLd`,
   `faqJsonLd`, `breadcrumbJsonLd`, `jsonLdScript`. Target graph:
-  [docs/schema-graph.md](docs/schema-graph.md). Today only 7 of 33 pages emit any JSON-LD; the whole
-  18-page location silo ships bare and `breadcrumbJsonLd` is never imported even though every nested
-  route already builds a crumb trail for `PageHeader`.
+  [docs/schema-graph.md](docs/schema-graph.md). **All 32 indexable pages now emit JSON-LD** — only the
+  404 and `/תודה/` are bare, both correctly. `breadcrumbJsonLd` fires from `PageHeader`, so every
+  nested route ships a `BreadcrumbList` matching its visible trail. The remaining schema work is
+  depth, not coverage: per-service and per-city `FAQPage`, and `Article` for the knowledge hub.
 - **`Review`/`AggregateRating` ship only when genuinely sourced** — today that means never. Same for
   `Offer` with a price: the business deliberately publishes no price table, so any figure is invented.
 - **Images:** `images.unoptimized` is on and there is **no** `assets/` pipeline and **no**
   `image:optimize` script in this repo. Ship optimized WebP into `public/` by hand. Every meaningful
-  image needs a Hebrew `alt`; decorative gets `alt=""`. There is currently **no favicon of any kind**.
+  image needs a Hebrew `alt`; decorative gets `alt=""`. `app/icon.svg` ships as the favicon, but
+  **the site otherwise contains zero images** — `public/` holds only `_headers` and `llms.txt`, and OG
+  points at an external host. Prefer the kit's `SiteImage` (currently unused) over a hand-rolled
+  `<img>`: it makes `alt` structurally required and always emits width/height. Note the current LCP is
+  **text**, so any hero image can only make it worse — budget for that explicitly. **Never** ship stock
+  photography of technicians or work; that is a staffing claim rendered as an image.
 
 ---
 

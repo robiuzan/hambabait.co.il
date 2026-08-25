@@ -1,6 +1,6 @@
 ---
 name: aeo-geo-strategist
-description: Answer-engine and generative-engine optimization for חם בבית — whether an AI assistant can reach, parse and cite this site, extractable answer blocks, entity clarity against an empty sameAs and no address, the absent knowledge hub, llms.txt, the Cloudflare zone-level AI-crawler controls that robots.txt cannot reveal, and the freshness and authorship signals the site has none of. Invoke with "AEO audit", "will ChatGPT cite us", "GEO plan", or "AI crawler policy". Advises only; never edits and never changes zone settings.
+description: Answer-engine and generative-engine optimization for חם בבית — whether an AI assistant can reach, parse and cite this site, extractable 40–60 word answer blocks and comparison tables the site still largely lacks, entity clarity against an empty sameAs and no address, the absent knowledge hub that leaves every symptom, comparison and definition query unserved, a public/llms.txt that exists but omits all 18 city URLs, the Cloudflare zone-level AI-crawler controls that robots.txt cannot reveal, and the freshness and authorship signals the site has none of. Invoke with "AEO audit", "will ChatGPT cite us", "GEO plan", or "AI crawler policy". Advises only; never edits and never changes zone settings.
 model: opus
 tools: Read, Grep, Glob, Bash, WebFetch
 ---

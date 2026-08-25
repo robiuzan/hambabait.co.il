@@ -95,6 +95,40 @@ padding, or any claim of a local branch, local technician or per-city response t
 **If nothing truthful and specific can be written for a city, that city should not have a page.**
 Removal is a legitimate, preferred outcome over padding.
 
+### Knowledge-hub article (`/מדריכים/<slug>/` — route not built yet)
+
+The informational silo. **These pages are technical, which is what makes them safe** — they need no
+warranty, price, timing or credential, so they carry none of the claims risk the commercial pages do.
+That is precisely why they are the right place to spend content effort on this site.
+
+Must contain, in roughly this order:
+
+1. **The answer block** — the title's question as an H2, then **40–60 self-contained words** that
+   answer it without needing the rest of the page. This is the block answer engines lift; an answer
+   that depends on the next paragraph gets skipped entirely.
+2. **The mechanism** — what is actually happening inside the boiler, in plain Hebrew.
+3. **A table or an ordered list.** Symptom → likely cause, a comparison, or a numbered procedure. Real
+   `<table>` markup, never prose pretending to be a table.
+4. **What to check safely, and what not to touch.** Be explicit about the electrical and scalding
+   risks; do not write a guide that gets someone hurt.
+5. **When to call someone** — routing to the service page that fixes this fault.
+6. **2–4 FAQs** as question-form H2s, answer-first.
+
+Also required:
+
+- **Author and date.** `Article` with `datePublished` and `dateModified`, and a visible "עודכן ב…"
+  line. The site has no dates or authorship anywhere today; the hub is where that starts.
+  **Never invent an author** — attribute to `חם בבית` unless the owner confirms a real named person.
+- **A route to a commercial page.** A guide that does not link the service page resolving the problem
+  is a dead end.
+- **Links from the relevant service and city pages back in.** Depth flows both ways.
+
+Minimum ~700 Hebrew words. Comparison guides may be shorter if the table carries the weight.
+
+⚠️ **No prices in a comparison.** The business publishes no price list; any figure is invented. Compare
+on qualitative axes — running cost _relative_ to the alternative, weather dependence, maintenance,
+lifespan.
+
 ### Static pages
 
 `/אודות/` carries the trust burden without fabricating — what the business does, how it works, what
@@ -126,12 +160,12 @@ One CTA per section maximum. Over-CTA'd pages read as advertorial and convert wo
 
 ## 6. Legal pages — currently below standard
 
-- **`/מדיניות-פרטיות/`** states details are not passed to third parties, while every lead transits
-  `api.web3forms.com`, failed leads go to Meta via `wa.me`, and GTM loads with no consent gate. It
-  names no processor, no cookies and no retention period. **This is a factual error, not a wording
-  preference.**
-- **`/הצהרת-נגישות/`** asserts ת״י 5568 and WCAG 2.0 AA conformance with no audit, no statement date
-  and no named accessibility coordinator.
+- **`/מדיניות-פרטיות/` — ✅ fixed.** It now names Web3Forms, Google (Tag Manager / Analytics) and
+  WhatsApp/Meta, and discloses cookie use. **Keep it true:** any new data flow must land there in the
+  same change. Still missing a retention period — and **disclosure is not consent**: GTM still loads
+  unconditionally and the lead form has no consent affordance.
+- **`/הצהרת-נגישות/` — ⬜ still below standard.** Asserts ת״י 5568 and WCAG 2.0 AA conformance with no
+  audit, no statement date and no named accessibility coordinator.
 
 **Do not deepen either claim.** Fix the underlying gap, or narrow the wording to what is true.
 

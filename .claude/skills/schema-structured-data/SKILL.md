@@ -1,6 +1,6 @@
 ---
 name: schema-structured-data
-description: Emit the JSON-LD graph with the @ishub/site-kit/seo builders — Plumber from the manifest, Service per service page, the missing Service+breadcrumb on all 18 location pages, BreadcrumbList via breadcrumbJsonLd on every nested route (the crumb data already exists and is unused), FAQPage matched to visible FAQs, and the hard bar on Review/AggregateRating and priced Offer. Use when wiring or auditing structured data, or before a Rich Results Test. Triggers: "add schema", "JSON-LD", "BreadcrumbList", "structured data", "rich results", "Offer", "why do location pages have no schema".
+description: Emit the JSON-LD graph with the @ishub/site-kit/seo builders — Plumber from the manifest, Service per service page, area-scoped Service on all 18 location pages, BreadcrumbList emitted from PageHeader on every nested route, FAQPage matched to visible FAQs, Article for the knowledge hub, and the hard bar on Review/AggregateRating and priced Offer. Coverage now stands at 32 of 32 indexable pages; only the 404 and /תודה/ are bare, both correctly. Use when wiring or auditing structured data, or before a Rich Results Test. Triggers: "add schema", "JSON-LD", "BreadcrumbList", "structured data", "rich results", "Offer", "Article schema".
 ---
 
 # Structured data

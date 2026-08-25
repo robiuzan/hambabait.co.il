@@ -1,6 +1,6 @@
 ---
 name: conversion-cro
-description: Lead conversion on hambabait — click-to-call above the fold, the sticky mobile bar, the Web3Forms lead form and its silent WhatsApp fallback, the browser-only honeypot, per-field errors and aria-invalid, the missing consent affordance and thank-you route, data-cta coverage on every CTA, and the honest-trust-signal gate. Use when conversions are weak, a page is missing its CTAs, or the form needs work. Triggers: "improve conversions", "CRO pass", "form validation", "thank you page", "add click-to-call", "why aren't leads tracked", "lead form".
+description: Lead conversion on hambabait — click-to-call above the fold, the sticky mobile bar, the Web3Forms lead form and its WhatsApp fallback panel (now an explicit user choice, no longer a silent auto-open), the browser-only honeypot, per-field errors and aria-invalid, the /תודה/ destination-URL conversion route paired with the lead_submit event, the consent affordance that is still missing from the form, the 17-strong data-cta inventory, and the honest-trust-signal gate. Use when conversions are weak, a page is missing its CTAs, or the form needs work. Triggers: "improve conversions", "CRO pass", "form validation", "thank you page", "add click-to-call", "why aren't leads tracked", "lead form".
 ---
 
 # Conversion

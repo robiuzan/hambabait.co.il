@@ -1,6 +1,6 @@
 ---
 name: internal-linking
-description: Build the link mesh on hambabait — a header that reaches all 6 services and the areas index in one hop, a footer that stops orphaning location pages, service↔location cross-links that do not exist today, contextual in-copy links, breadcrumbs matched to BreadcrumbList, and a zero-orphan check across all 32 URLs. Use when wiring related links, fixing orphans, or auditing navigation. Triggers: "internal linking", "orphan pages", "navigation", "related links", "footer links", "breadcrumbs", "link mesh".
+description: Build the link mesh on hambabait — a header that reaches all 6 services and the areas index in one hop, a footer that links all 6 services and all 18 locations as the site's orphan insurance, the service→location mesh that is bidirectional but asymmetric because service pages render locations.slice(0,8) and leave cities 9–18 with no service-page inbound link, contextual in-copy links, nearby-city links that do not exist at all, breadcrumbs matched to BreadcrumbList, and a zero-orphan check across all 32 URLs. Use when wiring related links, fixing orphans, or auditing navigation. Triggers: "internal linking", "orphan pages", "navigation", "related links", "footer links", "breadcrumbs", "link mesh".
 ---
 
 # Internal linking

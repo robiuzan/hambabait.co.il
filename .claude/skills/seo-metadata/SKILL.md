@@ -1,6 +1,6 @@
 ---
 name: seo-metadata
-description: Per-route metadata for hambabait — the Hebrew title and description formulas, the layout template rule that stops the doubled brand suffix currently shipping on 24 of 33 pages, self-referencing percent-escaped trailing-slash canonicals, the 404 that canonicalizes to the homepage, OG/Twitter, Search Console verification, and deriving sitemap.ts and robots.ts from the data arrays instead of a hand-maintained list. Use when writing generateMetadata for a route, fixing duplicate or doubled titles, or auditing on-page SEO. Triggers: "set the metadata", "titles and descriptions", "canonical", "double brand suffix", "sitemap", "one H1", "404 metadata".
+description: Per-route metadata for hambabait — the Hebrew title and description formulas, the layout template rule that keeps the brand suffix from doubling (a defect that once shipped on 24 of 33 pages and must not regress), self-referencing percent-escaped trailing-slash canonicals now at 32/32 parity with the sitemap, the 404 and /תודה/ that deliberately carry no canonical, OG/Twitter, the googleSiteVerification field that is still wired to no verification block, and deriving sitemap.ts and robots.ts from the data arrays instead of a hand-maintained list. Use when writing generateMetadata for a route, fixing duplicate or doubled titles, or auditing on-page SEO. Triggers: "set the metadata", "titles and descriptions", "canonical", "double brand suffix", "sitemap", "one H1", "404 metadata".
 ---
 
 # Per-route SEO metadata

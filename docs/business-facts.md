@@ -5,7 +5,7 @@
 > Authoring copy is not a source. The roster manifest is only a source for identity fields the
 > business supplied — see the warning in §0.
 
-Last audited: 2026-08-16.
+Last audited: 2026-08-25. (§4.1 closed — the privacy policy now describes the real data flow.)
 
 ---
 
@@ -156,26 +156,41 @@ no technician roster, no address and no geo. **This is the doorway-page exposure
 
 ---
 
-## 4. ⬜ Unconfirmed — legal pages that contradict the code
+## 4. Legal pages
 
-### 4.1 Privacy policy is factually wrong about data flow
+### 4.1 ✅ Privacy policy — fixed 2026-08-25
 
-`app/מדיניות-פרטיות/page.tsx:33-36` states details are not transferred to third parties. In fact:
+**Previously a factual error; now resolved.** `app/מדיניות-פרטיות/page.tsx` names the real processors:
 
-- every lead POSTs name/phone/service/message to **`api.web3forms.com`** (`LeadForm.tsx:19-21,70-82`);
-- every failed lead is handed to **Meta** via a `wa.me` URL carrying the same fields
-  (`LeadForm.tsx:27-38,88-92`);
-- **GTM loads on first paint with no consent gate** (`app/layout.tsx:44-46,59-70`).
+- **Web3Forms** — lead delivery by email (`:57-58`)
+- **Google (Tag Manager / Analytics)** — measurement, and that it may set cookies (`:61-62`)
+- **WhatsApp (Meta)** — both the direct contact route and the lead-form hand-off (`:65-67`)
+- a cookies section explaining browser-level blocking (`:83-87`)
 
-The policy mentions no cookies, no Google/GTM/GA4, no Web3Forms, no WhatsApp, no retention period.
-This is a factual gap on a legal page, not a wording preference.
+Its header comment records the page as a factual description of the site's actual data flow. **Keep it
+that way: any new data flow must land here in the same change.**
 
-### 4.2 Accessibility statement asserts conformance with no audit
+### 4.1a ⬜ Still open — disclosure is not consent
 
-`app/הצהרת-נגישות/page.tsx:22-23` claims conformance work per **ת״י 5568** and **WCAG 2.0 AA**, with a
-four-bullet "what was made accessible" list (`:26-31`). There is no audit, no statement date and no
-named accessibility coordinator (Israeli practice expects both), and no evidence any bullet was
-tested. See the `responsive-accessibility` skill before touching this page.
+The policy now _discloses_, but nothing _gates_:
+
+- **GTM loads on first paint with no Consent Mode default.** A grep for `consent|denied|gtag\(` across
+  `app/`, `components/` and `lib/` returns nothing but the policy's own prose.
+- **The lead form has no consent affordance** — a passive disclosure paragraph under the submit button
+  links the policy, but there is no checkbox and no gate.
+- **No stated retention period** anywhere.
+
+See the `consent-mode` skill. Roughly half the fix is container-side and belongs to the owner.
+
+### 4.2 ⬜ Accessibility statement asserts conformance with no audit — still open
+
+`app/הצהרת-נגישות/page.tsx:25` claims conformance work per **ת״י 5568** and **WCAG 2.0 AA**. There is
+no audit behind it, and a grep for `עודכן|תאריך|רכז נגישות` over that file returns **0** — no statement
+date and no named accessibility coordinator, both of which Israeli practice expects.
+
+Fix order: run the real audit (`perf-a11y-auditor`), fix what it finds, **then** rewrite the statement
+to say what was tested, when, by whom, and the known limitations. See the `responsive-accessibility`
+skill before touching this page.
 
 ---
 
