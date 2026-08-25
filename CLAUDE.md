@@ -158,6 +158,13 @@ layout goes in components.** Copy never gets typed directly into JSX.
 structurally validated against `SiteManifest` at compile time. A malformed manifest fails at runtime,
 not at build.
 
+> ⚠️ **There is no roster→repo sync script.** `ops/` holds `bump-site-kit`, `deploy-site`,
+> `make-og-card`, `sync-media`, `validate-manifests` and `webdav-deploy` — **none of them syncs the
+> roster into `site.config.json`**, and `deploy-site.ps1` reads the repo's copy as-is. So editing the
+> roster alone changes nothing public: the value must also reach `site.config.json` before the next
+> build, or the deploy ships the old one. Verified 2026-08-25, when a softened `shortPitch` was
+> edited in the roster and the old text kept shipping as the JSON-LD `description`.
+
 ---
 
 ## 6. RTL & localization — NON-NEGOTIABLE
