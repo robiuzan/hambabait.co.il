@@ -11,9 +11,13 @@ export function FinalCta() {
           <h2 className="font-heading text-2xl font-extrabold text-accent-foreground sm:text-3xl">
             הדוד לא מחמם? דברו איתנו עוד היום.
           </h2>
+          {/* 🔶 confirm — dropped "עם אחריות על העבודה". The warranty is asserted across
+              the site with no term, scope or document anywhere, and this component renders
+              on nearly every page, so it was one of the widest carriers of the claim.
+              docs/business-facts.md §3.1. */}
           <p className="mx-auto mt-3 max-w-xl text-accent-foreground/90">
-            אבחון והצעת מחיר שקופה — ללא התחייבות. תיקון דודים מקצועי בכל הארץ, עם אחריות
-            על העבודה.
+            אבחון והצעת מחיר שקופה — ללא התחייבות. תיקון דודים מקצועי בכל הארץ, עם תנאים
+            ברורים מראש.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">

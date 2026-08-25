@@ -71,6 +71,36 @@ Herzliya have coastline but most housing sits inland of it; do not overreach.
 
 ---
 
+## 4a. The primary anchor: building height → boiler mix
+
+**This is the axis that does most of the discriminating**, and it is the one used across all 18
+entries in `cityContent`.
+
+Israeli regulation has required solar water heating on residential buildings since 1980, with taller
+buildings exempt. The consequence is directly observable and genuinely varies by city:
+
+- **Low-rise stock** → individual solar system per dwelling, private or shared roof access, and the
+  fault set of an ageing solar system (ווסת, קולט, gravity feed, backup element).
+- **High-rise stock** → electric or central heating, no collector, no private roof — and a completely
+  different fault set centred on the element, the thermostat and the RCD.
+
+So "what kind of building do you live in" predicts the job better than anything else, and cities
+differ in their mix: Tel Aviv and Ramat Gan hold both; Petah Tikva is actively shifting from one to
+the other through urban renewal; Modiin is uniformly modern; Kfar Saba and Raanana skew low-rise.
+
+**Keep proportions qualitative.** There is no source in this repo for "N% of buildings in X", so
+nothing written claims one.
+
+## 4b. The secondary anchors
+
+| Anchor                       | Applies to                                         | Why it is checkable                                                                                                                                            |
+| ---------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Cold winters / altitude**  | jerusalem                                          | verifiable climate; shifts winter load onto the electric backup element, so "no hot water" calls cluster in winter and trace to the element, not the collector |
+| **Desert sun + hard water**  | beer-sheva                                         | verifiable regional characteristics; solar performs year-round, so the dominant failure mode becomes scale (אבנית) rather than lack of heat                    |
+| **Household size / density** | bnei-brak                                          | high hot-water draw means the element runs far more hours; also reframes "hot water runs out" as an undersized-tank question rather than a fault               |
+| **Building-stock age**       | modiin (young), tel-aviv / bat-yam / holon (older) | verifiable urban history; predicts whether the tank itself or a replaceable component is the likely culprit                                                    |
+| **Topography**               | haifa                                              | verifiable; hillside siting complicates roof access and changes what a visit involves                                                                          |
+
 ## 5. The four legitimate material types
 
 1. **Housing stock and boiler mix** — solar-dominant vs electric/pressure; older stock vs new
@@ -85,30 +115,37 @@ Herzliya have coastline but most housing sits inland of it; do not overreach.
 
 ## 6. The 18 — research table
 
-Fill during Track D. **A row that cannot be filled truthfully is a recommendation to remove that
-city's page**, not a prompt to pad it. Removal is a legitimate and preferred outcome
-(`content-standards.md` §3).
+Written into `cityContent` in `lib/content.ts` on 2026-08-25. Every entry uses the building-height
+anchor (§4a) plus at least one secondary anchor (§4b), and each carries 1–2 city-specific FAQs.
 
-| #   | Slug            | City        | Coastal | Angle 1 (housing / boiler mix) | Angle 2 (access / corrosion) | City FAQ | Source tier | Status |
-| --- | --------------- | ----------- | ------- | ------------------------------ | ---------------------------- | -------- | ----------- | ------ |
-| 1   | `tel-aviv`      | תל אביב     | ~       |                                |                              |          |             | ⬜     |
-| 2   | `jerusalem`     | ירושלים     | —       |                                |                              |          |             | ⬜     |
-| 3   | `haifa`         | חיפה        | ✅      |                                |                              |          |             | ⬜     |
-| 4   | `rishon-lezion` | ראשון לציון | ~       |                                |                              |          |             | ⬜     |
-| 5   | `petah-tikva`   | פתח תקווה   | —       |                                |                              |          |             | ⬜     |
-| 6   | `netanya`       | נתניה       | ✅      |                                |                              |          |             | ⬜     |
-| 7   | `ashdod`        | אשדוד       | ✅      |                                |                              |          |             | ⬜     |
-| 8   | `beer-sheva`    | באר שבע     | —       |                                |                              |          |             | ⬜     |
-| 9   | `holon`         | חולון       | —       |                                |                              |          |             | ⬜     |
-| 10  | `bnei-brak`     | בני ברק     | —       |                                |                              |          |             | ⬜     |
-| 11  | `ramat-gan`     | רמת גן      | —       |                                |                              |          |             | ⬜     |
-| 12  | `rehovot`       | רחובות      | —       |                                |                              |          |             | ⬜     |
-| 13  | `herzliya`      | הרצליה      | ~       |                                |                              |          |             | ⬜     |
-| 14  | `kfar-saba`     | כפר סבא     | —       |                                |                              |          |             | ⬜     |
-| 15  | `modiin`        | מודיעין     | —       |                                |                              |          |             | ⬜     |
-| 16  | `bat-yam`       | בת ים       | ✅      |                                |                              |          |             | ⬜     |
-| 17  | `raanana`       | רעננה       | —       |                                |                              |          |             | ⬜     |
-| 18  | `ashkelon`      | אשקלון      | ✅      |                                |                              |          |             | ⬜     |
+| #   | Slug            | City        | Coastal | Primary angle                                       | Secondary angle                           |
+| --- | --------------- | ----------- | ------- | --------------------------------------------------- | ----------------------------------------- |
+| 1   | `tel-aviv`      | תל אביב     | ~       | old low-rise w/ private solar vs new towers         | salt air → anode wear                     |
+| 2   | `jerusalem`     | ירושלים     | —       | cold winters shift load to the electric element     | varied stock: stone low-rise vs newer     |
+| 3   | `haifa`         | חיפה        | ✅      | hillside siting complicates roof access             | salt air → anode wear                     |
+| 4   | `rishon-lezion` | ראשון לציון | ~       | growth in waves → build year predicts the fault     | western areas more exposed than eastern   |
+| 5   | `petah-tikva`   | פתח תקווה   | —       | urban renewal: solar-on-roof → electric-in-flat     | RCD trips become the common symptom       |
+| 6   | `netanya`       | נתניה       | ✅      | seafront towers (electric) vs low-rise east (solar) | direct salt exposure on the shore strip   |
+| 7   | `ashdod`        | אשדוד       | ✅      | planned low-rise → private solar widespread         | salt air → anode wear                     |
+| 8   | `beer-sheva`    | באר שבע     | —       | strong irradiance → solar carries winter too        | hard water → scale is the failure mode    |
+| 9   | `holon`         | חולון       | —       | 1960s–70s walk-ups, several systems per shared roof | identifying which system is yours         |
+| 10  | `bnei-brak`     | בני ברק     | —       | large households → high draw, element runs hot      | "runs out" = undersized tank, not a fault |
+| 11  | `ramat-gan`     | רמת גן      | —       | old walk-ups and tower districts side by side       | RCD trips in the electric stock           |
+| 12  | `rehovot`       | רחובות      | —       | low-rise / private homes → single-owner roofs       | no committee → no periodic inspection     |
+| 13  | `herzliya`      | הרצליה      | ~       | detached housing → private roof, standalone systems | coastal exposure near the shore           |
+| 14  | `kfar-saba`     | כפר סבא     | —       | garden-city low-rise → private solar common         | **no** coastal corrosion — ages slower    |
+| 15  | `modiin`        | מודיעין     | —       | uniformly young stock → whole areas age together    | inland; first component replacements due  |
+| 16  | `bat-yam`       | בת ים       | ✅      | directly on the sea + dense older stock             | sharpest corrosion case on the list       |
+| 17  | `raanana`       | רעננה       | —       | low-rise, single-owner roofs                        | set back from the coast → milder exposure |
+| 18  | `ashkelon`      | אשקלון      | ✅      | spread-out low-rise → solar widespread              | strong sun and salt air together          |
+
+**No city was removed.** Every one had at least one truthful, discriminating angle available.
+
+The weakest cases are `rehovot`, `raanana` and `kfar-saba`: all three lean on the
+low-rise/private-roof pattern and differ from each other mainly in distance from the coast. **If any
+of the 18 need deepening first, it is those three** — and if a future review decides one of them
+cannot be genuinely differentiated, removing it is the preferred outcome over padding
+(`content-standards.md` §3).
 
 ✅ coastal · ~ partial exposure · — inland
 

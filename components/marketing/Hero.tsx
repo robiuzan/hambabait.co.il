@@ -4,7 +4,9 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { LeadForm } from "@/components/forms/LeadForm";
 
-const points = ["הגעה מהירה", "אחריות על העבודה", "כל סוגי הדודים"];
+// 🔶 confirm — was "אחריות על העבודה". No warranty term, scope or document exists
+// anywhere; softened to what the site can stand behind. docs/business-facts.md §3.1.
+const points = ["הגעה מהירה", "תנאים ברורים מראש", "כל סוגי הדודים"];
 
 export function Hero() {
   return (
@@ -27,7 +29,7 @@ export function Hero() {
           </h1>
           <p className="mt-5 max-w-xl text-lg text-white/85">
             דוד שמש, דוד חשמל, תרמוסטט או נזילה — הטכנאים שלנו מאבחנים ומתקנים כל סוג של
-            דוד, במהירות ובמחיר הוגן, עם אחריות על העבודה.
+            דוד, ומסבירים בדיוק מה נמצא ומה נדרש לפני שמתחילים.
           </p>
 
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2">

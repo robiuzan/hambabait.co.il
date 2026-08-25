@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { locations, type LocationSlug, siteConfig, manifest } from "@/lib/site-config";
-import { serviceCards } from "@/lib/content";
-import { serviceJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
+import { locations, type LocationSlug, manifest } from "@/lib/site-config";
+import { serviceCards, cityContent } from "@/lib/content";
+import { serviceJsonLd, faqJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { FinalCta } from "@/components/marketing/FinalCta";
@@ -21,20 +21,39 @@ function findLocation(param: string) {
   return locations.find((c) => c.slug.normalize("NFC") === target);
 }
 
+/** Trim to a whole word inside the 140–160 char description budget. The source is the
+ *  city's own answer block, so every description is genuinely different — the previous
+ *  one was a single string with the city name interpolated, identical on all 18. */
+function toDescription(text: string, max = 155): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${cut.slice(0, lastSpace > 0 ? lastSpace : max).trimEnd()}…`;
+}
+
 export function generateMetadata({ params }: { params: { city: string } }): Metadata {
   const loc = findLocation(params.city);
   if (!loc) return {};
+  const city = cityContent[loc.slug];
   return {
     alternates: { canonical: `/locations/${loc.slug}/` },
     // No brand suffix here — the root `template` in app/layout.tsx already appends "| חם בבית".
     title: `תיקון דודים ב${loc.name}`,
-    description: `תיקון דודים ב${loc.name} — דוד שמש, דוד חשמל, תרמוסטט ונזילות. שירות מהיר, אבחון מקצועי, מחיר הוגן ואחריות על העבודה.`,
+    description: toDescription(city.answer.body),
   };
 }
 
 export default function LocationPage({ params }: { params: { city: string } }) {
   const loc = findLocation(params.city);
   if (!loc) notFound();
+
+  // Per-city content. Before this, the whole silo was one template with `loc.name`
+  // substituted — 18 pages a find-and-replace could regenerate from each other, which is
+  // the definition of a doorway page. docs/content-standards.md §0.
+  const city = cityContent[loc.slug];
+  const nearby = city.nearby
+    .map((slug) => locations.find((l) => l.slug === slug))
+    .filter((l): l is NonNullable<typeof l> => l !== undefined);
 
   // A city-scoped Service joined to the single #business node — NOT a per-city LocalBusiness,
   // which would fabricate 18 branches that do not exist. The kit's serviceJsonLd always takes
@@ -49,6 +68,8 @@ export default function LocationPage({ params }: { params: { city: string } }) {
     }),
     areaServed: { "@type": "City", name: loc.name },
   };
+  // FAQPage per city, matched item for item to the rendered Q&A below.
+  const faqLd = faqJsonLd(city.faqs);
 
   return (
     <>
@@ -56,9 +77,15 @@ export default function LocationPage({ params }: { params: { city: string } }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqLd) }}
+      />
       <PageHeader
         title={`תיקון דודים ב${loc.name}`}
-        subtitle={`שירות תיקון דודים ב${loc.name} והסביבה — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. הגעה מהירה, מחיר הוגן ואחריות על העבודה.`}
+        // Was: "הגעה מהירה, מחיר הוגן ואחריות על העבודה" — an arrival-speed claim and a
+        // warranty claim, neither sourced, shipping on all 18 pages. docs/business-facts.md §3.
+        subtitle={`שירות תיקון דודים ב${loc.name} והסביבה — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות.`}
         crumbs={[
           { label: "בית", href: "/" },
           { label: "אזורי שירות", href: "/איזורי-שירות" },
@@ -69,17 +96,22 @@ export default function LocationPage({ params }: { params: { city: string } }) {
 
       <Section tone="white">
         <div className="mx-auto max-w-3xl">
-          <p className="text-lg leading-relaxed text-gray-700">
-            הדוד שלכם ב{loc.name} לא מחמם, מטפטף או שהמים רותחים מדי? ב{siteConfig.name}
-            מאבחנים ומתקנים כל סוג של דוד — שמש, חשמל, משולב ולחץ — בבית פרטי, בדירה
-            ובעסק. אנחנו מגיעים במהירות, מאתרים את מקור התקלה ומתקנים במקום, עם חלקים
-            מתאימים ובעבודה נקייה.
-          </p>
-          <p className="mt-4 text-gray-700">
-            תיקון דוד הוא לרוב עניין דחוף, ולכן אנחנו משתדלים להגיע ל{loc.name} מהר ככל
-            האפשר — במקרים דחופים אף באותו יום. לפני שמתחילים תקבלו הצעת מחיר ברורה, ועל
-            כל תיקון וכל חלק שאנחנו מחליפים ניתנת אחריות.
-          </p>
+          {/* Answer block — question-form H2 then a 40–60 word self-contained answer,
+              specific to THIS city. */}
+          <h2 className="font-heading text-xl font-bold text-primary">
+            {city.answer.question}
+          </h2>
+          <p className="mt-3 text-lg leading-relaxed text-gray-800">{city.answer.body}</p>
+
+          {/* The two paragraphs that could not be written about any other city on the
+              list. Anchored to building height and the solar mandate, coastal exposure,
+              climate or building-stock age — never to a local branch, a local technician
+              or a per-city response time, none of which exist. */}
+          {city.profile.map((para) => (
+            <p key={para.slice(0, 32)} className="mt-4 leading-relaxed text-gray-700">
+              {para}
+            </p>
+          ))}
 
           <h2 className="mt-10 font-heading text-xl font-bold text-primary">
             שירותי תיקון דודים ב{loc.name}
@@ -97,6 +129,41 @@ export default function LocationPage({ params }: { params: { city: string } }) {
               </li>
             ))}
           </ul>
+
+          {/* Per-city FAQ, matched to the FAQPage node above. */}
+          <h2 className="mt-10 font-heading text-xl font-bold text-primary">
+            שאלות נפוצות ב{loc.name}
+          </h2>
+          <dl className="mt-4 space-y-6">
+            {city.faqs.map((f) => (
+              <div key={f.q}>
+                <dt className="font-heading text-base font-bold text-primary">{f.q}</dt>
+                <dd className="mt-2 leading-relaxed text-gray-700">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {/* City → city links. The site had none at all: every city linked the six
+              services and nothing else, so the location silo had no internal structure. */}
+          {nearby.length > 0 && (
+            <div className="mt-10 border-t border-gray-100 pt-8">
+              <h2 className="font-heading text-lg font-bold text-primary">
+                ערים נוספות באזור
+              </h2>
+              <ul className="mt-4 flex flex-wrap gap-2.5">
+                {nearby.map((n) => (
+                  <li key={n.slug}>
+                    <Link
+                      href={`/locations/${n.slug}`}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-gray-100 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:border-secondary hover:text-secondary"
+                    >
+                      תיקון דודים ב{n.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </Section>
 

@@ -28,7 +28,7 @@ export function ServicesGrid() {
       <SectionHeading
         eyebrow="השירותים שלנו"
         title="שירותי תיקון דודים"
-        subtitle="פתרון לכל תקלה בדוד — משמש וחשמל ועד תרמוסטט, אלמנט ונזילות, עם אבחון מהיר ואחריות על העבודה."
+        subtitle="פתרון לכל תקלה בדוד — משמש וחשמל ועד תרמוסטט, אלמנט ונזילות, עם אבחון מדויק והצעת מחיר ברורה מראש."
       />
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
