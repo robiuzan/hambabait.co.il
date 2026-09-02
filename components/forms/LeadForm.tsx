@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, MessageCircle, Phone, Send, TriangleAlert } from "lucide-react";
@@ -21,6 +21,9 @@ import { trackEvent } from "@ishub/site-kit/analytics";
  * call and a WhatsApp hand-off the user clicks themselves. An auto `window.open()` after an
  * `await` is outside the user-gesture window and gets eaten by popup blockers, which used to
  * lose the lead with no UI feedback at all.
+ *
+ * That error state REPLACES the form, so two things have to survive the swap: keyboard focus
+ * (the status-panel effect below) and everything the user typed (`draft`).
  */
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 // `||` not `??`: a manifest key blanked to "" must fall through to the env var, not disable
@@ -29,6 +32,23 @@ const WEB3FORMS_KEY =
   siteConfig.formAccessKey || process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "";
 
 type FieldErrors = { name?: string; phone?: string };
+
+/**
+ * What the user typed, snapshotted on the failure path only. The error panel unmounts the
+ * form, so "חזרה לטופס" remounts it — and an uncontrolled input with no defaultValue comes
+ * back empty. A user whose lead failed to send used to lose name, phone, service and message
+ * and had to retype all four, at the exact moment they were already annoyed.
+ */
+type Draft = { name: string; phone: string; service: string; message: string };
+
+function draftFrom(data: FormData): Draft {
+  return {
+    name: (data.get("name") as string) || "",
+    phone: (data.get("phone") as string) || "",
+    service: (data.get("service") as string) || "",
+    message: (data.get("message") as string) || "",
+  };
+}
 
 /**
  * Israeli phone shapes, digits only after stripping separators:
@@ -54,9 +74,33 @@ export function LeadForm({
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [whatsappFallback, setWhatsappFallback] = useState<string>("");
+  const [draft, setDraft] = useState<Draft | null>(null);
 
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Focus the first invalid field only AFTER React has committed aria-invalid and the error
+  // text. Calling .focus() inline in the submit handler moved focus while React 18 still had
+  // the state update batched, so the screen reader announced a field with no error on it.
+  useEffect(() => {
+    if (fieldErrors.name) nameRef.current?.focus();
+    else if (fieldErrors.phone) phoneRef.current?.focus();
+  }, [fieldErrors]);
+
+  // The done/error panels replace the entire form, which drops focus to <body> and leaves
+  // the user at the top of the document with no idea what happened. tabIndex={-1} makes the
+  // panel a legal programmatic focus target so focus lands on the outcome instead.
+  //
+  // "חזרה לטופס" unmounts that panel and has the same problem in reverse, so the return trip
+  // focuses the <form> itself — not the name field, which would pop the mobile keyboard on a
+  // user who has not asked to type yet. `draft` is the marker for "this is a return trip":
+  // it is null on first mount, so a freshly loaded page never has its focus stolen.
+  useEffect(() => {
+    if (status === "done" || status === "error") statusRef.current?.focus();
+    else if (status === "idle" && draft) formRef.current?.focus();
+  }, [status, draft]);
 
   function buildWhatsapp(data: FormData): string {
     const text = [
@@ -75,7 +119,14 @@ export function LeadForm({
     const form = e.currentTarget;
     const data = new FormData(form);
 
-    if ((data.get("company") as string)?.length) return; // honeypot
+    // Honeypot. The silence towards the bot is deliberate — an error message just teaches it
+    // which field to leave alone — but silent is not the same as untracked: the event carries
+    // no field values, only the fact that a submit was dropped here. If real humans ever turn
+    // up in this count (an autofill filling a display:none field), that is the only signal.
+    if ((data.get("company") as string)?.length) {
+      trackEvent("lead_submit_blocked", { form: "lead", reason: "honeypot" });
+      return;
+    }
 
     const name = (data.get("name") as string)?.trim() ?? "";
     const phone = (data.get("phone") as string)?.trim() ?? "";
@@ -86,15 +137,10 @@ export function LeadForm({
     if (!phone) errors.phone = "נא למלא מספר טלפון";
     else if (!isValidIsraeliPhone(phone)) errors.phone = "מספר הטלפון אינו תקין";
 
+    // A fresh object every time, so a repeated failure still changes identity and re-runs
+    // the focus effect above.
     setFieldErrors(errors);
-    if (errors.name) {
-      nameRef.current?.focus();
-      return;
-    }
-    if (errors.phone) {
-      phoneRef.current?.focus();
-      return;
-    }
+    if (errors.name || errors.phone) return;
 
     setStatus("sending");
 
@@ -107,6 +153,7 @@ export function LeadForm({
         setStatus("done");
         return;
       }
+      setDraft(draftFrom(data));
       setWhatsappFallback(buildWhatsapp(data));
       setStatus("error");
       trackEvent("lead_submit_failed", { form: "lead", reason: "no_key" });
@@ -139,6 +186,7 @@ export function LeadForm({
       router.push("/תודה/");
     } catch {
       // Never silent, and never an auto-popup: render a WhatsApp hand-off the user clicks.
+      setDraft(draftFrom(data));
       setWhatsappFallback(buildWhatsapp(data));
       setStatus("error");
       trackEvent("lead_submit_failed", { form: "lead", reason: "delivery" });
@@ -146,11 +194,14 @@ export function LeadForm({
   }
 
   if (status === "done") {
+    // role="status" already implies aria-live="polite"; stating both made some screen
+    // readers announce the panel twice.
     return (
       <div
+        ref={statusRef}
+        tabIndex={-1}
         className={cn("rounded-xl bg-green-50 p-6 text-center", className)}
         role="status"
-        aria-live="polite"
       >
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
           <Check className="h-6 w-6" aria-hidden />
@@ -174,11 +225,13 @@ export function LeadForm({
   }
 
   if (status === "error") {
+    // role="alert" already implies aria-live="assertive" — see the note on the done panel.
     return (
       <div
+        ref={statusRef}
+        tabIndex={-1}
         className={cn("rounded-xl bg-amber-50 p-6 text-center", className)}
         role="alert"
-        aria-live="assertive"
       >
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
           <TriangleAlert className="h-6 w-6" aria-hidden />
@@ -209,10 +262,11 @@ export function LeadForm({
             שליחה בוואטסאפ
           </Button>
         </div>
+        {/* Returns to the form with `draft` still populated, so nothing typed is lost. */}
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="mt-4 text-sm font-medium text-secondary underline focus-visible:ring-2 focus-visible:ring-secondary/40 focus-visible:outline-none"
+          className="mt-4 text-sm font-medium text-secondary underline focus-visible:ring-2 focus-visible:ring-secondary focus-visible:outline-none"
         >
           חזרה לטופס
         </button>
@@ -220,12 +274,44 @@ export function LeadForm({
     );
   }
 
+  // Contrast, all measured against white. Tailwind preflight sets the input background to
+  // transparent, so the 1px border is the ONLY thing marking the field and it owes the 3:1
+  // of SC 1.4.11: gray-300 was 1.47:1 and gray-400 is still only 2.60:1, so gray-500
+  // (#6a7282, 4.84:1). Placeholder text moves off gray-400 for the same reason. The focus
+  // ring runs at full strength because secondary/40 measured 1.91:1, under the same floor.
   const fieldClass =
-    "w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/40";
-  const errorClass = "border-red-500 focus:border-red-500 focus:ring-red-500/40";
+    "w-full rounded-lg border border-gray-500 px-3 py-2.5 text-gray-900 placeholder:text-gray-500 focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary";
+  // red-500 is 3.81:1 on white, so the error border clears 1.4.11 as it stands; the ring did
+  // not at /40 (1.81:1), so it goes to full-strength red-600 (4.77:1).
+  const errorClass = "border-red-500 focus:border-red-500 focus:ring-red-600";
+
+  // The full error set for the live region below. Focus can only ever announce one field.
+  const errorMessages = [fieldErrors.name, fieldErrors.phone].filter((m): m is string =>
+    Boolean(m),
+  );
+  const errorSummary =
+    errorMessages.length > 0 ? `הטופס לא נשלח. ${errorMessages.join(". ")}.` : "";
 
   return (
-    <form onSubmit={handleSubmit} className={cn("space-y-4", className)} noValidate>
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      className={cn("space-y-4", className)}
+      noValidate
+      // Focus target for the return trip out of the error panel; not in the tab order.
+      tabIndex={-1}
+    >
+      {/* Always mounted, empty when clean: a role="alert" inserted at the same moment as its
+          text is announced unreliably. `sr-only` is position:absolute, so while it is empty
+          it takes no space and space-y-4 (margin-block-end on non-last children) has nothing
+          to push. */}
+      <p
+        role="alert"
+        className={cn("text-sm font-medium text-red-600", !errorSummary && "sr-only")}
+      >
+        {errorSummary}
+      </p>
+
       <div>
         <label htmlFor="lf-name" className="mb-1 block text-sm font-medium text-gray-700">
           שם מלא
@@ -237,6 +323,7 @@ export function LeadForm({
           type="text"
           autoComplete="name"
           required
+          defaultValue={draft?.name ?? ""}
           aria-invalid={fieldErrors.name ? true : undefined}
           aria-describedby={fieldErrors.name ? "lf-name-error" : undefined}
           className={cn(fieldClass, fieldErrors.name && errorClass)}
@@ -265,6 +352,7 @@ export function LeadForm({
           autoComplete="tel"
           required
           dir="ltr"
+          defaultValue={draft?.phone ?? ""}
           aria-invalid={fieldErrors.phone ? true : undefined}
           aria-describedby={fieldErrors.phone ? "lf-phone-error" : undefined}
           // text-end under dir="ltr" resolves to the right edge — logical, not physical.
@@ -285,11 +373,13 @@ export function LeadForm({
         >
           השירות שמעניין אתכם (אופציונלי)
         </label>
+        {/* `??` not `||`: a restored draft where the user deliberately left the dropdown on
+            "בחירת שירות…" is "" and must stay "", not fall back to the route's default. */}
         <select
           id="lf-service"
           name="service"
           className={fieldClass}
-          defaultValue={defaultService}
+          defaultValue={draft?.service ?? defaultService}
         >
           <option value="">בחירת שירות…</option>
           {services.map((s) => (
@@ -312,6 +402,7 @@ export function LeadForm({
           name="message"
           rows={3}
           className={fieldClass}
+          defaultValue={draft?.message ?? ""}
           placeholder="לדוגמה: דוד חשמל שלא מחמם / נזילה מהדוד…"
         />
       </div>
@@ -328,32 +419,42 @@ export function LeadForm({
         />
       </div>
 
+      {/* Before the submit control, and wired to it with aria-describedby: a notice rendered
+          after the button is read out only once the user has already passed the thing that
+          sends their data. Web3Forms and the deletion right are both named in
+          /מדיניות-פרטיות/ already — this restates them, it does not add a claim. */}
+      <p id="lf-consent" className="text-start text-xs text-gray-600">
+        בשליחת הטופס אתם מאשרים שניצור איתכם קשר בטלפון או בוואטסאפ בנוגע לפנייה. הפנייה
+        נשלחת אלינו בדוא״ל באמצעות שירות Web3Forms, ותוכלו לפנות אלינו בכל עת כדי לעיין
+        בפרטים שמסרתם או לבקש את מחיקתם. פרטים נוספים ב
+        <Link href="/מדיניות-פרטיות/" className="underline hover:text-gray-800">
+          מדיניות הפרטיות
+        </Link>
+        .
+      </p>
+
       <Button
         type="submit"
         variant="accent"
         size="lg"
         className="w-full"
         disabled={status === "sending"}
+        aria-describedby="lf-consent"
+        data-cta={`${ctaPlacement}-submit`}
       >
         <Send className="h-5 w-5" aria-hidden />
         {status === "sending" ? "שולח…" : "שליחה וקבלת הצעת מחיר"}
       </Button>
 
       <p className="text-center text-xs text-gray-500">
-        בשליחת הטופס אתם מאשרים שניצור איתכם קשר בטלפון או בוואטסאפ בנוגע לפנייה. פרטים
-        נוספים ב
-        <Link href="/מדיניות-פרטיות/" className="underline hover:text-gray-700">
-          מדיניות הפרטיות
-        </Link>
-        .
-      </p>
-
-      <p className="text-center text-xs text-gray-500">
         מעדיפים וואטסאפ?{" "}
+        {/* #1da851 measured 3.10:1 on white, under the 4.5:1 body-text floor. accent-600 is
+            an existing @theme token at 6.81:1; the bright WhatsApp green stays on the filled
+            Button variant, where it is a background rather than text. */}
         <a
           href={whatsappHref("היי, אני מעוניין/ת בשירות תיקון דוד")}
           data-cta={`${ctaPlacement}-whatsapp`}
-          className="inline-flex items-center gap-1 font-semibold text-[#1da851] hover:underline"
+          className="inline-flex items-center gap-1 font-semibold text-accent-600 hover:underline"
         >
           <MessageCircle className="h-3.5 w-3.5" aria-hidden />
           שלחו לנו הודעה

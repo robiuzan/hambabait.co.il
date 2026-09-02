@@ -59,6 +59,13 @@ export default function ServicePage({ params }: { params: { service: string } })
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 
+  // The symptom table's accessible name, used twice: as the <caption> a screen reader
+  // announces before reading the cells, and as the label of the focusable scroll
+  // container around it. All twelve guide tables carry a caption and these six carried
+  // none. Derived from the service name rather than six hand-written strings, so it
+  // stays accurate on every page and describes only what the table holds.
+  const symptomsCaption = `תסמינים וסיבות סבירות — ${card.name}`;
+
   const jsonLd = serviceJsonLd(manifest, {
     name: card.name,
     description: card.description,
@@ -109,8 +116,24 @@ export default function ServicePage({ params }: { params: { service: string } })
             <h2 className="mt-10 font-heading text-xl font-bold text-primary">
               {depth.symptomsHeading}
             </h2>
-            <div className="mt-4 overflow-x-auto">
+            {/* The scroll container is focusable: `overflow-x-auto` on its own is
+                mouse- and touch-only, so on a viewport narrower than the table's
+                min-w-[30rem] a keyboard user could never reach the second column
+                (SC 2.1.1). role="group" and not role="region" — a landmark per table
+                would bury the page's real landmarks. The global
+                `[tabindex]:focus-visible` rule in app/globals.css draws the ring. */}
+            <div
+              className="mt-4 overflow-x-auto"
+              tabIndex={0}
+              role="group"
+              aria-label={symptomsCaption}
+            >
               <table className="w-full min-w-[30rem] border-collapse text-start text-sm">
+                {/* sr-only, unlike the guide tables' visible captions: those sit under a
+                    generic heading, but here the <h2> directly above already names this
+                    table for a sighted reader, so a visible caption renders as a duplicate
+                    subhead. Screen readers still get the caption before the cells. */}
+                <caption className="sr-only">{symptomsCaption}</caption>
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th

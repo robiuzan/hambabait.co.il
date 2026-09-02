@@ -4,17 +4,18 @@
 > before a change ships, no future claim of improvement is falsifiable.**
 >
 > Cited by `analytics-reporter`, `tracking-analytics`, `search-console-ops`.
-> Compiled 2026-08-25.
+> Re-baselined 2026-08-31.
 
 ---
 
 ## 0. Baseline — NOT YET RECORDED
 
 **Status: ❌ no baseline exists.** Search Console and GA4 both require console access this repo does
-not have.
+not have. Nothing below has been filled in, and nothing below may be filled in from memory, from an
+estimate, or from a number that appeared in another document.
 
-**This must be captured before the Phase 2 deploy.** Record the date measured and the source for every
-figure. A baseline taken after the change is not a baseline.
+**This must be captured before the next production deploy.** Record the date measured and the source
+for every figure. A baseline taken after the change is not a baseline.
 
 | Metric                       | Value  | Date | Source                        |
 | ---------------------------- | ------ | ---- | ----------------------------- |
@@ -22,36 +23,56 @@ figure. A baseline taken after the change is not a baseline.
 | Impressions — home           |        |      | GSC                           |
 | Impressions — `/services/*`  |        |      | GSC                           |
 | Impressions — `/locations/*` |        |      | GSC                           |
+| Impressions — `/מדריכים/*`   |        |      | GSC                           |
 | Clicks — all                 |        |      | GSC                           |
 | Avg position — all           |        |      | GSC                           |
-| Indexed / submitted          | ? / 32 |      | GSC Coverage                  |
+| Indexed / submitted          | ? / 45 |      | GSC Coverage                  |
 | Calls (`*-call`)             |        |      | GA4                           |
 | WhatsApp (`*-whatsapp`)      |        |      | GA4                           |
 | `lead_submit`                |        |      | GA4                           |
 | `/תודה/` pageviews           |        |      | GA4                           |
 | LCP / CLS / INP              |        |      | CrUX or lab — **label which** |
 
-**Split by page type.** Aggregate numbers hide the thing that matters: the location silo is the
-weakest surface, and averaging it with the homepage conceals that.
+**Split by page type.** Aggregate numbers hide the thing that matters. There are now four surfaces
+with genuinely different jobs — home, the 6 service pages, the 18 location pages and the 12 guides —
+and averaging the guides (informational, zero commercial intent) with the location pages
+(commercial + local) conceals both.
+
+The submitted denominator is **45**, not 32. The sitemap carries 45 `<loc>` entries; `/תודה/` is
+deliberately excluded as a `noindex` conversion destination and the 404 is not a route.
 
 ---
 
 ## 1. The verified technical baseline
 
-Unlike the traffic figures, this is measurable from the repo today. **Verified 2026-08-25:**
+Unlike the traffic figures, this is measurable from the repo today. **Verified 2026-08-31 against a
+fresh `out/`:**
 
 ```
-built pages                34   (32 indexable + 404 + /תודה/)
-pages with JSON-LD         32   (only 404 and /תודה/ bare — correct)
-canonicals                 32
-sitemap <loc>              32
+built HTML files           48   (47 index.html + out/404.html)
+built pages                47   (45 indexable + 404 + /תודה/)
+pages with JSON-LD         45   (only 404 and /תודה/ bare — correct)
+canonicals                 45   (exactly one per indexable page)
+sitemap <loc>              45   (45 unique)
 doubled brand titles        0
-banned schema props         0   (aggregateRating|review|ratingValue|reviewCount|foundingDate|warrantyPromise)
-data-cta identifiers       17
-images in public/           0
+banned schema props         0   (aggregateRating|reviewCount|ratingValue|foundingDate|warrantyPromise)
+banned RTL utilities        0   (pl-|pr-|ml-|mr-|left-|right-|text-left|text-right)
+data-cta identifiers       27   (492 occurrences)
+raster images (<img>)       0   (public/ holds only _headers and llms.txt)
+inline SVG diagrams         4   (on 4 of the 12 guides)
+llms.txt coverage       45/45
 ```
 
-Re-assert these on every deploy via `qa-build-gate`. They are the regression net.
+Weight, same build: `out/_next/static` **1.1 MB**, 30 JS files at **761,779 raw bytes**, one CSS file
+at **40,451 B raw / 8,723 B gzip**, `out/index.html` at **184,799 B raw / 25,205 B gzip**. Largest
+chunk **172,834 B raw / 53,531 B gzip**. Shared First Load JS **87.5 kB**.
+
+**`npm run qa:gate` re-asserts the structural half of this on every release** —
+`scripts/qa-gate.mjs`, 25 assertions over `out/`, currently 25 passed / 0 failed. It runs alongside
+`lint`, `typecheck`, `format:check` and `build`, and it is the regression net. Among what it checks:
+one canonical per page, canonical ↔ sitemap byte parity, exactly one `<h1>`, unique titles and
+descriptions, the `WebSite` node on the homepage, the Consent Mode default preceding the GTM
+container, no priced `Offer`, and no `potentialAction`/`SearchAction`.
 
 ---
 
@@ -59,26 +80,63 @@ Re-assert these on every deploy via `qa-build-gate`. They are the regression net
 
 Goal order: **(1) phone call, (2) WhatsApp, (3) lead form.**
 
-### `data-cta` — 17 identifiers
+### `data-cta` — 27 identifiers, 492 occurrences
 
-`header-call` (×3) · `hero-call` · `hero-whatsapp` · `sticky-call` · `sticky-whatsapp` ·
-`service-call` · `service-whatsapp` · `contact-call` · `contact-whatsapp` · `contact-email` ·
-`footer-call` · `footer-email` · `finalcta-call` · `finalcta-whatsapp` · `pricing-quote` ·
-`notfound-call` · `thanks-call`
+```
+contact-call · contact-email · contact-form-submit · contact-form-whatsapp · contact-whatsapp
+finalcta-call · finalcta-whatsapp · footer-call · footer-email
+header-call · header-call-icon · hero-call · hero-form-submit · hero-form-whatsapp · hero-whatsapp
+location-form-submit · location-form-whatsapp · mobile-menu-call · notfound-call · pricing-quote
+service-call · service-form-submit · service-form-whatsapp · service-whatsapp
+sticky-call · sticky-whatsapp · thanks-call
+```
 
-Naming convention: `<placement>-<action>`. **A CTA with no `data-cta` is invisible to the container.**
-Audit new pages for this.
+Naming convention: `<placement>-<action>`. **A CTA with no `data-cta` is invisible to the
+container.** Audit new pages for this.
 
 ```bash
 grep -rho 'data-cta="[^"]*"' out --include=index.html | sort | uniq -c | sort -rn
 ```
 
+### ⛔ The container is now behind the code — OWNER ACTION
+
+The inventory grew from 17 to 27, and **three of the values changed meaning**. GTM triggers match
+these strings literally, so until container `GTM-KWGGH438` is updated, the new identifiers record
+**nothing** and one existing identifier now records **less than it used to**.
+
+| Identifier         | Before                                                       | Now                                                     |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------- |
+| `header-call`      | reused for **three** different header elements on every page | the desktop header-bar call button **only**             |
+| `header-call-icon` | did not exist — folded into `header-call`                    | the compact icon call link                              |
+| `mobile-menu-call` | did not exist — folded into `header-call`                    | the call action inside the open mobile menu panel       |
+| `*-form-submit` ×4 | did not exist                                                | `hero-`, `service-`, `location-`, `contact-form-submit` |
+
+The split is the right change — one identifier covering three elements collapsed three different
+placements into one undifferentiated count, so nobody could tell a desktop header call from a
+mobile-menu call. But **the reporting consequence is real and it is live right now**: a trigger
+still matching `header-call` no longer sees the icon link or the mobile menu, which is where phone
+calls actually come from on this site. Expect header-attributed calls to fall the moment this ships,
+and **do not read that fall as a behaviour change.**
+
+**Accept:** the container has triggers covering all 27 identifiers, and a spot check confirms a tap
+on the mobile-menu call button reaches GA4.
+
 ### `trackEvent` calls
 
-| Event                | Fires when                                    | Payload                            |
-| -------------------- | --------------------------------------------- | ---------------------------------- |
-| `lead_submit`        | Web3Forms confirms `res.ok && result.success` | `{form: "lead"}`                   |
-| `lead_submit_failed` | delivery failure or empty key                 | `{reason: "no_key" \| "delivery"}` |
+| Event                 | Fires when                                       | Payload                                          |
+| --------------------- | ------------------------------------------------ | ------------------------------------------------ |
+| `lead_submit`         | Web3Forms confirms `res.ok && result.success`    | `{form: "lead"}`                                 |
+| `lead_submit_failed`  | delivery failure or empty access key             | `{form: "lead", reason: "no_key" \| "delivery"}` |
+| `lead_submit_blocked` | the browser-only honeypot catches the submission | `{form: "lead", reason: "honeypot"}`             |
+
+`lead_submit_blocked` is **new and currently inert** — it pushes to `dataLayer`, and container
+`GTM-KWGGH438` has no tag or trigger consuming it, so nothing is recorded. Standing one up is an
+owner action. It is worth doing: it is the only signal that distinguishes "the form is quiet" from
+"the form is being hit by bots", and reading a bot-suppressed period as a conversion drop would send
+the next content decision in the wrong direction.
+
+`lead_submit_failed` deserves a tag for the same reason — a `reason: "no_key"` spike means leads are
+being silently dropped, not that demand fell.
 
 ### ⚠️ The double-count risk
 
@@ -113,12 +171,14 @@ loads whenever the id changes.
 
 ## 4. Known measurement gaps
 
-| Gap                                           | Consequence                                                                                                                                 |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| **No consent gate**                           | analytics fire before any consent; a Consent Mode rollout will _reduce_ measured traffic, and that drop must not be misread as a regression |
-| **`googleSiteVerification` wired to nothing** | `app/layout.tsx` has no `verification` block, so setting the roster value silently does nothing                                             |
-| **[needs confirmation]** GA4 routing          | unverifiable without console access                                                                                                         |
-| **[needs confirmation]** Web3Forms inbox      | a lead can "succeed" and reach nobody                                                                                                       |
+| Gap                                         | Consequence                                                                                                                                                                                                                                                  |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Container behind the 27-value inventory** | new identifiers record nothing and `header-call` now under-counts — see §2. **Owner action, and the highest-value one on this page.**                                                                                                                        |
+| **`lead_submit_blocked` has no tag**        | honeypot activity is invisible, so a bot-suppressed quiet period looks like a conversion drop                                                                                                                                                                |
+| **Consent Mode v2 now ships**               | analytics are `denied` by default until the visitor chooses, so **measured traffic will drop against any pre-consent baseline**. That drop is the gate working. Do not read it as a regression, and do not compare across the boundary without labelling it. |
+| **`googleSiteVerification` is `null`**      | `app/layout.tsx` now has a `verification` block guarded on presence — the wiring is done. The roster value is still `null`, so no verification meta ships. **Owner action.**                                                                                 |
+| **[needs confirmation]** GA4 routing        | unverifiable without console access                                                                                                                                                                                                                          |
+| **[needs confirmation]** Web3Forms inbox    | a lead can "succeed" and reach nobody                                                                                                                                                                                                                        |
 
 ---
 
@@ -141,13 +201,18 @@ No keyword tool, rank tracker or analytics API is wired into this repo. Every nu
 its source and its date, or it is marked **[needs confirmation]**. Ranked qualitative judgement is
 worth more than a fabricated figure that gets planned against for six months.
 
+The same rule applies to this document. The technical baseline in §1 is quotable because it was
+measured from `out/`; the traffic table in §0 is not quotable, because it is empty.
+
 ### PII
 
 **Never put PII in `dataLayer`** — no name, phone, email or message content. The lead form has all four
-in scope and is one careless edit away from leaking them. Audit `trackEvent` call sites every pass.
+in scope and is one careless edit away from leaking them. Audit `trackEvent` call sites every pass;
+all four current calls pass only `form` and `reason`.
 
 Note the WhatsApp fallback builds a `wa.me` URL containing name, phone and message, handing PII to
-Meta. It is user-initiated, which is the defensible design, but it belongs in the privacy disclosure.
+Meta. It is user-initiated, which is the defensible design, and `/מדיניות-פרטיות/` names WhatsApp/Meta
+as a processor.
 
 ---
 
@@ -156,8 +221,11 @@ Meta. It is user-initiated, which is the defensible design, but it belongs in th
 Ordered by what actually matters to this business:
 
 1. **More calls and WhatsApp taps**, especially on mobile. The reader is mid-fault and on a phone.
-2. **Location pages earning non-brand impressions.** Today they are near-duplicates; if depth works,
-   this is where it shows first.
-3. **Informational queries arriving at all** — currently near zero, because no page serves them.
-4. **Indexed count reaching 32/32.**
+   Measurable only once the container covers the split identifiers in §2.
+2. **Location pages earning non-brand impressions.** They now carry per-city material rather than one
+   template; if depth works, this is where it shows first.
+3. **Informational queries arriving at all.** The 12 guides serve the symptom, comparison, definition
+   and seasonal clusters. Before the hub existed this number was structurally zero; it is now a real
+   metric with a real denominator, and the first one to check four weeks after a deploy.
+4. **Indexed count reaching 45/45.**
 5. Rankings — last, because they are the lagging indicator of everything above.

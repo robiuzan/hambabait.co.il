@@ -20,7 +20,7 @@ For a local business, this is close to the weakest possible off-site position:
 | ----------------------- | --------------------------------------------- | --------------------------------- |
 | Google Business Profile | none                                          | `site.config.json` `sameAs` empty |
 | Reviews                 | none anywhere                                 | `docs/business-facts.md` §2       |
-| `sameAs`                | empty array → pruned from JSON-LD             | `site.config.json:53`             |
+| `sameAs`                | empty array → pruned from JSON-LD             | `site.config.json:45`             |
 | Address / geo           | absent by design (mobile trade)               | manifest carries neither          |
 | Phone                   | **shared fleet line**, `phoneOverride: false` | roster `_needsConfirmation`       |
 | Citations               | none known                                    | —                                 |
@@ -42,7 +42,11 @@ the answer starts here, not with the copy. Say so even when it is not the answer
 
 `roster/sites/hambabait.json` carries a `_needsConfirmation` array flagging the **phone routing, the
 email, the hours and the pricing approach as assumptions**. The repo's synced `site.config.json`
-**drops that array**, which makes those values look settled when they are not.
+**drops that array**, which makes those values look settled when they are not — and that omission is
+deliberate, not an oversight: `site.config.json` is bundled into the client JS, so an internal
+"we are not sure about the phone" note would ship to visitors. `ops/sync-manifest.ps1` strips it and
+writes the assumptions to `docs/manifest-assumptions.md` instead. **Read that file, or the hub
+manifest. Never conclude a value is settled because the repo copy is silent.**
 
 | Field | Value                                      | Confirmed?                                     |
 | ----- | ------------------------------------------ | ---------------------------------------------- |
@@ -77,8 +81,11 @@ Note the hours are **duplicated** in the repo — machine-readable in the manife
       replacement, heating-element)
 - [ ] Hours identical to the manifest
 - [ ] Real photos of real work — no stock imagery
-- [ ] Profile URL added to the **roster manifest** `sameAs`, then synced. **Never edit
-      `site.config.json` directly.**
+- [ ] Profile URL added to the **roster manifest** `sameAs`, then synced with
+      `ops/sync-manifest.ps1` (`-DryRun` first, then `-Confirm`). **Never edit `site.config.json`
+      directly** — and never stop at the roster edit either. A roster change alone ships nothing:
+      this is exactly how a softened `shortPitch` sat in the roster while the old text kept going out
+      as the JSON-LD `description`. Confirm the value in `site.config.json` and then in `out/`.
 
 That last step is what converts an off-site asset into an on-site entity signal. One verified profile
 URL in `sameAs` is worth more than any amount of copy tuning.

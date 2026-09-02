@@ -1,19 +1,24 @@
 # Schema graph — חם בבית
 
-> The target JSON-LD graph, and the gap between it and what ships today. Cited by `schema-auditor`,
+> The JSON-LD graph, and the gap between it and what ships today. Cited by `schema-auditor`,
 > `schema-structured-data`, `new-city` and `new-service`.
+>
+> **Re-baselined 2026-08-31 against a fresh `out/`.**
 
-All nodes are built with `@ishub/site-kit/seo`. **Never hand-write JSON-LD.**
+All nodes are built with `@ishub/site-kit/seo`, except the two the kit does not export — `WebSite`
+and `Article`, both assembled inline in their routes and both flagged as such below. **Never
+hand-write JSON-LD anywhere else.**
 
 ---
 
-## 1. Current state — 45 of 45 indexable pages emit JSON-LD
+## 1. Current state — the graph is COMPLETE
 
-**Verified 2026-08-25 against a fresh `out/`.**
+Every node in the target graph now ships. What remains is not markup: it is the three data gaps in
+§2, and those are the owner's to close.
 
 | Route                  | Count | Emits today                                            |
 | ---------------------- | ----- | ------------------------------------------------------ |
-| `/`                    | 1     | `Plumber` + `FAQPage`                                  |
+| `/`                    | 1     | `Plumber` + `WebSite` + `FAQPage`                      |
 | `/services/<slug>/`    | 6     | `Service` + `FAQPage` + `BreadcrumbList`               |
 | `/locations/<slug>/`   | 18    | `Service` (area-scoped) + `FAQPage` + `BreadcrumbList` |
 | `/מדריכים/`            | 1     | `BreadcrumbList`                                       |
@@ -22,23 +27,55 @@ All nodes are built with `@ishub/site-kit/seo`. **Never hand-write JSON-LD.**
 | `/תודה/`               | 1     | nothing (correct — noindex)                            |
 | `out/404`              | 1     | nothing (correct)                                      |
 
-```bash
-npm run build
-find out -name index.html | wc -l                                  # 47
-grep -rl 'application/ld+json' out --include=index.html | wc -l    # 45
-grep -o '<loc>' out/sitemap.xml | wc -l                            # 45
+Measured coverage across the built output:
+
+```
+find out -name index.html | wc -l                                # 47  (45 indexable + 404 + /תודה/)
+grep -rl 'application/ld+json' out --include=index.html | wc -l  # 45  → 45/45 indexable, 100%
+grep -rl 'rel="canonical"'     out --include=index.html | wc -l  # 45
+grep -o '<loc>' out/sitemap.xml | wc -l                          # 45
+
+grep -rl '"@type":"WebSite"'  out --include=index.html | wc -l   #  1
+grep -rl '"@type":"Article"'  out --include=index.html | wc -l   # 12
+grep -rl 'FAQPage'            out --include=index.html | wc -l   # 37
+grep -rl '"@type":"Service"'  out --include=index.html | wc -l   # 24
+grep -rl 'BreadcrumbList'     out --include=index.html | wc -l   # 44
+grep -rl '"@type":"Plumber"'  out --include=index.html | wc -l   # 37  ← read §2.1 before believing this
 ```
 
 The only two pages without JSON-LD are the 404 and `/תודה/`, **both correct**.
 
-**Coverage and depth are both done.** What remains are the three honest data gaps in §2 — no
-`address`, no `geo`, empty `sameAs` — and those are owner problems, not markup problems.
+`FAQPage` at 37 = homepage + 6 services + 18 locations + 12 guides. `Service` at 24 = 6 service
+pages + 18 area-scoped location pages. `BreadcrumbList` at 44 = every indexable page except the
+homepage, which renders no `PageHeader` and correctly has no trail.
+
+### The `WebSite` node — shipped, and deliberately shallow
+
+The kit exports **no `websiteJsonLd`**, so `app/page.tsx` assembles it inline.
+
+```
+@type        WebSite
+@id          https://hambabait.co.il/#website
+url          https://hambabait.co.il
+name         חם בבית
+inLanguage   he-IL
+publisher    { @id: https://hambabait.co.il/#business }
+```
+
+`publisher` joins the `Plumber` node by `@id`, so the two nodes on the homepage resolve as one
+entity rather than two unrelated ones. Preserve that join.
+
+> **No `potentialAction`, no `SearchAction` — and that is not an omission to "fix."** This site has
+> no search of any kind: no search route, no query parameter, nothing an action could point at.
+> Declaring one is a false capability claim, and Google may render a sitelinks searchbox that
+> submits to a dead URL. `npm run qa:gate` asserts both properties are absent from `out/`. If site
+> search is ever built, the action gets added **in that same change** — never before it.
 
 ### The `Article` node
 
-The kit exports **no `articleJsonLd`**, so `app/מדריכים/[slug]/page.tsx` assembles the node inline —
-the same pattern the location route uses for its `areaServed` override, and with the same caveat: a
-proper builder belongs upstream in `@ishub/site-kit`, not in a local fork.
+The kit exports **no `articleJsonLd`** either, so `app/מדריכים/[slug]/page.tsx` assembles the node
+inline — the same pattern the location route uses for its `areaServed` override, and with the same
+caveat: a proper builder belongs upstream in `@ishub/site-kit`, not in a local fork.
 
 ```
 @type              Article
@@ -46,8 +83,8 @@ headline           ← guide.heading
 datePublished      ← guide.published
 dateModified       ← guide.updated
 inLanguage         he-IL
-author             { @id: https://hambabait.co.il/#business }
-publisher          { @id: https://hambabait.co.il/#business }
+author             { @type: Plumber, @id: https://hambabait.co.il/#business, name: חם בבית }
+publisher          { @type: Plumber, @id: https://hambabait.co.il/#business, name: חם בבית }
 mainEntityOfPage   { @type: WebPage, @id: <canonical> }
 ```
 
@@ -81,7 +118,20 @@ knowsLanguage
 ```
 
 **`@id` is the anchor of the whole graph.** One business, one `@id`. Every `Service` joins to it via
-`provider.@id`.
+`provider.@id`; every `Article` via `author.@id` and `publisher.@id`; `WebSite` via `publisher.@id`.
+
+### 2.1 Why `"@type":"Plumber"` greps to 37 pages and not 1
+
+The **full** business node ships **once**, on the homepage. The other 36 hits are reference stubs:
+the kit types its join objects, so a service page carries
+`"provider":{"@type":"Plumber","@id":"https://hambabait.co.il/#business"}` and a guide carries the
+same shape under `author` and `publisher`.
+
+That is correct — a typed `@id` reference is not a duplicate entity. But it means **a bare grep for
+`Plumber` counts references, not nodes.** Anyone auditing "how many LocalBusiness nodes ship" has to
+parse the JSON and look for a node carrying `name`, `telephone` and `openingHoursSpecification` —
+not string-match. Getting this wrong leads somewhere bad in either direction: a false alarm about 37
+fabricated branches, or a real per-city `LocalBusiness` slipping past unnoticed.
 
 ### Three honest gaps — do not paper over them
 
@@ -95,7 +145,12 @@ knowsLanguage
    Google Business Profile exists, its URL goes in the manifest — that single link is the strongest
    available entity signal.
 
-Minor: `url` ships without a trailing slash while the homepage canonical has one. Fix at the manifest.
+All three are **owner problems, not markup problems.** The markup is already as good as the data
+allows, and inventing any of the three makes the site worse rather than better.
+
+Minor: `url` ships as `https://hambabait.co.il` with no trailing slash while the homepage canonical
+has one. Both resolve to the same page and nothing breaks, but they are not byte-identical. Fix at
+the roster manifest, then sync — never by editing `site.config.json`.
 
 ---
 
@@ -108,13 +163,13 @@ Minor: `url` ships without a trailing slash while the homepage canonical has one
 name         ← services[].name
 description  ← per-slug copy in lib/content.ts
 url          https://hambabait.co.il/services/<slug>/
-provider     { @id: https://hambabait.co.il/#business }
+provider     { @type: Plumber, @id: https://hambabait.co.il/#business }
 ```
 
 The `provider.@id` join is correct — **preserve it**.
 
-**On location pages**, the right node is the same `Service` type scoped by `areaServed` to that city,
-with the same `provider.@id` join.
+**On location pages**, the node is the same `Service` type scoped by `areaServed` to that city, with
+the same `provider.@id` join. All 18 ship it, which is why `Service` greps to 24 and not 6.
 
 > **Never emit a per-city `LocalBusiness`.** Eighteen of them would fabricate eighteen branches that
 > do not exist. One business, one `@id`.
@@ -130,13 +185,14 @@ therefore reaches structured data by design — see §6.
 the visible `<nav aria-label="פירורי לחם">` trail. It fires whenever a route passes both `crumbs` and
 `currentPath` — which every nested route does.
 
-So `BreadcrumbList` ships on all 6 service pages, all 18 location pages and all 7 Hebrew static
-routes. It correctly does **not** ship on the homepage, the 404 or `/תודה/`, none of which render
-`PageHeader`.
+So `BreadcrumbList` ships on all 6 service pages, all 18 location pages, the hub index, all 12 guides
+and all 7 Hebrew static routes: **44 pages**. It correctly does **not** ship on the homepage, the 404
+or `/תודה/`, none of which render `PageHeader`.
 
 ```
 בית  ›  אזורי שירות  ›  תל אביב
 בית  ›  שירותים      ›  תיקון דוד שמש
+בית  ›  מדריכים      ›  אין מים חמים בכלל: איך מאתרים את הסיבה
 ```
 
 **Rule: the markup trail must match the visible trail item for item.** Never emit a crumb the user
@@ -144,13 +200,16 @@ cannot see.
 
 ---
 
-## 5. FAQPage
+## 5. FAQPage — 37 pages
 
-On the homepage, from 6 visible questions. Correct today.
+Homepage (6 visible questions), all 6 service pages, all 18 location pages and all 12 guides. Every
+one is matched to FAQs that actually render on that page.
 
 Extend only where FAQs actually render, and the question/answer text must match the rendered text
-exactly. Per-service and per-city FAQs each get their own `FAQPage` on their own page — never a single
-site-wide FAQ node.
+exactly. Per-service, per-city and per-guide FAQs each get their own `FAQPage` on their own page —
+**never a single site-wide FAQ node**, and never the same question string on two pages. That last
+rule is not cosmetic: a duplicate question was found and fixed this way, and the story is in
+[keyword-map.md](keyword-map.md) §8.
 
 ---
 
@@ -161,32 +220,54 @@ grep -rEo '"(aggregateRating|review|ratingValue|reviewCount|foundingDate|warrant
 # must return nothing
 ```
 
+`npm run qa:gate` asserts every row below over `out/` on each release, so a regression fails the gate
+rather than reaching a validator.
+
 | Property                                                  | Why barred                                                                                                                                                                   |
 | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Review`, `AggregateRating`, `ratingValue`, `reviewCount` | **There are no reviews.** Fabricated review markup is a Google policy violation with manual-action risk. The site is currently clean; that state is deliberate and verified. |
-| `foundingDate`                                            | `foundedYear` is `null`. The kit already omits it.                                                                                                                           |
-| `warrantyPromise`                                         | The warranty is asserted across ~15 surfaces with **no term anywhere**. See [business-facts.md](business-facts.md) §3.1.                                                     |
+| `foundingDate`                                            | `foundedYear` is `null`. The kit already omits it, and `lib/site-config.ts` keeps `founded` at `null` rather than falling back to `0`.                                       |
+| `warrantyPromise`                                         | The warranty is asserted with **no term, scope or document anywhere**. See [business-facts.md](business-facts.md) §3.1.                                                      |
 | `Offer` with a `price`                                    | The business publishes no price table and no shekel figure appears on the site. Any number is invented.                                                                      |
+| `potentialAction` / `SearchAction`                        | There is no site search. See §1.                                                                                                                                             |
 | per-city `LocalBusiness`                                  | Fabricates branches.                                                                                                                                                         |
 
-### The one claim already reaching schema
+### ✅ The one claim that used to reach schema — closed 2026-08-31
 
-The business `description` comes from the manifest's `shortPitch`, which **ends with an unsourced
-warranty claim**. It looks manifest-sourced but the manifest is just the same authored copy.
+The business `description` comes from the manifest's `shortPitch`, and that string used to end
+`…עם אחריות על העבודה`. The warranty was softened everywhere else in the repo first, which left the
+manifest as the last carrier — and because `shortPitch` is re-emitted verbatim as the JSON-LD
+`description`, the unsourced claim was still shipping as **structured data on the homepage** after it
+had been removed from the visible copy. It looked manifest-sourced; the manifest was just the same
+authored copy one level up.
 
-This is a live finding, not a hypothetical — see [business-facts.md](business-facts.md) §0. Fixing it
-means editing the roster manifest, not the code.
+**Fixed at the source.** The roster manifest was edited and synced with `ops/sync-manifest.ps1`,
+which now exists — see [manifest-assumptions.md](manifest-assumptions.md). The homepage `description`
+now reads `…אבחון מדויק, עבודה מקצועית והצעת מחיר ברורה לפני שמתחילים.`, and
+`grep -rl "אחריות על העבודה" out --include=index.html` returns exactly **one** file: `out/index.html`,
+in a deliberately-softened homepage FAQ answer saying that warranty terms are given with the quote,
+before work begins. That is a different and defensible sentence, and it is **not** in the JSON-LD.
+
+**Keep the lesson.** Softening the visible copy does not soften the schema. Anything living in
+`shortPitch`, a service `description` or a city description reaches structured data by design, and
+the only fix is a roster edit plus a sync — never an edit to `site.config.json`.
 
 ---
 
 ## 7. Pricing — the honest position
 
-`/מחירון/` emits nothing today, and that is **partly by design**: the business deliberately publishes
-no fixed price list.
+`/מחירון/` emits `BreadcrumbList` and nothing else, and that is **partly by design**: the business
+deliberately publishes no fixed price list.
 
 Defensible options: an `Offer` with `priceCurrency: "ILS"` and **no** price, or no `Offer` at all.
-Prefer the latter unless there is a concrete reason. `priceRange: "₪₪"` already ships on the business
-node — itself unsourced, but a band rather than a number.
+Prefer the latter unless there is a concrete reason — `qa:gate` fails any `Offer` carrying a `price`.
+`priceRange: "₪₪"` already ships on the business node — itself unsourced, but a band rather than a
+number.
+
+Note that the **pricing approach itself is one of the roster's unconfirmed assumptions**
+(`_needsConfirmation` in the hub manifest, stripped from `site.config.json` and recorded in
+[manifest-assumptions.md](manifest-assumptions.md)). So `/מחירון/` must not gain an answer block, an
+FAQ or a schema node that states how pricing works as settled fact.
 
 ---
 
@@ -197,6 +278,7 @@ ships.
 
 ```bash
 npm run build
+npm run qa:gate                                              # 25 assertions, several of them schema
 grep -rl 'application/ld+json' out --include=index.html      # which pages
 grep -rEo '"(aggregateRating|review|foundingDate)"' out      # must be empty
 ```

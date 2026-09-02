@@ -5,25 +5,41 @@
 > Authoring copy is not a source. The roster manifest is only a source for identity fields the
 > business supplied — see the warning in §0.
 
-Last audited: 2026-08-25. (§4.1 closed — the privacy policy now describes the real data flow.)
+Last audited: **2026-08-31.** (§0 partly closed — the laundered warranty claim is out of the JSON-LD
+and the assumptions array now has a home in the repo. §3.7 added. §4.1 and §4.2 closed.)
 
 ---
 
 ## 0. The laundering trap — read this first
 
-`Israeli services sites/roster/sites/hambabait.json:60-67` carries a `_needsConfirmation` array that
-flags the phone routing, the email address, the opening hours and the pricing approach as
-**assumptions made during the Phase 4 rebuild**, not as facts from the business.
+`Israeli services sites/roster/sites/hambabait.json` carries a `_needsConfirmation` array flagging
+**six** values — the phone routing, the email address, the opening hours, the pricing approach,
+`foundedYear`, and that all content is freshly authored — as **assumptions made during the Phase 4
+rebuild**, not as facts from the business.
 
-The repo's own `site.config.json` **does not contain that array.** Anyone reading only the repo
-manifest sees a clean, complete NAP and reasonably concludes it is confirmed. It is not.
+`site.config.json` still does not contain that array, and **that is now deliberate**: the file is
+`import`ed by `lib/site-config.ts`, so webpack bundles it whole into the client JS (verified — the
+Web3Forms key and `shortPitch` both appear in `out/_next/static` chunks). Shipping internal project
+notes to every visitor is not an option.
 
-Worse, one unsourced claim is already laundered into structured data: `site.config.json:12`
-`shortPitch` ends `…עם אחריות על העבודה`, and `@ishub/site-kit` uses `shortPitch` verbatim as the
-JSON-LD `description` (`node_modules/@ishub/site-kit/src/seo/index.ts:101`). The warranty claim
-therefore _looks_ manifest-sourced while no warranty term, duration or document exists anywhere.
+**The trap is closed from the other side instead.** `ops/sync-manifest.ps1` writes the array to
+[manifest-assumptions.md](manifest-assumptions.md) on every sync and prints it loudly, so the
+assumptions stay visible to humans and invisible to users. Read that file before calling any NAP
+value confirmed.
 
-**Always read the hub manifest, not the repo copy, before calling a NAP value confirmed.**
+### ✅ Closed 2026-08-31 — the laundered warranty claim
+
+`shortPitch` used to end `…עם אחריות על העבודה`, and `@ishub/site-kit` uses `shortPitch` verbatim as
+the JSON-LD `description` — so the warranty claim _looked_ manifest-sourced while no warranty term,
+duration or document existed anywhere.
+
+The roster had already been softened on 2026-08-25. **Nothing carried it across**, and the old text
+kept shipping for six days. That gap is why `ops/sync-manifest.ps1` now exists. The homepage
+`description` now reads `…אבחון מדויק, עבודה מקצועית והצעת מחיר ברורה לפני שמתחילים.`
+
+> **Verify, do not assume:** `grep -rl "אבחון מהיר, עבודה מקצועית ומחיר הוגן" out` must return
+> nothing. Note that a plain grep for `אחריות על העבודה` still matches **one** page — the homepage
+> FAQ answer at §3.1, which is the _deliberately softened_ wording, not this defect.
 
 ---
 
@@ -32,36 +48,42 @@ therefore _looks_ manifest-sourced while no warranty term, duration or document 
 These are settled in the sense that they are deliberate, single-sourced configuration. Where the
 hub manifest flags them for confirmation, the Status column says so.
 
-| Fact               | Value                                                                      | Source                     | Status                                                                                        |
-| ------------------ | -------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------- |
-| Brand (Hebrew)     | חם בבית                                                                    | `site.config.json:5`       | ✅                                                                                            |
-| Brand (English)    | Cham BaBait                                                                | `site.config.json:6`       | ✅ (JSON-LD `alternateName` only)                                                             |
-| Legal name         | חם בבית                                                                    | `site.config.json:7`       | ⬜ no registered entity confirmed                                                             |
-| Domain / URL       | hambabait.co.il · https://hambabait.co.il                                  | `site.config.json:3-4`     | ✅                                                                                            |
-| Locale / dir       | he-IL · rtl                                                                | `site.config.json:8-9`     | ✅                                                                                            |
-| Phone (display)    | 055-6601006                                                                | `site.config.json:14`      | ⬜ **shared fleet line** — `phoneOverride: false`, routing unconfirmed                        |
-| Phone (E.164)      | +972556601006                                                              | `site.config.json:15`      | ⬜ same                                                                                       |
-| WhatsApp           | +972556601006                                                              | `site.config.json:16`      | ⬜ same number as the phone line                                                              |
-| Email              | info@hambabait.co.il                                                       | `site.config.json:17`      | ⬜ **assumed** — fixes a live `chambait.co.il` typo; mailbox not proven provisioned           |
-| Hours              | ראשון–חמישי 08:00–18:00 · שישי 08:00–14:00                                 | `site.config.json:33-52`   | ⬜ **authored** — `lib/site-config.ts:40` says "confirm with client", yet it ships as JSON-LD |
-| Schema type        | `Plumber`                                                                  | `site.config.json:30`      | ✅                                                                                            |
-| Price range        | `₪₪`                                                                       | `site.config.json:31`      | ⬜ no source for the banding                                                                  |
-| Area served        | שירות בכל הארץ                                                             | `site.config.json:32`      | ⬜ authored SEO surface, not verified coverage                                                |
-| `sameAs`           | _(empty)_                                                                  | `site.config.json:53`      | ✅ no profile is claimed                                                                      |
-| GTM container      | GTM-KWGGH438                                                               | `site.config.json:56`      | ✅ verified HTTP 200                                                                          |
-| GA4 measurement id | _(none)_                                                                   | absent from repo manifest  | ✅ correctly absent                                                                           |
-| Search Console     | `null`                                                                     | `site.config.json:57`      | ⬜ ownership unverified                                                                       |
-| Founded year       | `null`                                                                     | `site.config.json:10`      | ✅ correctly null — **see hazard below**                                                      |
-| Services           | 6 — solar, electric, thermostat, leak-repair, replacement, heating-element | `lib/site-config.ts:60-67` | ✅                                                                                            |
-| Locations          | 18 cities                                                                  | `lib/site-config.ts:75-94` | ✅ as a page inventory                                                                        |
-| Lead delivery      | Web3Forms key `37b27cbc-…`                                                 | `site.config.json:18`      | ✅ public-by-design key; delivery inbox unverifiable from repo                                |
+| Fact               | Value                                                                      | Source                       | Status                                                                                        |
+| ------------------ | -------------------------------------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
+| Brand (Hebrew)     | חם בבית                                                                    | `site.config.json:5`         | ✅                                                                                            |
+| Brand (English)    | Cham BaBait                                                                | `site.config.json:6`         | ✅ (JSON-LD `alternateName` only)                                                             |
+| Legal name         | חם בבית                                                                    | `site.config.json:7`         | ⬜ no registered entity confirmed                                                             |
+| Domain / URL       | hambabait.co.il · https://hambabait.co.il                                  | `site.config.json:3-4`       | ✅                                                                                            |
+| Locale / dir       | he-IL · rtl                                                                | `site.config.json:8-9`       | ✅                                                                                            |
+| Phone (display)    | 055-6601006                                                                | `site.config.json:14`        | ⬜ **shared fleet line** — `phoneOverride: false`, routing unconfirmed                        |
+| Phone (E.164)      | +972556601006                                                              | `site.config.json:15`        | ⬜ same                                                                                       |
+| WhatsApp           | +972556601006                                                              | `site.config.json:16`        | ⬜ same number as the phone line                                                              |
+| Email              | info@hambabait.co.il                                                       | `site.config.json:17`        | ⬜ **assumed** — fixes a live `chambait.co.il` typo; mailbox not proven provisioned           |
+| Hours              | ראשון–חמישי 08:00–18:00 · שישי 08:00–14:00                                 | `site.config.json:33-52`     | ⬜ **authored** — `lib/site-config.ts:40` says "confirm with client", yet it ships as JSON-LD |
+| Schema type        | `Plumber`                                                                  | `site.config.json:30`        | ✅                                                                                            |
+| Price range        | `₪₪`                                                                       | `site.config.json:31`        | ⬜ no source for the banding                                                                  |
+| Area served        | שירות בכל הארץ                                                             | `site.config.json:32`        | ⬜ authored SEO surface, not verified coverage                                                |
+| `sameAs`           | _(empty)_                                                                  | `site.config.json:53`        | ✅ no profile is claimed                                                                      |
+| GTM container      | GTM-KWGGH438                                                               | `site.config.json:56`        | ✅ verified HTTP 200                                                                          |
+| GA4 measurement id | `null`                                                                     | `site.config.json` analytics | ✅ correctly null — synced from the roster                                                    |
+| Search Console     | `null`                                                                     | `site.config.json:57`        | ⬜ ownership unverified                                                                       |
+| Founded year       | `null`                                                                     | `site.config.json:10`        | ✅ correctly null — never give it a numeric fallback                                          |
+| Services           | 6 — solar, electric, thermostat, leak-repair, replacement, heating-element | `lib/site-config.ts:60-67`   | ✅                                                                                            |
+| Locations          | 18 cities                                                                  | `lib/site-config.ts:75-94`   | ✅ as a page inventory                                                                        |
+| Lead delivery      | Web3Forms key `37b27cbc-…`                                                 | `site.config.json:18`        | ✅ public-by-design key; delivery inbox unverifiable from repo                                |
 
-### Hazard: `founded` has a numeric fallback
+### ✅ Closed: `founded` no longer has a numeric fallback
 
-`lib/site-config.ts:28` reads `founded: manifest.foundedYear ?? 0`. Because `foundedYear` is `null`,
-`siteConfig.founded` silently equals **0**. Nothing references it today, but any future copy doing
-`{siteConfig.founded}` renders `0`, and `2026 - siteConfig.founded` renders **"2026 שנות ניסיון"**.
-The null must not carry a numeric fallback. Fix the default, don't work around it.
+`lib/site-config.ts` used to read `founded: manifest.foundedYear ?? 0`. Because `foundedYear` is
+`null`, `siteConfig.founded` silently equalled **0** — so any future copy doing
+`2026 - siteConfig.founded` would have rendered **"2026 שנות ניסיון"**, fabricating the one claim
+this site has never made.
+
+It now reads `?? null` and carries a comment saying why. **Never reintroduce a numeric fallback for
+a null business fact** — that is the whole failure mode.
+
+The manifest is also now validated at module load by `assertManifest()`, so a malformed
+`site.config.json` fails `npm run build` instead of failing at runtime in a visitor's browser.
 
 ---
 
@@ -153,6 +175,27 @@ All 18 city pages assert fast local arrival for their named city
 template. The only backing is the nationwide `areaServed` string. There is no per-city coverage data,
 no technician roster, no address and no geo. **This is the doorway-page exposure** — see
 [content-standards.md](content-standards.md).
+
+### 3.7 🔶 Per-city characterisations — added 2026-08-31
+
+Three city profiles were deepened on 2026-08-31 (`rehovot`, `raanana`, `kfar-saba`) to get them off
+the shared low-rise/private-roof pattern they all leaned on. Each was given a genuinely
+distinguishing second dimension.
+
+**None of these is a claim about the business** — they are characterisations of the _city_, and the
+technical consequence drawn from each is verifiable general physics. But the city characterisation
+itself is reasoned rather than sourced, so it is logged here.
+
+| Claim                                                                                                                                      | Where                              | Tier                                                                                                                 | Question for the owner / researcher                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| רחובות as a city of research and teaching institutions (מכון ויצמן, the Faculty of Agriculture) where some residents rent for a fixed term | `lib/content.ts` rehovot profile   | 🔶 the institutions are ✅ verifiable; the fixed-term-tenancy pattern around them is reasoned, not sourced           | Is there a citable source for a rental-heavy segment? If not, keep it qualitative — **no proportion is claimed today and none may be added** |
+| כפר סבא as a green city with mature trees between low buildings                                                                            | `lib/content.ts` kfar-saba profile | 🔶 widely described but unsourced here. The shading physics that follows is ✅ and is written conditionally          | Confirm against a citable municipal or press source, or soften to "עץ בוגר שגדל לצד בניין נמוך" with no city attribute                       |
+| רעננה as a city with a large business park and a broad community of residents who arrived from abroad                                      | `lib/content.ts` raanana profile   | 🔶 widely described but unsourced here. The storage-tank vs instantaneous-heater contrast that follows is ✅ general | Confirm or drop the demographic framing. **The technical paragraph survives without it**                                                     |
+
+> **The test each one passed before shipping:** swap the city name for another city's — if the
+> paragraph still reads as true, it is not city-specific and it does not count. And none of the
+> three says anything about _our_ presence, speed or coverage in that city, which is the line
+> §3.6 exists to guard.
 
 ---
 

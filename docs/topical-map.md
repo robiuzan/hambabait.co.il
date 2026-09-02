@@ -4,17 +4,19 @@
 > this query"_, this file answers _"what is the shape of the whole subject, and what are we missing"_.
 >
 > Cited by `content-strategist`, `keyword-research-il`, `content-brief`, `new-article`.
-> Compiled 2026-08-25.
+> **Re-baselined 2026-08-31 against a fresh `out/`.**
 
 ---
 
 ## 0. The shape in one paragraph
 
-The commercial silo is **built**: 6 service pages and 18 location pages, all emitting schema, all
-canonicalised, all in the sitemap. The informational silo is **absent** — there is no articles route,
-so every symptom, comparison and definition query has no home here. That asymmetry is the entire map:
-we are strong where intent is transactional and invisible where it is curious, which is also where
-answer engines look first.
+All three silos are **built**. 6 service pages, 18 location pages and 12 guides, plus 9 static
+routes — **45 indexable URLs, every one of them emitting JSON-LD and carrying a canonical that is
+byte-identical to its sitemap entry**. The asymmetry that defined this map for months — strong where
+intent is transactional, invisible where it is curious — is gone at the level of coverage. What is
+left is not a missing silo but a **missing mesh**: the knowledge cluster exists and almost nothing
+links into it, and the header reaches none of the six service pages in one hop. Depth was the last
+map's problem. Connective tissue is this one's.
 
 ---
 
@@ -27,19 +29,24 @@ answer engines look first.
               ┌────────────────────┼────────────────────┐
               ▼                    ▼                    ▼
     ┌──────────────────┐  ┌─────────────────┐  ┌──────────────────┐
-    │ SERVICE  ×6      │  │ LOCATION  ×18   │  │ KNOWLEDGE  ×0    │
+    │ SERVICE  ×6      │  │ LOCATION  ×18   │  │ KNOWLEDGE  ×12   │
     │ /services/<slug> │  │ /locations/<..> │  │ /מדריכים/<slug>  │
     │ commercial       │  │ commercial+local│  │ informational    │
-    │ ✅ built         │  │ ⚠️ templated    │  │ ❌ absent        │
+    │ ✅ built, deep   │  │ ✅ built, deep  │  │ ✅ built, deep   │
+    │                  │  │                 │  │ ⚠️ in-degree 1   │
     └──────────────────┘  └─────────────────┘  └──────────────────┘
 ```
 
 Support pages: `/מחירון/` (commercial research), `/אודות/` (trust), `/צור-קשר/` (conversion),
-`/שירותים/` and `/איזורי-שירות/` (indexes).
+`/שירותים/`, `/איזורי-שירות/` and `/מדריכים/` (indexes), plus the two legal pages.
+
+Emitted schema by tier: services and locations ship `Service` + `FAQPage` + `BreadcrumbList`; guides
+ship `Article` + `FAQPage` + `BreadcrumbList`; the homepage ships `Plumber` + `WebSite` + `FAQPage`.
+See [schema-graph.md](schema-graph.md).
 
 ---
 
-## 2. Service cluster — 6 pages, built, thin
+## 2. Service cluster — 6 pages, built, deep
 
 | Slug              | Owns                                   | Does **not** own                        |
 | ----------------- | -------------------------------------- | --------------------------------------- |
@@ -51,116 +58,167 @@ Support pages: `/מחירון/` (commercial research), `/אודות/` (trust), `
 | `heating-element` | אלמנט לדוד, אלמנט שרוף, אנודה          | control fault → `thermostat`            |
 
 **The two blur pairs.** `thermostat ↔ heating-element` and `leak-repair ↔ replacement` share symptoms.
-Each page must state which fault it covers and cross-link the other on the shared symptom. That
-sentence is the cannibalisation guard — see `content-brief`.
+Each page states which fault it covers and cross-links the other on the shared symptom. That sentence
+is the cannibalisation guard — see `content-brief`.
 
-**Current depth:** one ~45-word paragraph each (`serviceMeta`, `lib/content.ts:20-57`) plus a
-`triggers` array that is **identical on all six pages**. The bar is ~500 substantive words. This is
-the second-largest content gap.
+**Current depth:** each page carries an answer block, its own symptom→cause table, on-site steps, a
+repair-vs-replace section and three FAQs — roughly 35 unique blocks apiece. The six once shared one
+identical `triggers` array, which is the textbook §0 doorway failure inside otherwise-distinct pages;
+that is fixed and must not come back as a shared constant.
+
+**What is genuinely still open here:** each service page should link the guide that owns the
+diagnostic side of its fault. Today none of them does — see §5.
 
 ---
 
-## 3. Location cluster — 18 pages, built, templated
+## 3. Location cluster — 18 pages, built, deep
 
 Pattern: `תיקון דודים ב<עיר>`. The `ב` prefix is mandatory and propagates to title, H1, meta
 description and JSON-LD.
 
-**Every one of the 18 currently fails the doorway test** — one template, `loc.name` substituted, same
-meta description string. See `city-research` for what may legitimately differentiate them.
+**All 18 now clear the doorway test.** Each carries an answer block, at least two paragraphs that
+could not be written about another city, one or two city-specific FAQs and 2–4 nearby-city links —
+50 nearby links across the 18, none with fewer than two. Research basis in
+[city-briefs.md](city-briefs.md).
 
-The only structural differentiator available today is **coastal corrosion / anode wear**, which
-genuinely applies to some and not others:
+That state is recent and it is not self-sustaining. Nine of the eighteen were still opening with the
+same templated question (`מה מאפיין דודים ב<עיר>?`) after their bodies were already city-specific —
+the doorway pattern surviving in the furniture of a page that passes on its body. See
+[content-standards.md](content-standards.md) §0, which now carries that as its worked example.
+
+The strongest structural differentiator remains **coastal corrosion / anode wear**, which genuinely
+applies to some cities and not others:
 
 | Coastal exposure                                                                    | Inland                                                                                                        |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | haifa · netanya · ashdod · bat-yam · ashkelon · tel-aviv · herzliya · rishon-lezion | jerusalem · petah-tikva · beer-sheva · holon · bnei-brak · ramat-gan · rehovot · kfar-saba · modiin · raanana |
 
 Do not apply corrosion material to an inland city. Doing so is false _and_ it makes the coastal pages
-less distinctive — the differentiator only works if it discriminates.
+less distinctive — the differentiator only works if it discriminates. The inland cities are carried
+instead by housing stock, roof access and building age; where a city's material is reasoned rather
+than sourced it is written conditionally and marked `// 🔶 confirm` in the content layer.
 
-**Cap:** no 19th city until all 18 clear the bar. **No service × city intersection pages** — 108
-near-identical URLs is the textbook doorway pattern.
+**Cap:** no 19th city until every one of the 18 still clears the bar. **No service × city
+intersection pages** — 108 near-identical URLs is the textbook doorway pattern.
 
 ---
 
-## 4. Knowledge cluster — 0 pages, absent, the biggest opportunity
+## 4. Knowledge cluster — 12 pages, built
 
-Route: `/מדריכים/[slug]/`. Does not exist yet.
+Route: `/מדריכים/[slug]/`, with `/מדריכים/` as the index. Each guide ships `Article` + `FAQPage` +
+`BreadcrumbList` in a single JSON-LD block, carries `datePublished` / `dateModified` and a visible
+"עודכן" line attributed to the business, and opens with an answer block.
 
-**Why this cluster is the priority:** these topics are _technical_, so they require **no business
-fact**. No warranty, no price, no timing, no credential. On a site whose trust ledger is thin and
-whose claims budget is already overdrawn, this is the only place where depth can be added at zero
-claims risk.
+**Why this cluster earned the investment:** these topics are _technical_, so they require **no
+business fact**. No warranty, no price, no timing, no credential. On a site whose trust ledger is
+thin and whose claims budget is already overdrawn, this is the only place where depth can be added at
+zero claims risk. That logic has not changed, and it is why the remaining expansion room here is
+still the safest content spend on the site.
 
-### 4.1 Symptom sub-cluster — highest value
+### 4.1 Symptom sub-cluster — 5 guides
 
 The reader has a broken boiler and does not know why. This is also the most natural answer-engine
 query shape.
 
-| Guide                  | Primary intent                  | Routes to                                   |
-| ---------------------- | ------------------------------- | ------------------------------------------- |
-| אין מים חמים בכלל      | no hot water at all             | `electric`, `heating-element`, `thermostat` |
-| המים רק פושרים         | lukewarm water                  | `thermostat`, `heating-element`             |
-| הדוד מפיל את החשמל     | tripping the breaker            | `heating-element`, `electric`               |
-| הדוד מטפטף / נזילה     | leak                            | `leak-repair`, `replacement`                |
-| רעשים מהדוד            | noise                           | `heating-element` (scale)                   |
-| דוד שמש לא מתחמם בחורף | seasonal solar underperformance | `solar`                                     |
+| Guide slug         | Question shape              | Routes to                                   |
+| ------------------ | --------------------------- | ------------------------------------------- |
+| `no-hot-water`     | אין מים חמים בכלל           | `electric`, `heating-element`, `thermostat` |
+| `lukewarm-water`   | המים רק פושרים              | `thermostat`, `heating-element`             |
+| `tripping-breaker` | הדוד מפיל את החשמל / הפחת   | `heating-element`, `electric`               |
+| `leaking-boiler`   | מאיפה הנזילה מגיעה          | `leak-repair`, `replacement`                |
+| `noisy-boiler`     | רעשים מהדוד — נקישות ורתיחה | `heating-element` (אבנית)                   |
 
-**The single highest-value asset on this list is a symptom → likely cause table**, in real `<table>`
-markup. It is lifted by answer engines far more reliably than prose, and it feeds every service page
-internally.
+**Still open:** the symptom long tail is far from exhausted — water pressure, smell, discoloured
+water, timer and שעון שבת faults, solar underperformance specifically in winter. This is the largest
+remaining content opportunity on the site and the cheapest in claims risk.
 
-### 4.2 Comparison sub-cluster
+Each of these carries a symptom → likely cause **table** in real `<table>` markup. That format is
+lifted by answer engines far more reliably than prose, and it feeds the service pages internally.
 
-| Guide               | Shape                                                          |
+### 4.2 Comparison sub-cluster — 2 guides
+
+| Guide slug          | Shape                                                          |
 | ------------------- | -------------------------------------------------------------- |
-| דוד שמש או דוד חשמל | table — cost to run, weather dependence, maintenance, lifespan |
-| תיקון או החלפה      | decision table — age, fault type, tank condition               |
+| `solar-vs-electric` | table — cost to run, weather dependence, maintenance, lifespan |
+| `repair-or-replace` | decision table — age, fault type, tank condition               |
 
-Comparison tables are the most extractable format that exists. Build both as real tables.
+Comparison tables are the most extractable format that exists, and both are built as real tables.
 
-⚠️ **Neither may contain a price.** The business publishes no price list; any figure is invented. Compare
-on qualitative axes.
+⚠️ **Neither contains a price, and neither may gain one.** The business publishes no price list; any
+figure is invented. Compare on qualitative axes. This is also why the comparison sub-cluster has
+little expansion room left — most further comparisons a reader wants are cost comparisons.
 
-### 4.3 Definition sub-cluster
+### 4.3 Definition sub-cluster — 3 guides
 
-מה זה אנודה · מה עושה תרמוסטט · איך עובד דוד שמש · מה זה אלמנט חימום
+`what-is-anode` · `how-thermostat-works` · `how-solar-boiler-works`
 
 Low volume individually, but these are **entity-building**: they teach an answer engine what this site
-knows about. They also anchor the internal link mesh — every service page can link the definition of
-the part it replaces.
+knows about. They are also meant to anchor the internal link mesh — every service page should link
+the definition of the part it replaces. **That link direction is not built yet** (§5).
 
-### 4.4 Seasonal sub-cluster
+**Still open:** אלמנט חימום · ווסת · ברז ביטחון. Cheap, safe, and each has a service page waiting to
+link it.
 
-בדיקת דוד לפני החורף · למה דודים מתקלקלים בחורף
+### 4.4 Seasonal sub-cluster — 2 guides
 
-Boiler failure is strongly seasonal. Publish and refresh in **autumn**, before demand arrives — not
-during the winter peak. See `content-refresh`.
+`winter-boiler-check` · `why-boilers-fail-in-winter`
+
+Boiler failure is strongly seasonal. These are already published; the work now is **refresh timing,
+not new URLs** — revisit in autumn, before demand arrives, not during the winter peak. A
+`dateModified` moves only when the content actually changed. See `content-refresh`.
 
 ---
 
-## 5. Internal link rules for the map
+## 5. Internal link rules for the map — and where reality diverges
 
-- **Every informational page routes to a commercial one.** A symptom guide that does not link the
-  service page fixing that symptom is a dead end.
-- **Every service page links its relevant guides.** Depth flows both ways.
-- **Definition pages link the service that replaces the part.**
-- Service pages link cities; city pages link services. Today the service→city direction uses
-  `locations.slice(0, 8)`, which leaves cities 9–18 with no service-page inbound link. Fix that.
-- Cross-link the two blur pairs explicitly, on the shared symptom.
-- No page is an orphan. The footer links all 6 services and all 18 locations — that is the site's
-  orphan insurance and must keep covering the hub once it exists.
+The rules, and the measured state of each:
+
+| Rule                                                                    | State                                                                                                                                                                              |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service pages link cities                                               | ✅ all 18 linked from every service page (the old `locations.slice(0, 8)` cut-off is gone)                                                                                         |
+| City pages link services                                                | ✅ all 6 from every city page                                                                                                                                                      |
+| Cities link nearby cities                                               | ✅ 2–4 each, 50 links total                                                                                                                                                        |
+| Blur pairs cross-link on the shared symptom                             | ✅                                                                                                                                                                                 |
+| No page is an orphan                                                    | ✅ the footer links all 6 services and all 18 cities on every page — the site's orphan insurance                                                                                   |
+| **Every informational page routes to a commercial one**                 | ✅ every guide links the service page that resolves its fault                                                                                                                      |
+| **Every service page links its relevant guides**                        | ❌ **not built.** No service page links any guide.                                                                                                                                 |
+| **Definition pages are linked from the service that replaces the part** | ❌ **not built.**                                                                                                                                                                  |
+| Header reaches the main clusters in one hop                             | ⚠️ the header reaches all three indexes — `/שירותים/`, `/איזורי-שירות/`, `/מדריכים/` — plus `/מחירון/`, `/אודות/`, `/צור-קשר/` — and **0 of the 6 service pages**. Deferred, §5.1. |
+
+### 5.1 The two live mesh defects
+
+**Guide in-degree is 1.** Measured against `out/`: each of the 12 guides is linked from exactly one
+page, the `/מדריכים/` index. The hub is reachable and crawlable — it is in the header nav, the footer
+and `llms.txt` — but the "depth flows both ways" rule is satisfied in one direction only. The guides
+push authority into the commercial silo and receive none back. Fixing it is content-layer work: a
+`relatedGuides` link on each service page, and the definition links above.
+
+**The header reaches no service page in one hop.** Only the `/שירותים/` index is in the nav, so a
+reader wanting `תיקון דוד שמש` is always two clicks away. A services submenu was **considered and
+deliberately deferred** — it is a navigation-design decision with real trade-offs on a mobile-first
+site whose reader is mid-fault, and it belongs to the owner rather than to a docs pass. The
+orphan-insurance obligation is met regardless: the footer links all 6 services and all 18 cities on
+every page. Record it as an open decision, not as a bug that was missed.
 
 ---
 
 ## 6. Priority order
 
-1. **Knowledge hub, symptom sub-cluster** — largest gap, zero claims risk, feeds everything else.
-2. **Location depth ×18** — largest defect; 56% of indexable URLs currently near-duplicate.
-3. **Service depth ×6** — clear bar, clear gap, and the descriptions double as JSON-LD.
-4. **Comparison guides** — highest extractability per hour spent.
-5. **Definition guides** — entity building, cheap.
-6. **Seasonal** — timed to autumn.
+Re-derived 2026-08-31. Coverage is done; this list is now about mesh and long tail.
 
-Note what is _not_ on this list: more cities, more services, more pages of any kind. **Breadth is not
-the lever here.** 24 commercial pages already exist and 18 of them are one template.
+1. **Wire the guides into the commercial silo** — service → guide links, and service → definition
+   links. Cheapest fix on the list, closes the only structural defect in an otherwise complete map,
+   and it is pure content-layer work with zero claims risk.
+2. **Symptom long-tail guides** — the largest remaining topical gap and the safest content spend on
+   the site.
+3. **Answer blocks for `/מחירון/`, `/שירותים/` and `/איזורי-שירות/`** — three of the nine static
+   routes that carry none, each fielding a real question. Needs a brief and a rendering decision
+   first, and the `/מחירון/` one must not state a price **or** a pricing approach.
+4. **The three remaining definition guides** — אלמנט חימום, ווסת, ברז ביטחון. Cheap, entity-building,
+   and each has a service page waiting to link it.
+5. **Header navigation depth** — owner decision, see §5.1.
+6. **Seasonal refresh, timed to autumn** — not new URLs.
+
+Note what is _not_ on this list: more cities, more services, more pages of any kind. **Breadth is
+still not the lever here.** The 24 commercial pages and 12 guides that exist are deep; what they are
+not yet is fully connected.

@@ -1,6 +1,6 @@
 ---
 name: review-acquisition
-description: Building a genuine review stream for חם בבית, which has zero reviews anywhere — the WhatsApp-native ask on the number the business already runs on, timing it to the moment the hot water works again, responding to every review, and the hard gate that Review/AggregateRating markup must never ship until real attributable reviews exist. Covers what is prohibited: incentives, gating, filtering, drafting or seeding. Use when planning how to earn reviews or when someone proposes review schema. Triggers: "get reviews", "review markup", "AggregateRating", "testimonials", "star rating", "can we add reviews to the site".
+description: Building a genuine review stream for חם בבית, which has zero reviews anywhere — the WhatsApp-native ask on the number the business already runs on, timing it to the moment the hot water works again, responding to every review, and the hard gate that Review/AggregateRating markup must never ship until real attributable reviews exist, now enforced automatically by npm run qa:gate. Covers what is prohibited: incentives, gating, filtering, drafting or seeding. Use when planning how to earn reviews or when someone proposes review schema. Triggers: "get reviews", "review markup", "AggregateRating", "testimonials", "star rating", "can we add reviews to the site".
 ---
 
 # Review acquisition — חם בבית
@@ -8,22 +8,33 @@ description: Building a genuine review stream for חם בבית, which has zero 
 ## Current state
 
 **Zero reviews. Anywhere.** No Google Business Profile, no testimonials on the site, no rating in the
-schema. `docs/business-facts.md` §2 records this as one of the things the site correctly does _not_
-claim.
+schema, and `sameAs` is `[]` so the site claims no profile to hold them. `docs/business-facts.md` §2
+records this as one of the things the site correctly does _not_ claim.
 
-That clean state is deliberate and it is worth protecting. This skill is about earning reviews, not
-manufacturing them.
+That clean state is deliberate and it is worth protecting. It is also the single largest gap in the
+site's off-site position — see `gbp-local-listings`, and note that a profile cannot be published at
+all until the six roster assumptions in `docs/manifest-assumptions.md` are settled. This skill is
+about earning reviews, not manufacturing them.
 
 ## ⛔ The hard gate — read before anything else
 
 > **`Review`, `AggregateRating`, `ratingValue` and `reviewCount` must not appear in the built output.**
 
+This is no longer a manual check. **`npm run qa:gate` fails the build** if `aggregateRating`,
+`reviewCount` or `ratingValue` appears anywhere in `out/` — string-scanned over every `.html`, not
+just the `ld+json` blocks, because Next also serialises the JSON-LD into the React Flight payload and
+a banned property must not survive there either. The current build passes it clean.
+
 ```bash
+npm run build && npm run qa:gate
+
+# the same check by hand
 grep -rEo '"(aggregateRating|review|ratingValue|reviewCount)"' out | sort -u
 # must return nothing
 ```
 
-`docs/schema-graph.md` §6 makes this a hard gate, and the build currently passes it clean.
+`docs/schema-graph.md` §6 states the rule; the gate enforces it. Removing the assertion to "unblock"
+a change is the same violation as shipping the markup.
 
 Fabricated review markup is a **Google policy violation with manual-action risk** — not a style
 problem, not a grey area, and not something to "try and see". Losing the domain's rankings to a manual

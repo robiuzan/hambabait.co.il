@@ -34,7 +34,7 @@ Question 4 is where your value is. The first three describe a hole; the fourth i
 | נזילה בדוד           | problem-aware       | `/services/leak-repair/` |
 | תיקון דודים ב\<עיר\> | local, ×18          | `/locations/<slug>/`     |
 | מחיר תיקון דוד       | commercial research | `/מחירון/`               |
-| למה הדוד לא מתחמם    | informational       | **unserved today**       |
+| למה הדוד לא מתחמם    | informational       | `/מדריכים/no-hot-water/` |
 
 Sample the local query across **several** cities, not one. Tel Aviv and Ashkelon are different
 competitive environments and a plan built on one will mislead.
@@ -47,14 +47,20 @@ Before describing anyone else, anchor where we stand:
   a data gap, not a markup bug.
 - **No Google Business Profile, no reviews, empty `sameAs`.**
 - **Phone is a shared fleet line**, not a business-owned number.
-- **18 location pages are one template** with the city name substituted — near-duplicate.
-- **Zero images sitewide.**
-- **32 of 32 indexable pages do emit JSON-LD**, canonicals and sitemap are in parity, titles are
-  clean. The technical layer is genuinely good.
+- **Zero images sitewide** — no `<img>` in any built page. Every competitor teardown will show photos
+  we do not have, and the honest reply is that a stock photo of a technician is a staffing claim, not
+  a photograph.
+- **45 indexable pages, all emitting JSON-LD** — 1 home, 8 Hebrew static, 6 services, 18 locations,
+  12 guides. Canonicals are in byte parity with the sitemap and titles are clean. The technical layer
+  is genuinely good.
+- **The 18 location pages now carry real per-city material** — housing stock, roof and access
+  realities, coastal corrosion — plus a per-city answer block and 2–4 nearby-city links each. They
+  are no longer the near-duplicates a teardown would have found six months ago. Verify before
+  repeating either claim.
 
-So the realistic read is: **we can compete on depth, structure and answer quality. We cannot compete
-on local-pack signals until a profile and reviews exist.** Every recommendation must respect that
-split.
+So the realistic read is: **we compete on depth, structure and answer quality, and we already do.
+We cannot compete on local-pack signals until a profile and reviews exist.** Every recommendation
+must respect that split.
 
 ## Method
 
@@ -99,12 +105,17 @@ tweaks there is telling the reader what they want to hear.
 Look for what nobody in the result set does well. On this vertical the recurring gaps are:
 
 - **Symptom-first content.** Most competitors write "we fix boilers"; almost nobody answers
-  "למה הדוד לא מתחמם" properly. This is why the knowledge hub is being built.
-- **Comparison tables** — דוד שמש vs דוד חשמל, repair vs replace — in real `<table>` markup.
+  "למה הדוד לא מתחמם" properly. This is why the knowledge hub was built — 12 guides now hold the
+  symptom, comparison, definition and seasonal clusters. The gap to look for now is _which symptom or
+  decision query still has no home_, not whether the silo exists.
+- **Comparison tables** — דוד שמש vs דוד חשמל, repair vs replace — in real `<table>` markup. Ours
+  ship; check whether the competitor's do.
 - **Honest pricing explanation** without a fabricated price list.
-- **Genuinely local city content** rather than templated pages. Most competitors have the same
-  doorway problem we do.
-- **Answer-block structure** that AI Overviews and assistants can lift cleanly.
+- **Genuinely local city content** rather than templated pages. **Most competitors still have the
+  doorway problem; we no longer do**, and that is a live advantage worth naming in the report rather
+  than a shared weakness.
+- **Answer-block structure** that AI Overviews and assistants can lift cleanly. 36 blocks ship across
+  the services, cities and guides; the 9 static routes are the remaining hole.
 
 Rank the gaps by _our_ ability to fill them **without inventing a business fact**. A gap we can only
 fill with a fake credential is not a gap, it is a trap.

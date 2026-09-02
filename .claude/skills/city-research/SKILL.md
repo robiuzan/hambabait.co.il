@@ -1,21 +1,38 @@
 ---
 name: city-research
-description: How to source genuinely city-specific, checkable material for hambabait's 18 location pages so they stop being one template with the name substituted — the four legitimate material types (housing stock and boiler mix, roof and access realities, coastal corrosion and anode wear, city-specific FAQs), the banned padding patterns, the rule that a city with nothing truthful to say should lose its page rather than gain filler, and the source column every claim must survive. Use before writing or deepening any location page. Triggers: "research this city", "city-specific content", "what can we say about <city>", "doorway pages", "city briefs", "is this city page thin".
+description: How to source genuinely city-specific, checkable material for hambabait's 18 location pages — the four legitimate material types (housing stock and boiler mix, roof and access realities, coastal corrosion and anode wear, city-specific FAQs), the banned padding patterns, the rule that a city with nothing truthful to say should lose its page rather than gain filler, and the source tiers every claim must survive. The cityContent map already carries an answer block, ≥2 profile paragraphs, FAQs and nearby links for all 18, so this is now about deepening an entry or researching a genuine 19th. Use before writing or deepening any location page. Triggers: "research this city", "city-specific content", "what can we say about <city>", "doorway pages", "city briefs", "is this city page thin".
 ---
 
-# City research — the material that lifts 18 pages off the doorway line
+# City research — the material that keeps 18 pages off the doorway line
 
-## The problem this solves
+## Where the silo actually stands
 
-All 18 location pages render from one template: a fixed subtitle and two fixed paragraphs with
-`loc.name` substituted, then the same list of 6 services. `lib/site-config.ts` holds
-`locations` as a flat `{slug, name}` array — **there is no per-city content map anywhere in the repo.**
+The templated era is over. `lib/content.ts` carries a `cityContent: Record<LocationSlug, CityContent>`
+map with an entry for **every one of the 18 cities**:
 
-Two distinct risks, and both are real:
+```ts
+export interface CityContent {
+  answer: { question: string; body: string }; // question-form H2 + a self-contained answer
+  profile: string[]; // ≥2 paragraphs impossible to write about another city
+  faqs: Faq[];
+  nearby: LocationSlug[]; // city→city links; none existed anywhere before this
+}
+```
+
+Measured in the current build: 18 answer blocks (bodies 32–47 words, no duplicate question, no
+duplicate body), 18 `nearby` arrays holding 2–4 entries each (50 city→city links total, none below 2),
+and area-scoped `Service` + `BreadcrumbList` JSON-LD on all 18 pages.
+
+So the job is no longer "introduce per-city content". It is **deepen an entry that is thinner than its
+siblings, or research a genuine 19th** — and the bar and the sourcing discipline below are what made
+the first 18 defensible. They have not relaxed.
+
+## Two risks that never go away
 
 - **Ranking** — near-duplicate pages compete with each other, dilute the silo, and can be filtered out
-  of the index entirely.
-- **Claims** — each page currently tells a specific city it gets fast local service, backed by no
+  of the index entirely. Depth is what prevents that, and depth decays if a new entry is written to a
+  lower standard than the existing ones.
+- **Claims** — a location page telling a specific city it gets fast local service is backed by no
   address, no geo and no coverage data. See `docs/business-facts.md` §3.6.
 
 ## The bar
@@ -23,9 +40,16 @@ Two distinct risks, and both are real:
 > **≥2 paragraphs per city that could not be written about any other city.**
 
 Test it the hard way: swap the city name for another city's. If the paragraph still reads as true, it
-is not city-specific and it does not count.
+is not city-specific and it does not count. That is what `CityContent.profile` is typed for, and it is
+the check to run on an existing entry before deciding it is fine.
+
+The `answer` block is held to the same standard: `"מה משנה בתיקון דודים ב<עיר>?"` must have an answer
+that is genuinely about that city, not the generic one with a name substituted.
 
 ## The four legitimate material types
+
+The 18 shipped entries were built from four discriminators, recorded in the header comment above
+`cityContent`: coastal vs inland, altitude and climate, water hardness, and building-stock age.
 
 ### 1. Housing stock and boiler mix
 
@@ -33,7 +57,8 @@ Where solar dominates versus electric or pressure systems. Older building stock 
 construction. Apartment blocks with shared solar arrays versus private roofs.
 
 This is **technical and checkable**, and it genuinely changes what a repair visit involves. It is the
-richest of the four.
+richest of the four. Tel Aviv's low-rise-with-private-roof versus tower-with-electric split is the
+worked example in the data.
 
 ### 2. Roof and access realities
 
@@ -52,8 +77,9 @@ coastal pages less distinctive.
 
 ### 4. City-specific FAQs
 
-A question a resident of that city would actually ask, with an answer that is specific to it. Usually
-downstream of the first three — shared solar arrays, roof access, corrosion.
+A question a resident of that city would actually ask, with an answer specific to it. Usually
+downstream of the first three — shared solar arrays, roof access, corrosion, a Jerusalem winter that
+shifts the whole load onto the electric element.
 
 ## Banned — these are padding, and some are also claims
 
@@ -66,10 +92,11 @@ downstream of the first three — shared solar arrays, roof access, corrosion.
 | "Our local branch in \<city\>"                 | **false** — there is no branch anywhere              |
 | "Our technician in \<city\>"                   | **false** — no evidence any technician exists (§3.5) |
 | "We arrive in \<city\> within N minutes/hours" | **unsourced** response-time claim                    |
+| "N% of buildings in \<city\> have…"            | **no source in this repo** for any such proportion   |
 | Weather or tourism colour                      | not why the reader is on the page                    |
 
-The last three are not merely thin — they are fabricated business facts, which is the more serious
-failure.
+The claims rows are not merely thin — they are fabricated business facts, which is the more serious
+failure. Proportions in the shipped entries stay **qualitative on purpose** for exactly this reason.
 
 ## The removal option
 
@@ -78,10 +105,14 @@ failure.
 Removal is a legitimate and _preferred_ outcome over padding. Say so plainly rather than reaching for
 filler. `docs/content-standards.md` §3 makes this explicit.
 
-Removing a location is data-driven: drop the entry from the `locations` array in
-`lib/site-config.ts` and the route, the areas index, the link mesh and the sitemap all follow. Note
-that the URL then 404s — flag it so a redirect can be considered at the zone level, since a static
-export cannot issue one.
+Removing a location is data-driven: drop the entry from the `locations` array in `lib/site-config.ts`
+and from `cityContent` (the map is a total `Record<LocationSlug, …>`, so the two must move together or
+the build fails), and the route, the areas index, the link mesh and the sitemap all follow. Then:
+
+- prune the removed slug from every other city's `nearby` array;
+- delete its line from `public/llms.txt`, which is hand-maintained;
+- flag that the URL now 404s so a redirect can be considered **at the zone level** — a static export
+  cannot issue one.
 
 ## Sourcing discipline
 
@@ -109,9 +140,12 @@ that is defensibly true.
 
 `docs/city-briefs.md` — the research, per city, with sources.
 
-Then a typed `cityContent` map in `lib/content.ts` keyed by `LocationSlug`. **Copy lives in the
-content layer, never typed into JSX**, and the route reads from it. That way all 18 cities stay
-consistent in structure while differing in substance.
+Then into the `cityContent` entry in `lib/content.ts`, keyed by `LocationSlug`. **Copy lives in the
+content layer, never typed into JSX**, and `app/locations/[city]/page.tsx` reads from it. That is what
+keeps all 18 consistent in structure while differing in substance.
+
+`cityContent` is a **total** `Record`, not a `Partial` — a new `LocationSlug` with no entry is a
+type error, not a silent fallback. That is deliberate: it makes shipping an empty city page impossible.
 
 ## The 18
 
@@ -122,7 +156,8 @@ Coastal (corrosion material available): haifa · netanya · ashdod · bat-yam ·
 tel-aviv, herzliya and rishon-lezion have coastline too, so judge by actual exposure rather than
 reaching.
 
-Do **not** add a 19th until all 18 clear the bar.
+Do **not** add a 19th until all 18 clear the bar, and check that against the current entries rather
+than assuming — the entries exist, which is not the same as all of them being equally strong.
 
 ## Grammar
 

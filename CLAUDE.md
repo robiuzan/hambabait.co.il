@@ -12,7 +12,9 @@
   electric (דוד חשמל), thermostat, heating element, leak repair, full replacement.
 - **Phone (click-to-call):** `055-6601006` · WhatsApp same number · `info@hambabait.co.il`.
 - **Hours:** ראשון–חמישי 08:00–18:00, שישי 08:00–14:00. Saturday closed (absent = closed).
-- **Service area:** שירות בכל הארץ. **6 service pages, 18 location pages**, 8 static paths — 32 indexable URLs.
+- **Service area:** שירות בכל הארץ. **6 service pages, 18 location pages, 12 knowledge-hub guides**,
+  9 static paths — **45 indexable URLs** (47 built files, incl. the 404 and `/תודה/`).
+  Verified 2026-08-31 — see [docs/README.md](docs/README.md) §0 for the commands.
 - **Audience:** private homeowners with a broken or leaking boiler, usually mid-fault and in a hurry.
 - **Conversion goals, in order:** (1) phone call, (2) WhatsApp, (3) lead form. Every page keeps a
   call/WhatsApp action within reach; the mobile CTA bar is sticky.
@@ -54,15 +56,16 @@
 6. **Business facts come from `lib/site-config.ts`, never hardcoded in components.** Import
    `siteConfig`, `services`, `locations`, `telHref`, `whatsappHref()`.
 7. **No page ships under the content bar in [docs/content-standards.md](docs/content-standards.md).**
-   A location or service page a find-and-replace could regenerate is a doorway page, and 18 of the 32
-   URLs are currently one template.
-8. **The two legal pages are code, not decoration.** `/מדיניות-פרטיות/` now names its real processors
-   — Web3Forms, Google (Tag Manager / Analytics) and WhatsApp/Meta — and discloses cookie use. Keep it
-   true: any new data flow must land there in the same change. **But disclosure is not consent** — GTM
-   still loads unconditionally with no Consent Mode default and the lead form has no consent
-   affordance. `/הצהרת-נגישות/` still asserts ת״י 5568 + WCAG 2.0 AA conformance with no audit, no
-   statement date and no named accessibility coordinator. Do not deepen either claim; fix the gap or
-   narrow the wording.
+   A location or service page a find-and-replace could regenerate is a doorway page. All 18 city
+   pages cleared that bar in the 2026-08-25 build-out — **keep them there.**
+8. **The two legal pages are code, not decoration.** `/מדיניות-פרטיות/` names its real processors —
+   Web3Forms, Google (Tag Manager / Analytics) and WhatsApp/Meta — and discloses cookie use. Keep it
+   true: any new data flow must land there in the same change. Consent Mode v2 now ships
+   denied-by-default **above** the container (`lib/consent.ts`, `components/layout/ConsentBanner.tsx`)
+   — never move the default below the loader, and note the container-side half is the owner's. **The
+   lead form still has no consent affordance.** `/הצהרת-נגישות/` was rewritten to state only what was
+   actually checked, with a date and a contact; **do not re-add a conformance claim without a real
+   external audit.** See [docs/eeat-and-trust.md](docs/eeat-and-trust.md).
 9. **Never edit generated or vendored output** — `node_modules/`, `vendor/`, `.next/`, `out/`,
    `out.prev/`.
 10. **Tailwind v4 is CSS-first here.** There is no `tailwind.config.ts` and there must not be. Tokens
@@ -87,8 +90,10 @@ transpilePackages: ["@ishub/site-kit"],   // load-bearing: the kit ships raw TS,
 ```
 
 **Static export forbids** `headers()`, `redirects()`, `rewrites()`, middleware, API routes, and ISR.
-There is **no `public/_headers` and no `public/_redirects`** in this repo. Response headers on the
-live site come from the Cloudflare zone, which is Sys Admin territory — not from anything here.
+`public/_headers` exists and is honoured **by Cloudflare Pages only** — it sets immutable caching for
+`/_next/static/*` and **no security header at all**. HSTS, `X-Frame-Options` and `Permissions-Policy`
+come from the **Cloudflare zone**, which is Sys Admin territory. Do not duplicate a zone header into
+`_headers`; verify live responses instead. There is no `public/_redirects`.
 
 **`@ishub/site-kit` exports actually used:** root (`ogImageMeta`, `telHref`, `whatsappHref`,
 `type SiteManifest`), `/analytics` (`gtmHeadSnippet`, `gtmNoScriptSrc`, `trackEvent`), `/seo`
@@ -116,17 +121,20 @@ app/
   תודה/                   # noindex conversion destination — NOT in the sitemap
 components/
   ui/          Button Container Section SectionHeading Reveal
-  layout/      Header Footer PageHeader MobileCtaBar
+  layout/      Header Footer PageHeader MobileCtaBar ConsentBanner
   marketing/   Hero TrustBar ServicesGrid WhyUs Process PricingTeaser
-               ServiceAreas Faq FinalCta
+               ServiceAreas Faq FinalCta GuideBody GuideDiagram
   forms/       LeadForm
 lib/
   site-config.ts   # ⭐ NAP, services[6], locations[18], telHref, whatsappHref
   content.ts       # ⭐ Hebrew copy: serviceDepth[6], cityContent[18], faqs, nav
   guides.ts        # ⭐ the 12 knowledge-hub guides, as typed blocks
+  consent.ts       # Consent Mode v2 default snippet — must run BEFORE the container
   utils.ts         # cn()
-site.config.json   # SiteManifest — SYNCED FROM THE ROSTER, do not edit here
-docs/              # the acceptance bars every agent cites
+scripts/
+  qa-gate.mjs      # 25 assertions over out/ — `npm run qa:gate`, the 5th build-gate step
+site.config.json   # SiteManifest — SYNCED FROM THE ROSTER via ops/sync-manifest.ps1
+docs/              # the acceptance bars every agent cites — START AT docs/README.md
 ```
 
 Place by responsibility: reusable presentation primitive → `ui/`; page section → `marketing/`;
@@ -158,12 +166,30 @@ layout goes in components.** Copy never gets typed directly into JSX.
 structurally validated against `SiteManifest` at compile time. A malformed manifest fails at runtime,
 not at build.
 
-> ⚠️ **There is no roster→repo sync script.** `ops/` holds `bump-site-kit`, `deploy-site`,
-> `make-og-card`, `sync-media`, `validate-manifests` and `webdav-deploy` — **none of them syncs the
-> roster into `site.config.json`**, and `deploy-site.ps1` reads the repo's copy as-is. So editing the
-> roster alone changes nothing public: the value must also reach `site.config.json` before the next
-> build, or the deploy ships the old one. Verified 2026-08-25, when a softened `shortPitch` was
-> edited in the roster and the old text kept shipping as the JSON-LD `description`.
+> **Syncing the roster into the repo — use the script.** As of 2026-08-31 `ops/` carries
+> `sync-manifest.ps1` (with `sync-manifest.mjs` doing the JSON work). Run it after **every** roster
+> edit:
+>
+> ```powershell
+> powershell -File "c:/Users/robiu/antigravity/Projects/Israeli services sites/ops/sync-manifest.ps1" -Domain hambabait.co.il -DryRun
+> powershell -File "c:/Users/robiu/antigravity/Projects/Israeli services sites/ops/sync-manifest.ps1" -Domain hambabait.co.il -Confirm
+> ```
+>
+> It prints a field-level diff, follows the `-DryRun`/`-Confirm` contract, and exits 1 on drift so
+> it is CI-friendly. Node does the JSON work because Windows PowerShell 5.1's `ConvertTo-Json`
+> escapes every non-ASCII character to `\uXXXX`, which would wreck the Hebrew manifest.
+>
+> ⚠️ **Why it had to exist.** Until then nothing carried a roster edit into a site repo, and
+> `deploy-site.ps1` reads the repo's copy as-is — so a roster edit changed nothing public,
+> silently. Verified 2026-08-25, when a softened `shortPitch` was edited in the roster and the old
+> warranty text kept shipping as the JSON-LD `description` for six days.
+>
+> **Two keys are stripped on the way in.** `$schema` (a roster-authoring aid) and
+> `_needsConfirmation` — because `site.config.json` is `import`ed by `lib/site-config.ts`, so
+> webpack bundles the **whole file into the client JS**. Shipping the assumptions array would
+> publish internal project notes to every visitor. The script writes them to
+> [docs/manifest-assumptions.md](docs/manifest-assumptions.md) instead and prints them on every
+> run, so they stay visible to humans and invisible to users.
 
 ---
 
@@ -217,33 +243,50 @@ See the `hebrew-rtl` skill for the full rule set.
   `sitemap.xml` `<loc>`. `app/sitemap.ts` uses `encodeURI` for exactly this reason.
 - **JSON-LD** is built with `@ishub/site-kit/seo` — `localBusinessJsonLd`, `serviceJsonLd`,
   `faqJsonLd`, `breadcrumbJsonLd`, `jsonLdScript`. Target graph:
-  [docs/schema-graph.md](docs/schema-graph.md). **All 32 indexable pages now emit JSON-LD** — only the
+  [docs/schema-graph.md](docs/schema-graph.md). **All 45 indexable pages emit JSON-LD** — only the
   404 and `/תודה/` are bare, both correctly. `breadcrumbJsonLd` fires from `PageHeader`, so every
-  nested route ships a `BreadcrumbList` matching its visible trail. The remaining schema work is
-  depth, not coverage: per-service and per-city `FAQPage`, and `Article` for the knowledge hub.
+  nested route ships a `BreadcrumbList` matching its visible trail. `FAQPage` ships on 37 pages and
+  `Article` on the 12 guides. **The one node still unbuilt is `WebSite` on the homepage.**
 - **`Review`/`AggregateRating` ship only when genuinely sourced** — today that means never. Same for
   `Offer` with a price: the business deliberately publishes no price table, so any figure is invented.
 - **Images:** `images.unoptimized` is on and there is **no** `assets/` pipeline and **no**
   `image:optimize` script in this repo. Ship optimized WebP into `public/` by hand. Every meaningful
-  image needs a Hebrew `alt`; decorative gets `alt=""`. `app/icon.svg` ships as the favicon, but
-  **the site otherwise contains zero images** — `public/` holds only `_headers` and `llms.txt`, and OG
-  points at an external host. Prefer the kit's `SiteImage` (currently unused) over a hand-rolled
-  `<img>`: it makes `alt` structurally required and always emits width/height. Note the current LCP is
-  **text**, so any hero image can only make it worse — budget for that explicitly. **Never** ship stock
-  photography of technicians or work; that is a staffing claim rendered as an image.
+  image needs a Hebrew `alt`; decorative gets `alt=""`. `app/icon.svg` ships as the favicon and four
+  inline SVG diagrams ship in `components/marketing/GuideDiagram.tsx`, but **the site ships zero
+  photographs** — `public/` holds only `_headers` and `llms.txt`. Prefer the kit's `SiteImage`
+  (currently unused) over a hand-rolled `<img>`: it makes `alt` structurally required and always emits
+  width/height. Note the current LCP is **text**, so any hero image can only make it worse — budget for
+  that explicitly. **Never** ship stock photography of technicians or work; that is a staffing claim
+  rendered as an image.
+- **Raster assets do not live in this repo.** The OG card is `hambabait/og.jpg` in the fleet **Media
+  Studio** catalog (1200×630, 39,026 B, sha256 on file), served from `imgquarry.com` and reaching the
+  manifest through `ops/sync-media.ps1`. The key is **immutable** — a new picture is an overwrite at
+  the same key, same aspect ratio, never narrower — and Hebrew `altHe` is enforced at publish because
+  this domain is `dir="rtl"`. Prompts for generated imagery are written by the `image-art-director`
+  agent into `Media Studio/prompts/hambabait/` and are approved by the **owner**, never by an agent.
+  See [docs/media-assets.md](docs/media-assets.md) §1a.
 
 ---
 
 ## 9. Build gate
 
 ```
-npm run lint && npm run typecheck && npm run format:check && npm run build
+npm run lint && npm run typecheck && npm run format:check && npm run build && npm run qa:gate
 ```
 
-All four must pass before any deploy. `.github/workflows/ci.yml` runs the same four on every push
-and PR (since 2026-08-17 — before that, CI ran only `build` and a formatting or type error shipped
-silently). The `qa-build-gate` skill adds the output assertions on `out/` (route count, unique
-titles, one H1, canonical presence, JSON-LD presence, sitemap parity).
+All **five** must pass before any deploy. `.github/workflows/ci.yml` runs the first four on every
+push and PR (since 2026-08-17 — before that, CI ran only `build` and a formatting or type error
+shipped silently).
+
+`npm run qa:gate` (`scripts/qa-gate.mjs`, added 2026-08-31) is the fifth: **25 assertions against
+`out/`** — page and indexable counts, JSON-LD / canonical / sitemap parity byte-for-byte, no
+doubled brand suffix, unique titles and descriptions, exactly one H1, no banned schema property
+(`aggregateRating` · `reviewCount` · `ratingValue` · `foundingDate` · `warrantyPromise`), no priced
+`Offer`, no `SearchAction`/`potentialAction`, the `WebSite` node present, the Consent Mode default
+preceding the GTM container, and no physical-direction Tailwind utility in the built HTML.
+
+Its thresholds are named constants at the top of the file — update them when the route count
+legitimately changes, rather than deleting the assertion.
 
 ---
 
@@ -284,10 +327,11 @@ still exists at the host and simply no longer receives deploys.
 | Type-check       | `npm run typecheck`    |
 | Format           | `npm run format`       |
 | Format check     | `npm run format:check` |
+| Output QA gate   | `npm run qa:gate`      |
 
-Those are **all seven scripts that exist** (`dev`, `build`, `start`, `lint`, `format`,
-`format:check`, `typecheck`). There is no test script, no image script and no deploy script in this
-repo — deploys run from the hub's `ops/`.
+Those are **all eight scripts that exist** (`dev`, `build`, `start`, `lint`, `format`,
+`format:check`, `typecheck`, `qa:gate`). There is no test script, no image script and no deploy
+script in this repo — deploys run from the hub's `ops/`.
 
 ---
 
@@ -297,10 +341,11 @@ repo — deploys run from the hub's `ops/`.
 - Don't add a 19th location until all 18 pass the doorway test in
   [docs/content-standards.md](docs/content-standards.md).
 - Don't add dependencies without a reason that survives "can the platform already do this?"
-  (`framer-motion` is already declared and imported by nothing — `Reveal.tsx` hand-rolls the same
-  effect with `IntersectionObserver`.)
+  (`framer-motion` once shipped as a declared-but-unimported dependency and was removed —
+  `Reveal.tsx` hand-rolls the same effect with `IntersectionObserver` for no bytes. Don't bring it
+  back.)
 - Don't put PII in `dataLayer`.
-- `out.prev/` and `site.config.json.bak` are untracked debris that `.gitignore` does not cover. Never
-  `git add -A` in this repo without looking.
+- `out.prev/` and `site.config.json.bak` are untracked debris. `.gitignore` now covers `/out.prev/`
+  and `*.bak`, but still look before you `git add -A` in this repo.
 - Cloudflare zone settings (headers, cache rules, AI crawler policy) are **the owner's to change**.
   Document the exact toggle; never assume it was done.

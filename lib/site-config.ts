@@ -19,6 +19,68 @@ import {
 /** Normalized per-site manifest (single source of truth for NAP/identity/schema). */
 export const manifest = siteManifest as unknown as SiteManifest;
 
+/**
+ * The cast above goes through `unknown`, so `site.config.json` is never structurally checked
+ * against `SiteManifest` at compile time. A truncated or malformed manifest therefore used to
+ * surface as a TypeError in the browser, on a live page. This guard runs at module load and
+ * every route imports this module, so a bad manifest fails `npm run build` instead — a runtime
+ * failure traded for a build failure.
+ *
+ * It checks only the fields the code below actually dereferences. Fields that are nullable by
+ * design — `foundedYear`, `analytics.googleSiteVerification`, `schema.sameAs`,
+ * `contact.formAccessKey` — are deliberately absent: requiring any of them would fail the
+ * build on a correct manifest. Hand-rolled on purpose; a schema library is not worth a
+ * dependency for nine fields.
+ */
+function assertManifest(m: SiteManifest): void {
+  const problems: string[] = [];
+
+  const isObject = (v: unknown): v is Record<string, unknown> =>
+    typeof v === "object" && v !== null && !Array.isArray(v);
+
+  const requireString = (field: string, value: unknown): void => {
+    if (typeof value !== "string" || value.trim() === "") {
+      // JSON.stringify(undefined) returns undefined, not "undefined" — and a missing field is
+      // the most likely failure, so it needs to read as one rather than as a blank.
+      const got = value === undefined ? "undefined" : JSON.stringify(value);
+      problems.push(`${field} must be a non-empty string (got ${got})`);
+    }
+  };
+
+  requireString("url", m.url);
+  requireString("brandName", m.brandName);
+
+  // Read the nested objects as `unknown`: the declared types claim they are always present,
+  // which is exactly the claim this guard exists to distrust.
+  const contact: unknown = m.contact;
+  if (!isObject(contact)) {
+    problems.push("contact must be an object");
+  } else {
+    requireString("contact.phoneDisplay", contact.phoneDisplay);
+    requireString("contact.phoneE164", contact.phoneE164);
+    requireString("contact.whatsappE164", contact.whatsappE164);
+    requireString("contact.email", contact.email);
+  }
+
+  const schema: unknown = m.schema;
+  if (!isObject(schema)) {
+    problems.push("schema must be an object");
+  } else {
+    requireString("schema.areaServed", schema.areaServed);
+  }
+
+  if (problems.length > 0) {
+    throw new Error(
+      `site.config.json is invalid (${problems.length} problem(s)):\n` +
+        problems.map((p) => `  - ${p}`).join("\n") +
+        "\nFix this in the ROSTER — 'Israeli services sites'/roster/sites/hambabait.json — " +
+        "then run ops/sync-manifest.ps1 to carry it across. Never edit site.config.json directly.",
+    );
+  }
+}
+
+assertManifest(manifest);
+
 export const siteConfig = {
   name: manifest.brandName ?? "",
   nameEn: manifest.brandNameEn ?? "",

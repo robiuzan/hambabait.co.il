@@ -12,3 +12,46 @@
 # winning and this needs a zone-level fix instead.
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Content-Security-Policy — REPORT-ONLY, deliberately. Nothing here blocks anything yet; the
+# browser only logs violations to the console. Enforcing must not ship until real traffic has
+# been watched for a while, because the GTM container is the shared IL fleet container
+# (GTM-KWGGH438) and any tag added to it later can pull from an origin not listed below.
+# There is no report-uri/report-to endpoint, so violations surface in DevTools only — someone
+# has to actually open a browser and look.
+#
+# WHY NO SCRIPT HASHES. A hash-based script-src is not achievable on this site. Next.js App
+# Router serialises the React Flight payload into bare inline <script> tags, and the current
+# out/ carries 169 DISTINCT such bodies across 48 built HTML files (502 tags in total); their
+# content changes on every build. CSP ignores 'unsafe-inline' the moment any hash or nonce is
+# present, so listing the two id-bearing snippets (consent-default, gtm-init) would block all
+# 169 and render every page blank. A nonce is not an option either: output "export" has no
+# server to mint one per request. So script-src ships 'unsafe-inline' and no hashes, and the
+# value of this policy is the directives that ARE free and real — base-uri, object-src,
+# frame-ancestors, form-action, and tight allowlists on connect-src/frame-src/img-src/font-src.
+#
+# GTM CAVEAT. Custom HTML tags injected from the container need 'unsafe-inline', and a few
+# Google tag types still need 'unsafe-eval'. 'unsafe-eval' is NOT granted here. If a container
+# change starts throwing eval violations, the honest fix is to change the tag, not to widen the
+# policy — granting 'unsafe-eval' hands any XSS a code-execution primitive.
+#
+# ORIGINS. Verified from out/ and the source: googletagmanager.com (the gtm.js loader in
+# #gtm-init and the ns.html noscript iframe) and api.web3forms.com (the lead form's fetch in
+# components/forms/LeadForm.tsx). font-src is 'self' because next/font self-hosts — the woff2
+# files sit in /_next/static/media/ and the fonts.googleapis.com / fonts.gstatic.com strings in
+# out/ live only inside Next's internal font-optimisation constant table in main-*.js, never in
+# a runtime request. imgquarry.com is NOT listed: it appears only as a preconnect hint (CSP does
+# not govern preconnect) and in og:image/twitter:image, which crawlers fetch, not the browser.
+# The google-analytics/doubleclick entries are the DOCUMENTED GA4 transports — they are not
+# observed in this repo, which is exactly why the header is report-only.
+#
+# NO KNOWN ZONE COLLISION, but confirm it. The zone-level headers recorded at the top of this
+# file are HSTS, X-Frame-Options and Permissions-Policy; CSP is not among them. That list was
+# written from an earlier observation and is not re-checked here — curl the live apex after the
+# next deploy and make sure exactly ONE Content-Security-Policy-Report-Only comes back. Two
+# policies do not merge: both apply, and the intersection is what the browser enforces.
+#
+# Applied to /* rather than an enumerated list of the 47 built HTML routes: a CSP delivered on
+# a subresource response is inert, and enumerating routes here would rot on the next page added.
+/*
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://www.google.com https://www.google.co.il https://stats.g.doubleclick.net; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net; frame-src https://www.googletagmanager.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'

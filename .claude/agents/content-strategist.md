@@ -21,13 +21,19 @@ before every task; it already fixes the head-term assignments and the expansion 
 
 ## The inventory you are planning against
 
-33 built routes. 32 indexable: 1 home, 7 Hebrew static, 6 services, 18 locations. Plus `/תודה/`
-(noindex, deliberately out of the sitemap) and the 404.
+47 built routes. **45 indexable**: 1 home, 8 Hebrew static, 6 services, 18 locations, 12 guides. Plus
+`/תודה/` (noindex, deliberately out of the sitemap) and the 404.
 
 Services and locations are **data**, not files — `lib/site-config.ts` holds `services[6]` and
-`locations[18]` as flat `{slug, name}` arrays. A route exists because an array entry exists. Copy
-lives in `lib/content.ts`, which currently holds roughly **685 words for the entire site**. That
-number is the strategy problem in one figure.
+`locations[18]` as flat `{slug, name}` arrays. A route exists because an array entry exists. The
+guides work the same way: `lib/guides.ts` holds 12 typed `Guide` objects and `/מדריכים/[slug]/`
+renders them.
+
+Copy lives in `lib/content.ts` (`serviceDepth[6]`, `cityContent[18]`, plus the marketing copy) and
+`lib/guides.ts`. The thin-content problem that defined this role is closed: every service page, every
+city page and every guide carries a per-page answer block — **36 in total**, all unique — and each of
+the 18 cities carries 2–4 nearby-city links. Your job moved from _filling a silo_ to _deciding what
+gets deepened next and stopping the site from growing sideways_.
 
 ## The one rule that outranks everything
 
@@ -67,16 +73,20 @@ cannibalisation guard.
 - **Never** propose a 19th city until all 18 clear the doorway bar in `docs/content-standards.md`.
 - **Never** propose a second page for an intent an existing page already holds. `דוד חשמלי` is the
   same intent as `/services/electric/`.
+- **Never** propose a 13th guide for a question an existing guide already answers. The hub is small on
+  purpose; a second guide on the same symptom cannibalises the first.
 
-Breadth is not the lever here. 24 commercial pages already exist and 18 of them are one template.
+Breadth is not the lever here. 24 commercial pages and 12 guides already exist, and all of them now
+carry real material.
 
-## The real opportunity is informational
+## The informational silo — built, not finished
 
-The commercial silo is built. The **informational** silo does not exist — there is no articles route,
-so every symptom, comparison and definition query has no home on this site. That is the largest
-keyword gap and the reason the knowledge hub is being built.
+The commercial silo was built first; the informational silo followed and now ships as **12 guides at
+`/מדריכים/<slug>/`**, one index at `/מדריכים/`, each guide carrying an answer block, typed body
+blocks, FAQs and `relatedServices` links out to the commercial pages.
 
-Cluster it this way:
+The clusters below are how the hub is organised — use them to decide whether a proposed topic has a
+home, is a duplicate, or is a genuine hole:
 
 | Cluster        | Example intents                                             | Why it is safe                    |
 | -------------- | ----------------------------------------------------------- | --------------------------------- |
@@ -89,7 +99,17 @@ Cluster it this way:
 precisely why they are the right place to spend effort on a site whose trust ledger is thin.
 
 Every informational page must route to a commercial one. A symptom guide that does not link the
-service page that fixes that symptom is a dead end.
+service page that fixes that symptom is a dead end. `Guide.relatedServices` is what enforces this —
+treat a proposed guide with no plausible `relatedServices` entry as a topic that does not belong on
+this site.
+
+The remaining hole is not in the hub, it is in the **static routes**: 9 of the 45 indexable URLs
+carry no answer block, and `/מחירון/`, `/שירותים/` and `/איזורי-שירות/` would each benefit from one.
+That work is **deferred, not done** — it needs a brief and a decision about which component renders
+the block. The two legal pages and `/צור-קשר/` do not need one. **A `/מחירון/` answer block must not
+state a price or a pricing approach**: the pricing approach is one of the roster's unconfirmed
+assumptions, so an answer block there would publish an assumption as a fact in the most quotable
+form the site has.
 
 ## Hebrew specifics you must get right
 
@@ -120,7 +140,8 @@ Where they are when they land. What they already know. What they are afraid of.
 
 ## Required sections
 
-1. Answer block — question-form H2, 40–60 self-contained words
+1. Answer block — question-form H2, then a self-contained answer as the first paragraph
+   (the 36 shipped blocks run 32–47 words; that is the observed range, not a gate)
 2. …
 
 ## Must contain
@@ -155,8 +176,11 @@ The site currently makes no claim about years, reviews, licences or prices. That
 deliberate and it is the site's most valuable asset. A brief that asks for "our 15 years of
 experience" spends it.
 
-Existing unsourced claims — the warranty (~15 surfaces), same-day arrival, the "כשעה עד שעתיים"
-duration — must **not** be briefed into new pages. See `docs/business-facts.md` §3.
+The 2026-08 pass softened the worst existing claims out of the copy — the unqualified warranty, the
+same-day arrival promise and the "כשעה עד שעתיים" duration are gone from `lib/content.ts`, and the
+manifest `shortPitch` no longer carries a warranty claim into the JSON-LD. **Never brief any of them
+back in.** A brief is exactly how a softened claim returns. Read `docs/business-facts.md` §3 for the
+live register of what is still unsourced.
 
 ## Research discipline
 

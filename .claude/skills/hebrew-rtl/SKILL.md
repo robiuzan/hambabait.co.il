@@ -1,6 +1,6 @@
 ---
 name: hebrew-rtl
-description: RTL and Hebrew (he-IL) discipline for hambabait — logical Tailwind utilities only with the pl/pr/ml/mr/left/right/text-left/text-right ban, dir="ltr" islands for phone, email and URL, Israeli number and date formats, Hebrew punctuation with גרש and גרשיים, the ב+city grammar rule, and the percent-encoded Hebrew route trap. Use whenever writing markup, classes or copy that appears on the page. Mandatory per CLAUDE.md §6. Triggers: "RTL", "Hebrew", "which padding utility", "text direction", "LTR island", "Hebrew slug 404", "mirrored layout".
+description: RTL and Hebrew (he-IL) discipline for hambabait — logical Tailwind utilities only with the pl/pr/ml/mr/left/right/text-left/text-right ban that qa:gate now enforces on the built HTML, dir="ltr" islands for phone, email and URL, Israeli number and date formats, Hebrew punctuation with גרש and גרשיים, the ב+city grammar rule, and the percent-encoded Hebrew route trap across nine Hebrew route directories and the knowledge hub's Hebrew parent segment. Use whenever writing markup, classes or copy that appears on the page. Mandatory per CLAUDE.md §6. Triggers: "RTL", "Hebrew", "which padding utility", "text direction", "LTR island", "Hebrew slug 404", "mirrored layout".
 ---
 
 # Hebrew & RTL discipline
@@ -33,10 +33,20 @@ mirror the vertical axis.
 <span className="left-1/2 -translate-x-1/2" />;
 ```
 
-Audit with:
+### The gate, and why a plain grep is not it
+
+`npm run qa:gate` checks the **built HTML**, not the source, and it is the authority. It reads class
+attributes only, splits them into whole tokens, strips variant prefixes at bracket depth 0 (so
+`data-[state=open]:ml-2` reduces to `ml-2` while `bg-[url(data:...)]` is left alone), then matches the
+base utility exactly.
+
+That machinery exists because the naive grep is full of false positives: `text-primary`,
+`border-primary`, `placeholder:text-gray-400` and `lucide-chevron-left` all contain a banned
+substring. Use the source grep as a fast first pass, then trust the gate:
 
 ```bash
 grep -rnE '\b(pl|pr|ml|mr)-[0-9]|\b(left|right)-[0-9]|text-(left|right)\b' app components
+npm run build && npm run qa:gate
 ```
 
 ## Let `dir="rtl"` do the mirroring
@@ -57,7 +67,8 @@ Latin or numeric runs inside Hebrew text get isolated, or the bidi algorithm reo
 </a>
 ```
 
-`.ltr` is defined in `app/globals.css` as `direction: ltr; unicode-bidi: isolate`. Use it for:
+`.ltr` is defined in the `@layer utilities` block of `app/globals.css` as
+`direction: ltr; unicode-bidi: isolate`. Use it for:
 
 - phone numbers (`055-6601006`)
 - email addresses (`info@hambabait.co.il`)
@@ -65,12 +76,14 @@ Latin or numeric runs inside Hebrew text get isolated, or the bidi algorithm reo
 - prices and any standalone number with a symbol
 
 Without isolation, `055-6601006` beside Hebrew can render with the hyphen or the leading zero in the
-wrong place — a bug that only appears in production copy, never in a code review.
+wrong place — a bug that only appears in production copy, never in a code review. It is also an
+accessibility defect, not just a cosmetic one: a user reads and dials the wrong digits.
 
 ## Israeli formats
 
 - **Phone:** `0XX-XXX-XXXX` for display; `+972…` for `tel:` and schema.
-- **Currency:** `₪`, symbol before the number, wrapped as an LTR island.
+- **Currency:** `₪`, symbol before the number, wrapped as an LTR island. (No price appears anywhere on
+  this site today, and none may be introduced — see the claims rules.)
 - **Dates:** `dd/mm/yyyy`.
 - **Hours:** `08:00–18:00` with an en-dash, days written in Hebrew
   (`ראשון–חמישי`, `שישי`). Saturday absent means closed — do not write "סגור" as a row unless the
@@ -87,21 +100,26 @@ wrong place — a bug that only appears in production copy, never in a code revi
 ## The ב+city grammar rule
 
 Hebrew prefixes the city: `תיקון דודים **ב**תל אביב`. It never follows. This matters because location
-titles, descriptions and H1s are all generated from the city name.
+titles, descriptions, H1s and JSON-LD are all generated from the city name.
 
 If a city needs a non-default prefix form, encode it in `lib/site-config.ts` alongside the name —
 never patch it with a conditional at the call site, because the same city string feeds the title, the
-H1, the meta description and the JSON-LD.
+H1, the meta description and the schema.
 
 ## The Hebrew route trap
 
-Seven routes are Hebrew directories (`app/מחירון/`, `app/צור-קשר/`, `app/הצהרת-נגישות/`, …). Three
-rules keep them working:
+**Nine route directories are Hebrew** — `אודות`, `איזורי-שירות`, `הצהרת-נגישות`, `מדיניות-פרטיות`,
+`מדריכים`, `מחירון`, `צור-קשר`, `שירותים`, `תודה` — and the knowledge hub adds a Hebrew **parent
+segment** to 13 more URLs (`/מדריכים/` plus its 12 guide slugs, whose slugs themselves are English).
+`/תודה/` is deliberately outside the sitemap; the other eight are in it.
+
+Three rules keep them working:
 
 1. **Sitemap:** every `loc` goes through `encodeURI` in `app/sitemap.ts`. The protocol requires
    escaped URLs, and the host matches the **escaped** asset key — a raw-UTF-8 path 404s.
 2. **Canonicals:** Next escapes them automatically, producing a byte-identical match to the sitemap
-   `<loc>`. Never hand-write one.
+   `<loc>`. `qa:gate` asserts that parity in both directions across all 45 indexable URLs. Never
+   hand-write one.
 3. **In-page `href`s:** ship as raw UTF-8 (`href="/אודות/"`). Browsers encode on navigation. This is
    correct — do not "fix" it.
 
@@ -109,18 +127,23 @@ rules keep them working:
 double-encodes the bytes (`%D7%9E` → `%C3%97%C2%9E`) and returns a 404 that looks exactly like a real
 outage. This has burned people; it is a test-harness bug, not a site bug.
 
+One more shell trap on Windows: `grep -P '[\x{0590}-\x{05FF}]'` fails outright in this environment
+("character value too large"). Match Hebrew paths by testing for non-ASCII bytes instead of by
+codepoint range.
+
 ## Copy voice
 
 Second person plural (אתם/אתן), warm and plain. The reader usually has no hot water right now — lead
 with what happens next, not with brand adjectives. No exclamation marks. No hard sell.
 
 Before adding any sentence that makes a factual promise (warranty, timing, price, coverage), check
-`docs/business-facts.md`. Most of this site's speed and warranty language is already unsourced; do
-not add more.
+`docs/business-facts.md` and `docs/manifest-assumptions.md`. Much of this site's speed and warranty
+language is already unsourced, and the pricing approach, hours, email and phone routing are recorded
+as **assumptions, not confirmed facts**. Do not add more.
 
 ## Review checklist
 
-- [ ] No banned physical utility (run the grep above)
+- [ ] No banned physical utility (source grep, then `qa:gate` on the built HTML)
 - [ ] No `flex-row-reverse` added to "fix" ordering
 - [ ] Every phone/email/URL/price is an LTR island
 - [ ] Hebrew abbreviations use `׳`/`״`

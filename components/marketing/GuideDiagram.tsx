@@ -15,6 +15,8 @@
  *   - RTL-correct reading order — labels sit right of the shapes they name
  *   - @theme tokens via currentColor and CSS custom properties, never hardcoded brand hex
  *   - colour is never the sole carrier of meaning; every element is also labelled
+ *   - the `overflow-x-auto` wrapper is focusable, so if the frame ever does scroll it is
+ *     reachable from the keyboard and not only by mouse or touch drag (SC 2.1.1)
  */
 
 import type { GuideDiagramName } from "@/lib/guides";
@@ -30,7 +32,15 @@ export function GuideDiagram({ name }: { name: GuideDiagramName }) {
   const titleId = `diagram-title-${name}`;
   return (
     <figure className="mt-8">
-      <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-gray-50 p-5">
+      {/* role="group" and not role="region": a landmark per diagram would bury the
+          page's real landmarks. The label is the diagram's own title, so it never
+          drifts from the <title> the SVG announces. */}
+      <div
+        className="overflow-x-auto rounded-2xl border border-gray-100 bg-gray-50 p-5"
+        tabIndex={0}
+        role="group"
+        aria-label={TITLES[name]}
+      >
         <svg
           role="img"
           aria-labelledby={titleId}

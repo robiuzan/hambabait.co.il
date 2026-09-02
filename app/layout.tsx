@@ -96,6 +96,13 @@ export default function RootLayout({
         >
           דילוג לתוכן הראשי
         </a>
+        {/* Second in the DOM, not last. The banner is `fixed`, so its position on screen does
+            not depend on where it sits in the markup — z-50 still stacks above the z-40 mobile
+            CTA bar, and `bottom-16` still clears it. But as the last element in <body> it was
+            ~100 tab stops from the top: a keyboard user had to traverse the entire page to
+            answer it, and at 400% zoom it covered the viewport with unreachable controls.
+            Consent logically precedes everything else, so it is reached first. */}
+        <ConsentBanner />
         {gtmNoScript && (
           <noscript>
             <iframe
@@ -111,14 +118,18 @@ export default function RootLayout({
           <script id="gtm-init" dangerouslySetInnerHTML={{ __html: gtmHead }} />
         )}
         <Header />
-        <main id="main" className="flex-1">
+        {/* tabIndex={-1} is what makes the skip link above actually work. Without it Safari
+            (and other engines) move the URL fragment but leave focus in the header, so the
+            next Tab returns to the nav the user just skipped. -1 keeps <main> out of the tab
+            order while making it programmatically focusable; :focus-visible does not fire for
+            programmatic focus, so no new ring appears for mouse users. */}
+        <main id="main" tabIndex={-1} className="flex-1">
           {children}
         </main>
         <Footer />
         {/* Spacer so the fixed mobile CTA bar never overlaps footer content. */}
         <div className="h-16 lg:hidden" aria-hidden />
         <MobileCtaBar />
-        <ConsentBanner />
       </body>
     </html>
   );

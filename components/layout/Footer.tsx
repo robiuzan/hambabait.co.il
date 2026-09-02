@@ -3,9 +3,15 @@ import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { siteConfig, telHref, services, locations } from "@/lib/site-config";
 import { Container } from "@/components/ui/Container";
 
-export function Footer() {
-  const year = 2026; // static export — keep build deterministic; update yearly.
+// Read once at module scope, from the build clock. This is a Server Component in a static
+// export, so the value is baked into the HTML at build time — it never varies per request and
+// cannot cause a hydration mismatch. Evaluating it here rather than per render keeps a single
+// build internally consistent even if it straddles midnight on 31/12. The copyright is
+// therefore correct as of the last build: any rebuild within the year fixes it, where the
+// previous hardcoded 2026 would have gone silently wrong on 01/01/2027.
+const year = new Date().getFullYear();
 
+export function Footer() {
   return (
     <footer className="bg-primary text-white/90">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">

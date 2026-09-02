@@ -15,7 +15,9 @@ export function FinalCta() {
               the site with no term, scope or document anywhere, and this component renders
               on nearly every page, so it was one of the widest carriers of the claim.
               docs/business-facts.md §3.1. */}
-          <p className="mx-auto mt-3 max-w-xl text-accent-foreground/90">
+          {/* No /90 opacity: white at 90% over the accent band (#16833e) composites to
+              #e8f3ec = 4.23:1 and fails AA. Full white on #16833e is 4.83:1 and passes. */}
+          <p className="mx-auto mt-3 max-w-xl text-accent-foreground">
             אבחון והצעת מחיר שקופה — ללא התחייבות. תיקון דודים מקצועי בכל הארץ, עם תנאים
             ברורים מראש.
           </p>

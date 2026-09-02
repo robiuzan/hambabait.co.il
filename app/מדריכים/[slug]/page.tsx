@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { manifest } from "@/lib/site-config";
+import { manifest, siteConfig } from "@/lib/site-config";
 import { serviceCards } from "@/lib/content";
 import { guides, guideClusterLabels } from "@/lib/guides";
 import { faqJsonLd, breadcrumbJsonLd, jsonLdScript } from "@ishub/site-kit/seo";
@@ -58,6 +58,16 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   // `author` and `publisher` are the BUSINESS. There is no named author anywhere on this
   // site and no evidence any specific technician exists; inventing a byline would be a
   // fabricated credential. docs/business-facts.md §3.5.
+  //
+  // Both carry @type + name ALONGSIDE the @id join, matching the kit's own `provider` idiom in
+  // serviceJsonLd. The @id is what makes the graph cohere for a consumer that resolves it into
+  // the homepage Plumber node; the @type and name keep the node self-describing for one that
+  // does not, instead of an author with no type and no name.
+  const businessRef = {
+    "@type": manifest.schema.type ?? "LocalBusiness",
+    "@id": `${manifest.url}/#business`,
+    name: siteConfig.name,
+  };
   const articleLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -68,8 +78,8 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
     datePublished: guide.published,
     dateModified: guide.updated,
     inLanguage: "he-IL",
-    author: { "@id": `${manifest.url}/#business` },
-    publisher: { "@id": `${manifest.url}/#business` },
+    author: businessRef,
+    publisher: businessRef,
   };
   const faqLd = faqJsonLd(guide.faqs);
   const crumbLd = breadcrumbJsonLd(manifest, [

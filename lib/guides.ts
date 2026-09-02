@@ -682,7 +682,7 @@ export const guides: Guide[] = [
         a: "לרוב כן — זהו רכיב סטנדרטי במיכלי דוד. מיקומה וסוגה משתנים בין דגמים, וזה חלק ממה שנבדק כשפותחים את הדוד.",
       },
     ],
-    relatedServices: ["heating-element", "leak-repair", "replacement"],
+    relatedServices: ["leak-repair", "replacement", "heating-element"],
   },
 
   {
@@ -830,7 +830,7 @@ export const guides: Guide[] = [
         a: "כן. אבק ושכבת לכלוך מפחיתים את כמות הקרינה שהקולט סופג. ההידרדרות הדרגתית ולכן קשה להבחין בה, וניקוי הוא חלק מתחזוקה בסיסית של המערכת.",
       },
     ],
-    relatedServices: ["solar", "heating-element"],
+    relatedServices: ["solar", "heating-element", "leak-repair"],
   },
 
   // ── Seasonal cluster ───────────────────────────────────────────────────────

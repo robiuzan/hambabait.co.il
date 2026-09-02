@@ -119,34 +119,50 @@ nothing written claims one.
 Written into `cityContent` in `lib/content.ts` on 2026-08-25. Every entry uses the building-height
 anchor (§4a) plus at least one secondary anchor (§4b), and each carries 1–2 city-specific FAQs.
 
-| #   | Slug            | City        | Coastal | Primary angle                                       | Secondary angle                           |
-| --- | --------------- | ----------- | ------- | --------------------------------------------------- | ----------------------------------------- |
-| 1   | `tel-aviv`      | תל אביב     | ~       | old low-rise w/ private solar vs new towers         | salt air → anode wear                     |
-| 2   | `jerusalem`     | ירושלים     | —       | cold winters shift load to the electric element     | varied stock: stone low-rise vs newer     |
-| 3   | `haifa`         | חיפה        | ✅      | hillside siting complicates roof access             | salt air → anode wear                     |
-| 4   | `rishon-lezion` | ראשון לציון | ~       | growth in waves → build year predicts the fault     | western areas more exposed than eastern   |
-| 5   | `petah-tikva`   | פתח תקווה   | —       | urban renewal: solar-on-roof → electric-in-flat     | RCD trips become the common symptom       |
-| 6   | `netanya`       | נתניה       | ✅      | seafront towers (electric) vs low-rise east (solar) | direct salt exposure on the shore strip   |
-| 7   | `ashdod`        | אשדוד       | ✅      | planned low-rise → private solar widespread         | salt air → anode wear                     |
-| 8   | `beer-sheva`    | באר שבע     | —       | strong irradiance → solar carries winter too        | hard water → scale is the failure mode    |
-| 9   | `holon`         | חולון       | —       | 1960s–70s walk-ups, several systems per shared roof | identifying which system is yours         |
-| 10  | `bnei-brak`     | בני ברק     | —       | large households → high draw, element runs hot      | "runs out" = undersized tank, not a fault |
-| 11  | `ramat-gan`     | רמת גן      | —       | old walk-ups and tower districts side by side       | RCD trips in the electric stock           |
-| 12  | `rehovot`       | רחובות      | —       | low-rise / private homes → single-owner roofs       | no committee → no periodic inspection     |
-| 13  | `herzliya`      | הרצליה      | ~       | detached housing → private roof, standalone systems | coastal exposure near the shore           |
-| 14  | `kfar-saba`     | כפר סבא     | —       | garden-city low-rise → private solar common         | **no** coastal corrosion — ages slower    |
-| 15  | `modiin`        | מודיעין     | —       | uniformly young stock → whole areas age together    | inland; first component replacements due  |
-| 16  | `bat-yam`       | בת ים       | ✅      | directly on the sea + dense older stock             | sharpest corrosion case on the list       |
-| 17  | `raanana`       | רעננה       | —       | low-rise, single-owner roofs                        | set back from the coast → milder exposure |
-| 18  | `ashkelon`      | אשקלון      | ✅      | spread-out low-rise → solar widespread              | strong sun and salt air together          |
+| #   | Slug            | City        | Coastal | Primary angle                                       | Secondary angle                                        |
+| --- | --------------- | ----------- | ------- | --------------------------------------------------- | ------------------------------------------------------ |
+| 1   | `tel-aviv`      | תל אביב     | ~       | old low-rise w/ private solar vs new towers         | salt air → anode wear                                  |
+| 2   | `jerusalem`     | ירושלים     | —       | cold winters shift load to the electric element     | varied stock: stone low-rise vs newer                  |
+| 3   | `haifa`         | חיפה        | ✅      | hillside siting complicates roof access             | salt air → anode wear                                  |
+| 4   | `rishon-lezion` | ראשון לציון | ~       | growth in waves → build year predicts the fault     | western areas more exposed than eastern                |
+| 5   | `petah-tikva`   | פתח תקווה   | —       | urban renewal: solar-on-roof → electric-in-flat     | RCD trips become the common symptom                    |
+| 6   | `netanya`       | נתניה       | ✅      | seafront towers (electric) vs low-rise east (solar) | direct salt exposure on the shore strip                |
+| 7   | `ashdod`        | אשדוד       | ✅      | planned low-rise → private solar widespread         | salt air → anode wear                                  |
+| 8   | `beer-sheva`    | באר שבע     | —       | strong irradiance → solar carries winter too        | hard water → scale is the failure mode                 |
+| 9   | `holon`         | חולון       | —       | 1960s–70s walk-ups, several systems per shared roof | identifying which system is yours                      |
+| 10  | `bnei-brak`     | בני ברק     | —       | large households → high draw, element runs hot      | "runs out" = undersized tank, not a fault              |
+| 11  | `ramat-gan`     | רמת גן      | —       | old walk-ups and tower districts side by side       | RCD trips in the electric stock                        |
+| 12  | `rehovot`       | רחובות      | —       | low-rise / private homes → single-owner roofs       | research/teaching institutions → fixed-term tenants 🔶 |
+| 13  | `herzliya`      | הרצליה      | ~       | detached housing → private roof, standalone systems | coastal exposure near the shore                        |
+| 14  | `kfar-saba`     | כפר סבא     | —       | garden-city low-rise → private solar common         | mature-tree shading cuts collector yield 🔶            |
+| 15  | `modiin`        | מודיעין     | —       | uniformly young stock → whole areas age together    | inland; first component replacements due               |
+| 16  | `bat-yam`       | בת ים       | ✅      | directly on the sea + dense older stock             | sharpest corrosion case on the list                    |
+| 17  | `raanana`       | רעננה       | —       | low-rise, single-owner roofs                        | storage tank vs instantaneous heater expectations 🔶   |
+| 18  | `ashkelon`      | אשקלון      | ✅      | spread-out low-rise → solar widespread              | strong sun and salt air together                       |
 
 **No city was removed.** Every one had at least one truthful, discriminating angle available.
 
-The weakest cases are `rehovot`, `raanana` and `kfar-saba`: all three lean on the
-low-rise/private-roof pattern and differ from each other mainly in distance from the coast. **If any
-of the 18 need deepening first, it is those three** — and if a future review decides one of them
-cannot be genuinely differentiated, removing it is the preferred outcome over padding
-(`content-standards.md` §3).
+### ✅ Deepened 2026-08-31 — the three weakest are no longer the three weakest
+
+`rehovot`, `raanana` and `kfar-saba` were the weakest cases: all three leaned on the
+low-rise/private-roof pattern and differed from each other mainly in distance from the coast. Each
+now carries a **third paragraph built on a genuinely different dimension**:
+
+| City        | New dimension                                       | The technical consequence it earns                                                                                     |
+| ----------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `rehovot`   | research/teaching institutions → fixed-term tenants | the person who meets the fault is not the person who decides repair-vs-replace                                         |
+| `raanana`   | residents who arrived from abroad                   | an instantaneous heater stores nothing; a finite-volume tank behaves differently, and that difference reads as a fault |
+| `kfar-saba` | mature trees beside low buildings                   | partial collector shading cuts yield with nothing broken — gradual decline, worst in winter                            |
+
+**All three city characterisations are 🔶 reasoned, not sourced**, and are logged in
+[business-facts.md](business-facts.md) §3.7 with the exact question each one needs answered. The
+_technical_ consequence drawn from each is ✅ verifiable general physics, which is what makes the
+paragraph safe to ship while the framing is still unconfirmed.
+
+None of the three says anything about _our_ presence, speed or coverage in that city.
+
+> **The rule still stands:** if a future review decides a city cannot be genuinely differentiated,
+> removing it is the preferred outcome over padding (`content-standards.md` §3).
 
 ✅ coastal · ~ partial exposure · — inland
 

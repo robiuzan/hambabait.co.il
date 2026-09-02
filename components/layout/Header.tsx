@@ -27,26 +27,49 @@ export function Header() {
   const pathname = usePathname();
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  // The expanded menu sits inside the sticky header; lock body scroll while it is open so
-  // the page cannot scroll away underneath it.
+  // Disclosure pattern, not a dialog: the panel is in-flow directly after the toggle, so the
+  // natural Tab order already walks into it and no focus trap applies.
+  //
+  // Everything that may only be live while the panel is open lives in this one effect, so it
+  // all tears down together:
+  //   • Body scroll lock — the page must not scroll away underneath the panel. This is only
+  //     safe because the panel is now its own scroll container (max-h + overflow-y-auto
+  //     below); without that, a 320×256 viewport (400% zoom) locked the body around a ~445px
+  //     panel and the lower menu items and the call button were unreachable.
+  //   • Escape is bound to `document`, not to the <header>: an element handler only fires
+  //     while focus is inside that element, so Escape did nothing once focus left the header.
+  //     Closing returns focus to the toggle.
+  //   • The lg breakpoint — the panel is hidden by `lg:hidden` while `open` stays true, so
+  //     resizing past 1024px with the menu open left the body scroll-locked with no visible
+  //     control to unlock it.
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
+
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+
+    // 64rem is the Tailwind `lg` breakpoint — the exact width at which `lg:hidden` takes the
+    // panel and the toggle away.
+    const mql = window.matchMedia("(min-width: 64rem)");
+    const onBreakpoint = (e: MediaQueryListEvent) => {
+      if (e.matches) setOpen(false);
+    };
+    mql.addEventListener("change", onBreakpoint);
+
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      mql.removeEventListener("change", onBreakpoint);
     };
   }, [open]);
-
-  // Disclosure pattern, not a dialog: the panel is in-flow directly after the toggle, so the
-  // natural Tab order already walks into it and no focus trap applies. Escape closes and
-  // returns focus to the toggle.
-  function onKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Escape" && open) {
-      setOpen(false);
-      toggleRef.current?.focus();
-    }
-  }
 
   const desktopLink = (href: string) =>
     cn(
@@ -63,10 +86,7 @@ export function Header() {
     );
 
   return (
-    <header
-      className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur"
-      onKeyDown={onKeyDown}
-    >
+    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
       <Container className="flex h-16 items-center justify-between gap-4">
         <Link
           href="/"
@@ -105,10 +125,12 @@ export function Header() {
           </Button>
 
           {/* Under 640px the full phone Button is hidden — without this icon link the header
-              carries no call affordance at all on phones, the device that actually dials. */}
+              carries no call affordance at all on phones, the device that actually dials.
+              Its own data-cta: sharing "header-call" with the bar button collapsed a
+              phone-only placement and a desktop-only one into a single unreadable metric. */}
           <a
             href={telHref}
-            data-cta="header-call"
+            data-cta="header-call-icon"
             aria-label={`חיוג אל ${siteConfig.name}: ${siteConfig.phone}`}
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-accent-foreground sm:hidden"
           >
@@ -124,15 +146,26 @@ export function Header() {
             aria-controls="mobile-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {/* aria-hidden like every other icon on the site: the button's accessible name
+                comes from aria-label, and the glyph would otherwise be announced twice. */}
+            {open ? (
+              <X className="h-6 w-6" aria-hidden />
+            ) : (
+              <Menu className="h-6 w-6" aria-hidden />
+            )}
           </button>
         </div>
       </Container>
 
-      {/* Mobile menu */}
+      {/* Mobile menu. The panel is its own scroll container because the body is locked while
+          it is open: 100vh minus the h-16 (4rem) header bar is exactly the room it has, and
+          overscroll-contain keeps the scroll chain from leaking to the locked page. */}
       <div
         id="mobile-menu"
-        className={cn("border-t border-gray-100 lg:hidden", open ? "block" : "hidden")}
+        className={cn(
+          "max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain border-t border-gray-100 lg:hidden",
+          open ? "block" : "hidden",
+        )}
       >
         <Container className="py-4">
           <nav aria-label="ראשי נייד">
@@ -153,7 +186,7 @@ export function Header() {
           </nav>
           <Button
             href={telHref}
-            data-cta="header-call"
+            data-cta="mobile-menu-call"
             variant="accent"
             size="lg"
             className="mt-3 w-full"

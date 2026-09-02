@@ -1,9 +1,9 @@
 # Media assets — חם בבית
 
-> The image inventory, byte budgets, alt text and provenance. **The site currently ships zero images.**
+> The image inventory, byte budgets, alt text and provenance. **The site ships zero photographs.**
 >
-> Cited by `media-asset-producer`, `performance-web-vitals`, `responsive-accessibility`.
-> Compiled 2026-08-25.
+> Cited by `media-asset-producer`, `image-art-director`, `performance-web-vitals`,
+> `responsive-accessibility`. Compiled 2026-08-25 · updated 2026-09-01.
 
 ---
 
@@ -11,15 +11,20 @@
 
 `public/` contains exactly two files: `_headers` and `llms.txt`.
 
-| Asset           | State                                                                    |
-| --------------- | ------------------------------------------------------------------------ |
-| Favicon         | `app/icon.svg` ✅                                                        |
-| OG image        | external host, via the manifest `images` block ⚠️ third-party dependency |
-| Hero            | ❌ none                                                                  |
-| Logo file       | ❌ none                                                                  |
-| Service imagery | ❌ none                                                                  |
-| Photos of work  | ❌ none                                                                  |
-| Diagrams        | ❌ none                                                                  |
+| Asset           | State                                                                          |
+| --------------- | ------------------------------------------------------------------------------ |
+| Favicon         | `app/icon.svg` ✅                                                              |
+| OG image        | `hambabait/og.jpg` in the Media Studio catalog, served from `imgquarry.com` ✅ |
+| Diagrams        | 4 inline SVGs in `components/marketing/GuideDiagram.tsx`, on 4 guides ✅       |
+| Hero            | ❌ none                                                                        |
+| Logo file       | ❌ none                                                                        |
+| Service imagery | ❌ none                                                                        |
+| Photos of work  | ❌ none                                                                        |
+
+**Who does what.** `media-asset-producer` owns this file, the byte budgets, the diagrams and the
+markup. `image-art-director` decides whether a photograph belongs in a given slot at all and, when
+one does, writes the prompt file that produces it — see §1a. The art director never writes markup
+and never edits `site.config.json`.
 
 ---
 
@@ -40,6 +45,43 @@ The hero renders type, not an image. That makes LCP about as fast as it can be.
 > **Adding a hero image can only make LCP worse.** It may still be worth it — for conversion, for
 > E-E-A-T, for the credibility of showing real work — but that cost is stated and budgeted, never
 > slipped in as a free improvement. Measure before and after, and be willing to revert.
+
+---
+
+## 1a. The one pipeline that does exist: the Media Studio
+
+§1 is about this **repo**, and it stays true: nothing here resizes, converts or budgets a file. But
+raster assets do not have to live in `public/`. The fleet's Media Studio already carries this site:
+
+```
+Media Studio/prompts/hambabait/<slot>.md      the prompt — the approval unit, committed
+        │  owner sets approved: (never an agent)
+        ▼
+scripts/generate-image.mjs → tmp/generated/   a FILE. No upload, no R2, no D1.
+        │  studio-api.ps1 -Action Upload      EXIF stripped · sha256 · history/ archive · replace guards
+        ▼
+R2 → imgquarry.com/<key>                      transformed at the edge by /cdn-cgi/image/
+        │  ops/sync-media.ps1
+        ▼
+roster/sites/hambabait.json + site.config.json   the images block: key, dimensions, alt, altHe
+```
+
+The manifest's `images` block is already wired: `mediaHost: "imgquarry.com"`, `defaultQuality: 80`,
+`og.key: "hambabait/og.jpg"` (1200×630, 39,026 bytes, sha256 on file), `badges: []`, `gallery: null`.
+
+Three rules this pipeline imposes, none of them optional:
+
+- **`images.key` is immutable.** Replacing a photo is an overwrite at the **same key**. The Media
+  Studio refuses a replacement that changes the aspect ratio by more than ±0.01 or that is narrower
+  than the original, because deployed HTML carries baked `width`/`height`.
+- **Hebrew alt is enforced at publish**, because `sites.dir = 'rtl'` for this domain. `altHe` is not
+  a nicety here; the route rejects the publish without it.
+- **`site.config.json` is written by `ops/sync-media.ps1`, never by hand** — the same golden rule 3
+  that governs the rest of the manifest.
+
+Provenance for anything that comes through this path is **"AI-generated from
+`Media Studio/prompts/hambabait/<slot>.md`"**. It is never "a photo of our work", and §4 explains why
+that distinction is the whole point.
 
 ---
 
@@ -97,6 +139,20 @@ JPEG.
 
 Real photos are an **owner action**. Document the request; do not fill the hole.
 
+### The narrow envelope a photograph may occupy
+
+Because of the above, the only subject matter this site may honestly photograph — generated or
+otherwise — is **equipment and physical reality**: a boiler, a solar collector on a rooftop, a
+corroded anode rod, a scaled heating element, a burnt thermostat, a ceiling hatch, a roof.
+
+**No people in frame. None** — not a technician, not a crew, not a customer, and not a pair of hands
+performing a repair. Sibling fleet sites allow approved brand characters; this one does not, and
+`Media Studio/refs/` has no `hambabait` directory precisely because there is nothing to keep
+consistent. Also out: vans, uniforms, branded workwear, signage, logos, livery, any lettering in the
+frame, any price, and any framing that reads as a specific job this business performed.
+
+`image-art-director` enforces this envelope at the prompt, before an image exists.
+
 ---
 
 ## 5. What can be built honestly: diagrams
@@ -104,13 +160,17 @@ Real photos are an **owner action**. Document the request; do not fill the hole.
 Inline SVG diagrams are the safe, high-value asset class here. They illustrate **technical reality**,
 which needs no business fact — the same reason the knowledge hub is safe.
 
-| Diagram                                                        | Serves                                     |
-| -------------------------------------------------------------- | ------------------------------------------ |
-| How a דוד שמש works — collector, tank, backup element          | `/services/solar/`, איך עובד דוד שמש       |
-| Where a leak originates — fitting vs connection vs failed tank | `/services/leak-repair/`, `replacement`    |
-| What an anode does and how it wears                            | `heating-element`, coastal city pages      |
-| Thermostat vs element fault decision tree                      | `thermostat` ↔ `heating-element` blur pair |
-| Symptom → likely cause                                         | the symptom guides                         |
+| Diagram                                                        | `GuideDiagramName`      | State                                   |
+| -------------------------------------------------------------- | ----------------------- | --------------------------------------- |
+| How a דוד שמש works — collector, tank, backup element          | `solar-system`          | ✅ shipped                              |
+| Where a leak originates — fitting vs connection vs failed tank | `leak-origin`           | ✅ shipped                              |
+| What an anode does and how it wears                            | `anode-wear`            | ✅ shipped                              |
+| Thermostat vs element fault decision tree                      | `thermostat-vs-element` | ✅ shipped                              |
+| Symptom → likely cause                                         | —                       | ❌ not drawn; would need a union member |
+
+The union is typed in `lib/guides.ts`; a guide opts in through its optional `diagram` field, and the
+SVGs live in `components/marketing/GuideDiagram.tsx`. **Check the union before proposing a fifth** —
+adding a diagram means adding a member, not a parallel set.
 
 **Rules:** inline SVG · `role="img"` with a Hebrew `<title>` · real `<text>` elements where possible ·
 **RTL-correct reading order** · legible in light and dark · never colour as the sole carrier of
@@ -134,20 +194,30 @@ Hebrew, specific, describing **what is in the image and why it is here**.
 | ❌  | `alt="תיקון דודים חם בבית תיקון דוד שמש"` — keyword stuffing; reads as spam to screen readers and search engines alike |
 | ✅  | `alt="תרמוסטט שרוף שהוצא מדוד חשמל, עם סימני חריכה על המגעים"`                                                         |
 
-Alt text is an **accessibility obligation first**, and it is legally in scope: the site publishes a
-statement referencing ת״י 5568 and WCAG.
+Alt text is an **accessibility obligation first**, and it is in scope regardless of what the site
+says about itself. `/הצהרת-נגישות/` was rewritten to claim **no** conformance with ת״י 5568 or WCAG —
+it now states only what was actually checked, with a date. That lowers nothing: bad alt text is a
+real defect rather than merely a broken promise, and **that page must never be cited as evidence the
+site is accessible.**
+
+Alt text also carries claims. Years of experience, response times, ratings, customer counts and
+warranty terms are unsourced on this site ([docs/business-facts.md](business-facts.md)) — an `alt`
+attribute is not a hiding place for one.
 
 ---
 
 ## 7. Inventory
 
-| File           | Route | Purpose  | Dimensions | Budget | Actual | Alt | Type   | Provenance                     |
-| -------------- | ----- | -------- | ---------- | ------ | ------ | --- | ------ | ------------------------------ |
-| `app/icon.svg` | all   | favicon  | —          | —      | —      | —   | vector | in repo                        |
-| _(external)_   | all   | OG image | 1200×630   | 200 KB | —      | —   | photo  | ⚠️ external host, via manifest |
+| File / key         | Route    | Purpose  | Dimensions | Budget     | Actual   | Alt                               | Type   | Provenance                                                                |
+| ------------------ | -------- | -------- | ---------- | ---------- | -------- | --------------------------------- | ------ | ------------------------------------------------------------------------- |
+| `app/icon.svg`     | all      | favicon  | —          | —          | —        | —                                 | vector | in repo                                                                   |
+| `hambabait/og.jpg` | all      | OG card  | 1200×630   | 200 KB     | 39,026 B | `images.og.altHe` in the manifest | raster | Media Studio catalog → `imgquarry.com`; 🔶 origin of the bytes unrecorded |
+| `GuideDiagram.tsx` | 4 guides | diagrams | —          | 15 KB each | inline   | Hebrew `<title>` per diagram      | vector | hand-drawn in repo                                                        |
 
 **The provenance column is what stops a stock photo drifting into the site six months from now.** Every
-row must name where the asset came from and who owns it.
+row must name where the asset came from and who owns it. For anything the Media Studio generates,
+provenance is the prompt file path — `Media Studio/prompts/hambabait/<slot>.md` — and never "a photo
+of our work".
 
 ---
 

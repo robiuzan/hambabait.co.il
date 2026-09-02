@@ -10,7 +10,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "qa:gate": "node scripts/qa-gate.mjs"
   },
   "dependencies": {
     "@ishub/site-kit": "file:vendor/ishub-site-kit-0.0.0.tgz",

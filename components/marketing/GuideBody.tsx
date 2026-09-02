@@ -7,7 +7,8 @@ import type { GuideBlock } from "@/lib/guides";
  * Tables are real <table> markup with a <caption> and scoped headers: answer engines lift
  * tabular comparisons far more reliably than prose, and screen readers announce the
  * caption. They scroll inside their own container so a wide table never makes the page
- * scroll horizontally.
+ * scroll horizontally, and that container is focusable so the scroll is reachable from
+ * the keyboard and not only from a mouse or a touch drag.
  */
 export function GuideBody({ blocks }: { blocks: GuideBlock[] }) {
   return (
@@ -55,7 +56,18 @@ export function GuideBody({ blocks }: { blocks: GuideBlock[] }) {
 
           case "table":
             return (
-              <div key={i} className="mt-6 overflow-x-auto">
+              // Focusable scroll container: without a tab stop, a keyboard user on a
+              // viewport narrower than min-w-[30rem] cannot reach the second column
+              // (SC 2.1.1). role="group" and not role="region" — a landmark per table
+              // would bury the page's real landmarks. The caption doubles as the
+              // accessible name so the label can never drift from the table.
+              <div
+                key={i}
+                className="mt-6 overflow-x-auto"
+                tabIndex={0}
+                role="group"
+                aria-label={block.caption}
+              >
                 <table className="w-full min-w-[30rem] border-collapse text-start text-sm">
                   <caption className="pb-3 text-start text-sm font-bold text-primary">
                     {block.caption}

@@ -13,7 +13,12 @@ const base =
 const variants: Record<Variant, string> = {
   accent: "bg-accent text-accent-foreground hover:bg-accent-600",
   primary: "bg-primary text-primary-foreground hover:bg-primary-500",
-  whatsapp: "bg-[#25D366] text-white hover:bg-[#1da851]",
+  // WhatsApp keeps its brand fill; the LABEL is what changed. White on #25D366 is 1.98:1
+  // and fails AA — #344256 (primary) on it is 5.14:1. That inverts the hover direction too:
+  // the old darker #1da851 dropped the dark label to 3.29:1, so hover now moves LIGHTER.
+  // #4add80 is a 15% white tint of the brand green and holds the label at 5.80:1.
+  // The lucide icons inherit currentColor, so they clear the 3:1 non-text floor with it.
+  whatsapp: "bg-[#25D366] text-primary hover:bg-[#4add80]",
   outline: "border-2 border-primary text-primary hover:bg-primary hover:text-white",
 };
 

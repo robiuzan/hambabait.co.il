@@ -16,10 +16,12 @@ export function MobileCtaBar() {
         <Phone className="h-5 w-5" aria-hidden />
         חייגו עכשיו
       </a>
+      {/* Dark label on the WhatsApp brand fill: white on #25D366 is 1.98:1 and fails AA;
+          primary (#344256) on it is 5.14:1. Matches the Button `whatsapp` variant. */}
       <a
         href={whatsappHref("היי, אני מעוניין/ת בשירות תיקון דוד")}
         data-cta="sticky-whatsapp"
-        className="flex items-center justify-center gap-2 bg-[#25D366] py-3.5 font-semibold text-white"
+        className="flex items-center justify-center gap-2 bg-[#25D366] py-3.5 font-semibold text-primary"
         aria-label={`וואטסאפ ${siteConfig.name}`}
       >
         <MessageCircle className="h-5 w-5" aria-hidden />

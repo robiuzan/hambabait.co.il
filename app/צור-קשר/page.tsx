@@ -43,7 +43,11 @@ export default function ContactPage() {
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/10 text-[#1da851]">
+                {/* #1da851 measured 2.88:1 on the 10%-alpha WhatsApp tint (#e9fbf0), under the
+                    3:1 non-text floor. The icon is aria-hidden and duplicated by the adjacent
+                    text link, so it is decorative and technically exempt — but accent-600 costs
+                    nothing and measures 6.32:1, and it uses a token like the sibling rows do. */}
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/10 text-accent-600">
                   <MessageCircle className="h-5 w-5" aria-hidden />
                 </span>
                 <a

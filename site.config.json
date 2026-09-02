@@ -1,5 +1,5 @@
 {
-  "_comment": "Normalized per-site manifest. SYNCED FROM THE HUB: 'Israeli services sites'/roster/sites/hambabait.json. Edit there (the canonical roster) and sync here. Conforms to @ishub/site-kit SiteManifest.",
+  "_comment": "Normalized per-site manifest. SYNCED FROM THE HUB: 'Israeli services sites'/roster/sites/<domain>.json. Edit there (the canonical roster) and run ops/sync-manifest.ps1. Never edit this file directly. Conforms to @ishub/site-kit SiteManifest.",
   "domain": "hambabait.co.il",
   "url": "https://hambabait.co.il",
   "brandName": "חם בבית",
@@ -9,7 +9,7 @@
   "dir": "rtl",
   "foundedYear": null,
   "tagline": "מומחים לתיקון דודים – שירות מהיר, מקצועי ואמין לכל סוגי הדודים",
-  "shortPitch": "תיקון דודים בכל הארץ — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. אבחון מהיר, עבודה מקצועית ומחיר הוגן, עם אחריות על העבודה.",
+  "shortPitch": "תיקון דודים בכל הארץ — דוד שמש, דוד חשמל, תרמוסטט, אלמנט ונזילות. אבחון מדויק, עבודה מקצועית והצעת מחיר ברורה לפני שמתחילים.",
   "contact": {
     "phoneDisplay": "055-6601006",
     "phoneE164": "+972556601006",
@@ -46,6 +46,7 @@
   },
   "analytics": {
     "gtmId": "GTM-KWGGH438",
+    "ga4MeasurementId": null,
     "googleSiteVerification": null
   },
   "images": {
