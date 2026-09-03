@@ -47,7 +47,7 @@ telling "my build didn't ship" apart from "a zone rule is interfering".
 npm run lint && npm run typecheck && npm run format:check && npm run build && npm run qa:gate
 ```
 
-`qa:gate` runs `scripts/qa-gate.mjs` over `out/`: **25 assertions** covering built-page and indexable
+`qa:gate` runs `scripts/qa-gate.mjs` over `out/`: **28 assertions** covering built-page and indexable
 counts (47 / 45), sitemap `<loc>` count and byte-identical canonical parity, JSON-LD and canonical
 coverage, unique and non-doubled titles, unique descriptions, one `<h1>` per page, the banned schema
 properties (`aggregateRating`, `reviewCount`, `ratingValue`, `foundingDate`, `warrantyPromise`) and

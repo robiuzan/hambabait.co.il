@@ -18,6 +18,8 @@ find out -name index.html | wc -l                                   # 47  (45 in
 grep -rl 'application/ld+json' out --include=index.html | wc -l     # 45
 grep -rl 'rel="canonical"'     out --include=index.html | wc -l     # 45
 grep -o '<loc>' out/sitemap.xml | wc -l                             # 45
+grep -o '<lastmod>' out/sitemap.xml | wc -l                         # 12  <- guides only; the other 33 have no real date
+grep -c 'changefreq\|priority' out/sitemap.xml                      # 0   <- Google ignores both. Never add them
 grep -rl '"@type":"Plumber"'   out --include=index.html | wc -l     # 37  (home + 6 services + 18 cities + 12 guides)
 grep -rl '"@type":"Service"'   out --include=index.html | wc -l     # 24  (6 services + 18 area-scoped cities)
 grep -rl '"@type":"Article"'   out --include=index.html | wc -l     # 12
@@ -28,8 +30,8 @@ grep -rl '<img' out --include=index.html | wc -l                    # 0   <- zer
 grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u | wc -l   # 27
 ```
 
-**The gate is five steps now, not four.** `npm run qa:gate` (`scripts/qa-gate.mjs`) runs **25
-assertions over `out/`** and on this snapshot reports **25 passed, 0 failed**. It is the mechanism
+**The gate is five steps now, not four.** `npm run qa:gate` (`scripts/qa-gate.mjs`) runs **28
+assertions over `out/`** and on this snapshot reports **28 passed, 0 failed**. It is the mechanism
 that keeps this section from going stale between snapshots — route counts, unique non-doubled
 titles, one H1, canonical↔sitemap byte parity, JSON-LD parseability, the `WebSite` node, consent
 default ordering, the banned schema properties (`aggregateRating`, `reviewCount`, `ratingValue`,
@@ -42,6 +44,9 @@ physical-direction Tailwind utilities are all asserted, not remembered.
 | Built HTML files         | 48 (47 `index.html` + `out/404.html`), 3.96 MB on disk                                                                                                                          |
 | JSON-LD coverage         | 45 / 45 ✅ (404 and `/תודה/` bare, both correct)                                                                                                                                |
 | Canonical ↔ sitemap      | 45 / 45 byte-identical ✅ (asserted by `qa:gate`)                                                                                                                               |
+| Sitemap `<lastmod>`      | **12 of 45** — the guides only, each a real `updated` date. The other 33 carry none **by design**; a build timestamp is not a content date. Gated                               |
+| GSC verification         | **DNS TXT / Domain property.** `googleSiteVerification` stays `null` deliberately — not an open action. Sitemap submitted once in that property                                 |
+| Hosts serving the site   | **3** — apex, `www` (200, **not** a 301) and `hambabait.pages.dev`. All canonicalize to the apex; the `www` redirect is an open owner action                                    |
 | `WebSite` node           | ✅ homepage only — **the graph is complete**. No `SearchAction`: no search exists                                                                                               |
 | Titles                   | unique, 0 doubled brand ✅                                                                                                                                                      |
 | H1                       | exactly 1 on every page ✅                                                                                                                                                      |
@@ -163,6 +168,9 @@ true once and is false now; each is the kind of claim an agent acts on without r
 | "The 40–60 word answer block ships on every page"        | 36 of 45 URLs carry one; the band is guidance, and bodies measure 32–47 words                  |
 | "`shortPitch` puts an unsourced warranty in the JSON-LD" | Synced and softened; the phrase survives once in a separate homepage FAQ answer                |
 | "The gate is four commands"                              | Five — `npm run qa:gate` is part of it                                                         |
+| "The gate runs 25 assertions"                            | 28 — sitemap `lastmod` count, its date-only shape, and the `robots.txt` pointer were added     |
+| "Every sitemap URL carries a `lastmod`"                  | 12 do (the guides). The other 33 carry none on purpose — a build timestamp is not a date       |
+| "`googleSiteVerification` is an open owner action"       | No. Verification is DNS TXT; the field is `null` **deliberately** and must stay that way       |
 
 > **The rule this section encodes:** a doc that was right last week is not evidence. Before citing a
 > number from any file in this directory, check it against §0 or re-run the command beside it.

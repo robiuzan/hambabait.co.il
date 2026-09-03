@@ -41,6 +41,11 @@ and averaging the guides (informational, zero commercial intent) with the locati
 The submitted denominator is **45**, not 32. The sitemap carries 45 `<loc>` entries; `/תודה/` is
 deliberately excluded as a `noindex` conversion destination and the 404 is not a route.
 
+**Read `Indexed / submitted` in the Domain property.** Ownership is verified by DNS TXT, and only a
+Domain property covers all three hosts that serve the site (`hambabait.co.il`, `www` — currently 200
+rather than a redirect — and `hambabait.pages.dev`). A URL-prefix property reports on one of them and
+will understate coverage.
+
 ---
 
 ## 1. The verified technical baseline
@@ -68,7 +73,7 @@ at **40,451 B raw / 8,723 B gzip**, `out/index.html` at **184,799 B raw / 25,205
 chunk **172,834 B raw / 53,531 B gzip**. Shared First Load JS **87.5 kB**.
 
 **`npm run qa:gate` re-asserts the structural half of this on every release** —
-`scripts/qa-gate.mjs`, 25 assertions over `out/`, currently 25 passed / 0 failed. It runs alongside
+`scripts/qa-gate.mjs`, 28 assertions over `out/`, currently 28 passed / 0 failed. It runs alongside
 `lint`, `typecheck`, `format:check` and `build`, and it is the regression net. Among what it checks:
 one canonical per page, canonical ↔ sitemap byte parity, exactly one `<h1>`, unique titles and
 descriptions, the `WebSite` node on the homepage, the Consent Mode default preceding the GTM
@@ -176,7 +181,7 @@ loads whenever the id changes.
 | **Container behind the 27-value inventory** | new identifiers record nothing and `header-call` now under-counts — see §2. **Owner action, and the highest-value one on this page.**                                                                                                                        |
 | **`lead_submit_blocked` has no tag**        | honeypot activity is invisible, so a bot-suppressed quiet period looks like a conversion drop                                                                                                                                                                |
 | **Consent Mode v2 now ships**               | analytics are `denied` by default until the visitor chooses, so **measured traffic will drop against any pre-consent baseline**. That drop is the gate working. Do not read it as a regression, and do not compare across the boundary without labelling it. |
-| **`googleSiteVerification` is `null`**      | `app/layout.tsx` now has a `verification` block guarded on presence — the wiring is done. The roster value is still `null`, so no verification meta ships. **Owner action.**                                                                                 |
+| **GSC verification is DNS-based**           | `googleSiteVerification` stays `null` **by design** — ownership is a DNS TXT record on the Cloudflare zone, verified as a Domain property. The guarded `verification` block in `app/layout.tsx` therefore ships nothing, correctly. Not an open action.      |
 | **[needs confirmation]** GA4 routing        | unverifiable without console access                                                                                                                                                                                                                          |
 | **[needs confirmation]** Web3Forms inbox    | a lead can "succeed" and reach nobody                                                                                                                                                                                                                        |
 

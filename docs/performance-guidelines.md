@@ -199,6 +199,6 @@ Before any change that touches assets, fonts, client components or third parties
 5. If a budget is exceeded, either bring it back under or **state explicitly what was bought with the
    overspend** and get that trade accepted.
 
-`npm run qa:gate` (25 assertions over `out/`) runs the correctness half and fails the release gate
+`npm run qa:gate` (28 assertions over `out/`) runs the correctness half and fails the release gate
 when one breaks. **It asserts nothing about bytes** — no size assertion exists, which is exactly why
 this section is a discipline rather than a gate, and why step 4 above is the whole mechanism.

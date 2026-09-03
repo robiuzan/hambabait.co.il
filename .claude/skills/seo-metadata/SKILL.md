@@ -103,16 +103,19 @@ indexable set.
 `locations` (18) + `guides` (12) = **45 URLs**. Never hand-maintain a list; add a service, city or
 guide to its array and the sitemap follows.
 
-Two invariants:
+Three invariants:
 
 1. **Trailing slash on every `loc`**, matching `trailingSlash: true`. A slashless entry sends crawlers
    through a redirect hop.
 2. **`encodeURI` on every `loc`.** The protocol requires escaped URLs and the host matches the escaped
    key. Guides inherit this through their Hebrew parent segment.
 
-`lastModified` is `new Date()` for everything except the guides, which use their own `updated` date.
-That is honest for the guides and approximately meaningless for the rest — do not read it as a
-freshness signal, and do not "improve" it by inventing per-page dates.
+3. **`lastModified` only where a real date exists.** The 12 guides emit `<lastmod>` from their own
+   `updated` field; the other 33 URLs emit **none**, which the protocol allows. They carried
+   `new Date()` until 2026-09-03 — a build timestamp, identical to the millisecond, claiming 33 pages
+   changed on every deploy. An untrustworthy `lastmod` gets discounted site-wide, so the false date
+   was costing the guides their true one. Do not restore it and do not invent per-page dates to fill
+   the gap. `qa:gate` asserts the count is exactly 12 and every value is date-only.
 
 `app/robots.ts` emits `User-agent: *` / `Allow: /`, an explicit **AI-crawler allow list** (retrieval
 bots and training bots, fleet-wide policy), and the sitemap pointer. Nothing is disallowed. The
@@ -140,8 +143,11 @@ source.
 verification meta is worse than none. The field existed for months with no block to consume it, so
 setting it in the roster silently did nothing; that is fixed.
 
-The value is still unset. To verify: set it in the roster, run `ops/sync-manifest.ps1`, rebuild, and
-check the meta tag in `out/index.html` — or verify by DNS TXT and leave the field alone.
+**The value stays unset on purpose.** As of 2026-09-03 ownership is verified by **DNS TXT on the
+Cloudflare zone**, as a Domain property — which covers the apex, `www` (currently 200, not a
+redirect) and `hambabait.pages.dev` in one property. So the roster field is deliberately `null` and
+the block deliberately emits nothing; this is **not** an open action. See the `search-console-ops`
+skill for the record shape and the submission rules.
 
 ## Heading discipline
 

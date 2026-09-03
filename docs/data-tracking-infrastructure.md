@@ -193,14 +193,20 @@ Do not implement any of these unilaterally — each adds a processor and a priva
 
 ## 5. Search Console
 
-`app/layout.tsx` now emits a `verification` block, **guarded on presence** — the manifest field
-existed for months with no block consuming it, so setting it in the roster silently did nothing.
+`app/layout.tsx` emits a `verification` block, **guarded on presence** — the manifest field existed
+for months with no block consuming it, so setting it in the roster silently did nothing.
 
-**`analytics.googleSiteVerification` is still `null`.** The plumbing is ready; the value is an owner
-action. When it arrives: edit the **roster**, sync to `site.config.json`, rebuild, deploy, verify.
+**`analytics.googleSiteVerification` stays `null` on purpose.** As of 2026-09-03 ownership is verified
+by **DNS TXT on the Cloudflare zone**, as a **Domain property** — chosen over the meta tag because it
+survives a re-deploy and because three hosts serve byte-identical copies of all 45 pages
+(`hambabait.co.il`, `www.hambabait.co.il` at **200, not a 301**, and `hambabait.pages.dev`). A
+URL-prefix property would report on only one. The guarded block correctly ships nothing; this is
+**not** an outstanding action, and the field should not be filled in.
 
-The sitemap carries 45 percent-escaped `<loc>` entries. Submit it once verification lands, then triage
-coverage **split by page type** — aggregate coverage hides the location silo.
+The sitemap carries 45 percent-escaped `<loc>` entries, with `<lastmod>` on the 12 guides only.
+**Submit it once** in the Domain property — submissions do not carry across properties, and Google
+removed the ping endpoint in 2023, so there is no programmatic path and no reason to resubmit per
+deploy. Then triage coverage **split by page type** — aggregate coverage hides the location silo.
 
 ---
 

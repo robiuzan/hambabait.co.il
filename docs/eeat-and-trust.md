@@ -200,7 +200,7 @@ Run by `editorial-reviewer`; this is the trust half of the checklist.
       legacy unsourced claim is an opportunity to soften it further, never to restore it.
 - [ ] No image asserts something the copy is not allowed to assert.
 - [ ] Any new data flow is reflected in `/מדיניות-פרטיות/` **in the same change**.
-- [ ] `npm run qa:gate` is green. Among its 25 assertions: no `aggregateRating`, `reviewCount`,
+- [ ] `npm run qa:gate` is green. Among its 28 assertions: no `aggregateRating`, `reviewCount`,
       `ratingValue`, `foundingDate` or `warrantyPromise` anywhere in `out/`, and no priced `Offer`.
       **The claims bar is now machine-checked** — but only for those exact property names. A
       fabricated sentence in Hebrew prose passes the gate cleanly, so the reading job above is still

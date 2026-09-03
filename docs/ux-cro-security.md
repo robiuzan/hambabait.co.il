@@ -249,7 +249,7 @@ Three things to know before touching it:
 - [ ] Form: submit with a malformed phone → phone error only.
 - [ ] Form: simulate a delivery failure → error card with call + WhatsApp, no popup, no silent loss.
 - [ ] Zero orphans across all 45 URLs — the footer is what guarantees this, not the header.
-- [ ] `npm run qa:gate` green (25 assertions), alongside lint / typecheck / format:check / build.
+- [ ] `npm run qa:gate` green (28 assertions), alongside lint / typecheck / format:check / build.
 - [ ] Live headers checked after every deploy (§4), including **exactly one**
       `Content-Security-Policy-Report-Only` — two policies do not merge, they intersect.
 - [ ] `/מדיניות-פרטיות/` matches the actual set of third parties in the code.

@@ -278,7 +278,7 @@ ships.
 
 ```bash
 npm run build
-npm run qa:gate                                              # 25 assertions, several of them schema
+npm run qa:gate                                              # 28 assertions, several of them schema
 grep -rl 'application/ld+json' out --include=index.html      # which pages
 grep -rEo '"(aggregateRating|review|foundingDate)"' out      # must be empty
 ```

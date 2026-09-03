@@ -132,7 +132,7 @@ lib/
   consent.ts       # Consent Mode v2 default snippet — must run BEFORE the container
   utils.ts         # cn()
 scripts/
-  qa-gate.mjs      # 25 assertions over out/ — `npm run qa:gate`, the 5th build-gate step
+  qa-gate.mjs      # 28 assertions over out/ — `npm run qa:gate`, the 5th build-gate step
 site.config.json   # SiteManifest — SYNCED FROM THE ROSTER via ops/sync-manifest.ps1
 docs/              # the acceptance bars every agent cites — START AT docs/README.md
 ```
@@ -241,6 +241,12 @@ See the `hebrew-rtl` skill for the full rule set.
   `seo-metadata` skill.
 - **Canonicals:** self-referencing, trailing slash, percent-escaped so they are byte-identical to the
   `sitemap.xml` `<loc>`. `app/sitemap.ts` uses `encodeURI` for exactly this reason.
+- **The sitemap emits `<lastmod>` on the 12 guides and nowhere else.** They are the only pages with
+  a real editorial date (`guides[].updated`). Until 2026-09-03 the other 33 carried `new Date()` —
+  a build timestamp identical to the millisecond, claiming all 33 changed on every deploy. An
+  untrustworthy `lastmod` gets discounted site-wide, so the false date was costing the guides their
+  true one. **Do not restore it, and do not invent per-page dates to fill the gap.** Also **never
+  add `<changefreq>` or `<priority>`** — Google ignores both. All three are gated.
 - **JSON-LD** is built with `@ishub/site-kit/seo` — `localBusinessJsonLd`, `serviceJsonLd`,
   `faqJsonLd`, `breadcrumbJsonLd`, `jsonLdScript`. Target graph:
   [docs/schema-graph.md](docs/schema-graph.md). **All 45 indexable pages emit JSON-LD** — only the
@@ -278,12 +284,14 @@ All **five** must pass before any deploy. `.github/workflows/ci.yml` runs the fi
 push and PR (since 2026-08-17 — before that, CI ran only `build` and a formatting or type error
 shipped silently).
 
-`npm run qa:gate` (`scripts/qa-gate.mjs`, added 2026-08-31) is the fifth: **25 assertions against
+`npm run qa:gate` (`scripts/qa-gate.mjs`, added 2026-08-31) is the fifth: **28 assertions against
 `out/`** — page and indexable counts, JSON-LD / canonical / sitemap parity byte-for-byte, no
-doubled brand suffix, unique titles and descriptions, exactly one H1, no banned schema property
-(`aggregateRating` · `reviewCount` · `ratingValue` · `foundingDate` · `warrantyPromise`), no priced
-`Offer`, no `SearchAction`/`potentialAction`, the `WebSite` node present, the Consent Mode default
-preceding the GTM container, and no physical-direction Tailwind utility in the built HTML.
+doubled brand suffix, unique titles and descriptions, exactly one H1, exactly 12 sitemap
+`<lastmod>` values and every one of them date-only, the `robots.txt` sitemap pointer, no banned
+schema property (`aggregateRating` · `reviewCount` · `ratingValue` · `foundingDate` ·
+`warrantyPromise`), no priced `Offer`, no `SearchAction`/`potentialAction`, the `WebSite` node
+present, the Consent Mode default preceding the GTM container, and no physical-direction Tailwind
+utility in the built HTML.
 
 Its thresholds are named constants at the top of the file — update them when the route count
 legitimately changes, rather than deleting the assertion.

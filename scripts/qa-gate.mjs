@@ -5,8 +5,9 @@
  * The four npm scripts (lint, typecheck, format:check, build) prove the source compiles. They
  * prove nothing about what actually landed in out/. Every defect this file guards against
  * shipped green at least once: the doubled brand suffix on 24 of 33 pages, canonicals that
- * drifted out of byte-parity with the percent-escaped sitemap, and pages with no JSON-LD at
- * all. Run it as the fifth gate: `npm run qa:gate`.
+ * drifted out of byte-parity with the percent-escaped sitemap, pages with no JSON-LD at all,
+ * and a build-time <lastmod> on 33 of the 45 sitemap URLs. Run it as the fifth gate:
+ * `npm run qa:gate`.
  *
  * Reads only. Exits 0 when every assertion holds, 1 with a printed measured-vs-expected list
  * otherwise.
@@ -33,6 +34,23 @@ const EXPECTED_INDEXABLE = 45;
 /** <loc> entries in sitemap.xml. Must equal EXPECTED_INDEXABLE — the sitemap is derived from
  *  the same data arrays, so a mismatch means a route was added without reaching app/sitemap.ts. */
 const EXPECTED_SITEMAP_LOCS = 45;
+
+/**
+ * <lastmod> entries in sitemap.xml — one per guide, and nothing else. The other 33 URLs carry
+ * no date because they have none: app/sitemap.ts used to stamp `new Date()` on them, which told
+ * Google all 33 changed on every deploy and got the signal discounted site-wide, guides included.
+ * Raise this only when a non-guide route gains a REAL editorial date, never to make a build
+ * timestamp pass.
+ */
+const EXPECTED_SITEMAP_LASTMODS = 12;
+
+/** A content date is date-only, so it serialises to midnight UTC. A build timestamp carries a
+ *  wall-clock time. This is how the gate tells them apart even if the count happens to fit. */
+const DATE_ONLY_LASTMOD = /T00:00:00\.000Z$/;
+
+/** robots.txt must point at the sitemap. Nothing else in this gate reads robots.txt, so a
+ *  wrong or missing Sitemap: line would otherwise ship green. */
+const EXPECTED_ROBOTS_SITEMAP = "Sitemap: https://hambabait.co.il/sitemap.xml";
 
 /**
  * Routes that legitimately carry NO canonical and NO JSON-LD. The 404 is noindex and has no
@@ -254,9 +272,10 @@ assert(
 // ---------------------------------------------------------------------------
 // 5. Canonical <-> sitemap parity, byte-identical
 // ---------------------------------------------------------------------------
-// Seven routes are Hebrew directories. app/sitemap.ts runs every loc through encodeURI and
-// Next percent-escapes canonicals automatically, so the two strings must match byte for byte.
-// A raw-UTF-8 Hebrew URL on either side is the failure this catches.
+// Nine routes under app/ are Hebrew directories; eight of them reach the sitemap (/תודה/ is
+// deliberately out). app/sitemap.ts runs every loc through encodeURI and Next percent-escapes
+// canonicals automatically, so the two strings must match byte for byte. A raw-UTF-8 Hebrew URL
+// on either side is the failure this catches.
 
 const sitemapPath = path.join(OUT_DIR, "sitemap.xml");
 if (!fs.existsSync(sitemapPath)) {
@@ -295,6 +314,52 @@ if (!fs.existsSync(sitemapPath)) {
     "no duplicate <loc> in sitemap",
     locSet.size === locs.length,
     counted(locSet.size, locs.length),
+  );
+
+  // Only the 12 guides carry a date. Anything else means a build timestamp came back.
+  const lastmods = [...sitemapXml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map(
+    (m) => m[1],
+  );
+
+  assert(
+    "sitemap <lastmod> count (guides only)",
+    lastmods.length === EXPECTED_SITEMAP_LASTMODS,
+    `${counted(lastmods.length, EXPECTED_SITEMAP_LASTMODS)} — a build timestamp is not a content date`,
+  );
+
+  const timestamped = lastmods.filter((d) => !DATE_ONLY_LASTMOD.test(d));
+  assert(
+    "every <lastmod> is a content date, not a build time",
+    timestamped.length === 0,
+    timestamped.length
+      ? `${timestamped.length} carry a wall-clock time:\n      ${sample(timestamped)}`
+      : `${lastmods.length} date-only`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 5b. robots.txt points at the sitemap
+// ---------------------------------------------------------------------------
+// app/robots.ts builds the line from siteConfig.domain. If that field ever grows a trailing
+// slash or the host changes, the sitemap reference breaks silently — nothing else here reads
+// robots.txt, and the sitemap itself would still be perfectly valid.
+
+const robotsPath = path.join(OUT_DIR, "robots.txt");
+if (!fs.existsSync(robotsPath)) {
+  assert("robots.txt exists", false, `${robotsPath} not found`);
+} else {
+  const robotsTxt = fs.readFileSync(robotsPath, "utf8");
+  const hasSitemap = robotsTxt
+    .split(/\r?\n/)
+    .some((l) => l.trim() === EXPECTED_ROBOTS_SITEMAP);
+  assert(
+    "robots.txt names the sitemap",
+    hasSitemap,
+    hasSitemap
+      ? EXPECTED_ROBOTS_SITEMAP
+      : `expected "${EXPECTED_ROBOTS_SITEMAP}", found:\n      ${sample(
+          robotsTxt.split(/\r?\n/).filter((l) => l.toLowerCase().startsWith("sitemap")),
+        )}`,
   );
 }
 

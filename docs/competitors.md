@@ -19,8 +19,8 @@
 | Phone                       | **shared fleet line**, not business-owned                                     |
 | Location pages              | 18, all rendered from **one template**                                        |
 | Images                      | **zero**                                                                      |
-| JSON-LD coverage            | **32 of 32 indexable pages** ✅                                               |
-| Canonicals / sitemap parity | **32 / 32** ✅                                                                |
+| JSON-LD coverage            | **45 of 45 indexable pages** ✅                                               |
+| Canonicals / sitemap parity | **45 / 45** byte-identical ✅ (asserted by `qa:gate`)                         |
 | Titles                      | clean, no doubled brand ✅                                                    |
 
 > **The honest read: we can compete on depth, structure and answer quality. We cannot compete on

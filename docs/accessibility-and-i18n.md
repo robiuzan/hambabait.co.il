@@ -182,7 +182,7 @@ Every rule here already ships in `LeadForm.tsx`; the point is that they stay.
 
 | Layer                 | Tool                                           | State                                            |
 | --------------------- | ---------------------------------------------- | ------------------------------------------------ |
-| Static, automated     | `npm run qa:gate` (25 assertions over `out/`)  | ✅ green — one H1 per page, no banned utilities  |
+| Static, automated     | `npm run qa:gate` (28 assertions over `out/`)  | ✅ green — one H1 per page, no banned utilities  |
 | Static, agentic       | `perf-a11y-auditor` over `out/`                | Run on every content change                      |
 | Computed contrast     | Ratios computed from the tokens and the markup | ✅ done 2026-08-31 (§2)                          |
 | Automated a11y engine | axe / Lighthouse                               | ❌ **not run** — no browser automation installed |

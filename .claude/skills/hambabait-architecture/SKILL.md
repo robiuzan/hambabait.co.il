@@ -87,7 +87,7 @@ components/marketing/  Hero TrustBar ServicesGrid WhyUs Process PricingTeaser
                        ServiceAreas Faq FinalCta GuideBody GuideDiagram
 components/forms/      LeadForm
 lib/                   site-config.ts · content.ts · guides.ts · consent.ts · utils.ts (cn)
-scripts/               qa-gate.mjs — 25 assertions over out/
+scripts/               qa-gate.mjs — 28 assertions over out/
 public/                _headers (immutable caching + report-only CSP) · llms.txt
 docs/                  the acceptance bars every agent cites
 ```
@@ -145,7 +145,7 @@ Every URL ends in `/`. A slashless URL redirects, costing a hop.
 
 `dev` · `build` · `start` · `lint` · `format` · `format:check` · `typecheck` · **`qa:gate`**
 
-`qa:gate` runs `scripts/qa-gate.mjs` against `out/`: 25 assertions covering route and sitemap counts,
+`qa:gate` runs `scripts/qa-gate.mjs` against `out/`: 28 assertions covering route and sitemap counts,
 JSON-LD and canonical coverage, unique non-doubled titles, one H1 per page, byte-identical
 canonical↔sitemap parity, the banned schema properties, the `WebSite` node, Consent-Mode ordering,
 and banned physical-direction Tailwind utilities in the built HTML. It reads `out/`, so **`build`

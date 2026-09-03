@@ -1,6 +1,6 @@
 ---
 name: qa-build-gate
-description: The release gate before any deploy for hambabait — five commands now, not four: lint, typecheck, format:check, build, then `npm run qa:gate`, which runs scripts/qa-gate.mjs and asserts 25 invariants over out/ (route counts, unique non-doubled titles, one H1, canonical↔sitemap byte parity, JSON-LD coverage, banned schema props, the priced-Offer bar, the WebSite node, Consent Mode ordering, and the physical-direction Tailwind ban). CI runs the first four; deploys build from the working tree. Use before every deploy or when asked whether the site is ready to ship. Triggers: "run the build gate", "is this ready to ship", "pre-deploy check", "QA the site", "verify the build", "did I break anything".
+description: The release gate before any deploy for hambabait — five commands now, not four: lint, typecheck, format:check, build, then `npm run qa:gate`, which runs scripts/qa-gate.mjs and asserts 28 invariants over out/ (route counts, unique non-doubled titles, one H1, canonical↔sitemap byte parity, the sitemap lastmod count and its date-only shape, the robots.txt sitemap pointer, JSON-LD coverage, banned schema props, the priced-Offer bar, the WebSite node, Consent Mode ordering, and the physical-direction Tailwind ban). CI runs the first four; deploys build from the working tree. Use before every deploy or when asked whether the site is ready to ship. Triggers: "run the build gate", "is this ready to ship", "pre-deploy check", "QA the site", "verify the build", "did I break anything".
 ---
 
 # Build gate
@@ -34,9 +34,10 @@ Notes specific to this repo:
 ## `npm run qa:gate` — run this, don't hand-roll the greps
 
 `scripts/qa-gate.mjs` is read-only, exits 0 when every assertion holds and 1 with a measured-vs-expected
-list otherwise. **25 assertions.** Every defect it guards against shipped green at least once: the
+list otherwise. **28 assertions.** Every defect it guards against shipped green at least once: the
 doubled brand suffix on 24 of 33 pages, canonicals that drifted out of byte-parity with the
-percent-escaped sitemap, and pages with no JSON-LD at all.
+percent-escaped sitemap, pages with no JSON-LD at all, and a build-time `<lastmod>` on 33 of the 45
+sitemap URLs.
 
 | #     | Group               | Asserts                                                                                                                               |
 | ----- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -45,10 +46,12 @@ percent-escaped sitemap, and pages with no JSON-LD at all.
 | 6–9   | Titles/descriptions | no `… \| חם בבית \| חם בבית`; every page has a `<title>`; titles unique; meta descriptions unique                                     |
 | 10    | Headings            | exactly one `<h1>` per page                                                                                                           |
 | 11–13 | Sitemap             | 45 `<loc>`; canonical ↔ `<loc>` **byte-identical** both ways; no duplicate `<loc>`                                                    |
-| 14–20 | Banned schema       | `aggregateRating`, `reviewCount`, `ratingValue`, `foundingDate`, `warrantyPromise`, `SearchAction`, `potentialAction` — none anywhere |
-| 21–23 | Graph               | all JSON-LD blocks parse; no priced `Offer`; a `WebSite` node on the homepage                                                         |
-| 24    | Consent             | `id="consent-default"` precedes `id="gtm-init"` in every page                                                                         |
-| 25    | RTL                 | no physical-direction Tailwind utilities (`pl-*`, `mr-*`, `left-*`, `text-right`…) in any class attribute                             |
+| 14–15 | Sitemap `lastmod`   | exactly **12** `<lastmod>` (the guides, and nothing else); every value **date-only** `T00:00:00.000Z`                                 |
+| 16    | Robots              | `out/robots.txt` carries the exact `Sitemap: https://hambabait.co.il/sitemap.xml` line                                                |
+| 17–23 | Banned schema       | `aggregateRating`, `reviewCount`, `ratingValue`, `foundingDate`, `warrantyPromise`, `SearchAction`, `potentialAction` — none anywhere |
+| 24–26 | Graph               | all JSON-LD blocks parse; no priced `Offer`; a `WebSite` node on the homepage                                                         |
+| 27    | Consent             | `id="consent-default"` precedes `id="gtm-init"` in every page                                                                         |
+| 28    | RTL                 | no physical-direction Tailwind utilities (`pl-*`, `mr-*`, `left-*`, `text-right`…) in any class attribute                             |
 
 Two design details worth knowing before you "fix" a failure:
 
@@ -154,7 +157,7 @@ For anything beyond a small change, run the read-only agents and read their repo
 
 Report the gate as **one** of:
 
-- **Green** — five commands pass, all 25 assertions hold. Safe to deploy (still ask first).
+- **Green** — five commands pass, all 28 assertions hold. Safe to deploy (still ask first).
 - **Green with known defects** — passes, but ships a documented defect from
   `docs/optimization-backlog.md`. Name them explicitly; do not let a known bug pass as clean.
 - **Red** — name the failing command or assertion and stop. Do not deploy.
