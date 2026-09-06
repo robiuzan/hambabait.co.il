@@ -27,7 +27,9 @@ description: Search Console operations for hambabait — ownership is NOT yet ve
 > A Domain property is the right shape here because **three hosts serve byte-identical copies of all
 > 45 pages** — `hambabait.co.il`, `www.hambabait.co.il` (which returns **200, not a 301**) and
 > `hambabait.pages.dev`. All three canonicalize to the apex, so the duplication is contained, but a
-> URL-prefix property would report on only one of them.
+> URL-prefix property would report on only one of them. ⚠️ A `hambabait.co.il` Domain property covers
+> the apex and `www` — **not** `hambabait.pages.dev`, which is a separate domain. That host would need
+> its own property, which is not worth creating.
 
 The record, for reference when re-checking or re-verifying:
 

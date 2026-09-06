@@ -199,8 +199,9 @@ for months with no block consuming it, so setting it in the roster silently did 
 **`analytics.googleSiteVerification` stays `null` on purpose** — but ⚠️ **ownership is not verified.**
 The chosen **method** is **DNS TXT on the Cloudflare zone**, as a **Domain property** — over the meta
 tag because it survives a re-deploy and because three hosts serve byte-identical copies of all 45
-pages (`hambabait.co.il`, `www.hambabait.co.il` at **200, not a 301**, and `hambabait.pages.dev`); a
-URL-prefix property would report on only one. That decision stands and the field should not be filled
+pages (`hambabait.co.il` and `www.hambabait.co.il` at **200, not a 301**); a URL-prefix property
+would report on only one. `hambabait.pages.dev` is a **separate domain** and is not covered by a
+`hambabait.co.il` Domain property at all. That decision stands and the field should not be filled
 in. **What was never done is adding the record.** `nslookup -type=TXT hambabait.co.il 8.8.8.8`
 (2026-09-06) returns exactly one TXT record, `v=spf1 include:_spf.mx.cloudflare.net ~all`. A Domain
 property can be verified _only_ by DNS TXT, so ownership rests on neither mechanism today. **Open

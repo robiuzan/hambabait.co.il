@@ -125,39 +125,65 @@ be fixed by code and it is silently costing measurement right now.
 
 ## P1 — what is left
 
-### P1-1 · The GTM container is behind the `data-cta` split · owner action · S
+### P1-1 · ✅ CLOSED 2026-09-06 — and the original diagnosis was wrong
 
-**Evidence:** `out/` carries **27 unique `data-cta` values across 492 occurrences**, up from 17. Three
-changed meaning: `data-cta="header-call"` was previously reused for **three** different header
-elements on every page and is now split into `header-call` (desktop bar button), `header-call-icon`
-(compact icon link) and `mobile-menu-call` (inside the panel). Four `*-form-submit` values were also
-added (`hero-`, `service-`, `location-`, `contact-`).
+**What this item used to say:** that `GTM-KWGGH438` carried literal per-value `data-cta` triggers, that
+the header-call three-way split had "silently zeroed" two thirds of a real metric, and that
+header-attributed calls would appear to fall.
 
-**Impact:** GTM triggers match these strings literally. Until container `GTM-KWGGH438` is updated,
-`header-call-icon` and `mobile-menu-call` record **nothing** — and a trigger still matching
-`header-call` no longer covers the mobile header call, which is where calls actually come from on
-this site. **Expect header-attributed calls to fall the moment this ships, and do not read that fall
-as a behaviour change.**
+**What was actually true.** Inspected in the GTM console on 2026-09-06: the container held exactly
+**two tags** — `GA4 — Per-site config` (a Google Tag on `Init — Known Hostname`, a month old) and
+nothing else. **There were never any CTA triggers or tags at all.** No `data-cta` value had ever been
+tracked, so the split zeroed nothing, no metric declined, and there is no historical number to
+compare against. The "container is behind the repo" framing was inferred from the repo and never
+checked against the console — the same failure mode as the GSC verification claim.
 
-**Fix:** container-side only. Add triggers covering all 27 identifiers. The container is **shared
-across the Israeli fleet**, so the change affects other sites — coordinate.
+**Resolved by** one generic tag rather than 27 literal triggers, which is what the original fix should
+have proposed:
 
-**Accept:** a tap on the mobile-menu call button reaches GA4; all 27 identifiers have a trigger.
+- Variable `cta - data-cta` (Custom JavaScript) walking `closest('[data-cta]')` from `{{Click Element}}`
+- Trigger `Click - any data-cta` — All Elements, `Click Element` matches CSS selector `[data-cta], [data-cta] *`
+- Tag `GA4 - cta_click` sending `cta_id` to `{{GA4 Measurement ID}}`
+
+Verified in GTM Preview against the live site: the tag fired and sent hits to **`G-RLE7LGPPX3`**.
+Because the value is read from the attribute rather than matched literally, a future rename cannot
+silently zero this metric — which is the actual lesson.
+
+**Baseline note:** CTA history starts 2026-09-06. There is no earlier data to compare against.
+
+**Remaining:** none for CTAs. See **P1-2**, which the same inspection made much larger.
 
 ---
 
-### P1-2 · `lead_submit_blocked` fires into nothing · owner action · S
+### P1-2 · 🔴 The entire `lead_submit` family fires into nothing · owner action · S
 
-**Evidence:** `components/forms/LeadForm.tsx:127` pushes
-`trackEvent("lead_submit_blocked", { form: "lead", reason: "honeypot" })` when the browser-only
-honeypot catches a submission. No tag or trigger in `GTM-KWGGH438` consumes it.
+**Upgraded 2026-09-06.** This was filed as "the honeypot event has no tag". The GTM console shows it
+is far bigger: the container has **no tag consuming any `lead_submit*` event**. The site pushes four
+events that nobody receives.
 
-**Impact:** honeypot activity is invisible. A bot-suppressed quiet period is indistinguishable from a
-genuine drop in demand, and reading one as the other sends the next content decision the wrong way.
-`lead_submit_failed` deserves a tag for the same reason: a `reason: "no_key"` spike means leads are
-being dropped silently, not that demand fell.
+**Evidence:** `components/forms/LeadForm.tsx` pushes `lead_submit` (:183, on confirmed delivery),
+`lead_submit_failed` (:159 `reason: "no_key"`, :192 `reason: "delivery"`) and `lead_submit_blocked`
+(:127, honeypot). Container inspection 2026-09-06: two tags total, neither listening for a custom
+event. Nothing reaches GA4.
 
-**Accept:** both events visible in GA4 DebugView.
+**Impact — the most serious measurement gap on the site.** The lead form is conversion goal number
+three and **it has never been measured once**. `page_view` on `/תודה/` is collected by the config
+tag's enhanced measurement, so a rough proxy exists, but no conversion is defined and the proxy counts
+arrivals rather than confirmed sends. A `reason: "delivery"` or `"no_key"` spike means leads are being
+**dropped on the floor** and nobody would learn of it.
+
+**Fix (container-side — one trigger, one tag):**
+
+- Data Layer Variables `DLV - form` and `DLV - reason`
+- Trigger: **Custom Event**, event name `^lead_submit(_failed|_blocked)?` + end anchor, **use regex matching**
+- Tag: **GA4 Event**, Event Name `{{Event}}`, parameters `form` and `reason`, id `{{GA4 Measurement ID}}`
+
+**Then mark `lead_submit` — and only it — as a key event in GA4.** Not `cta_click`, not the
+`*-form-submit` clicks (those are attempts, not sends), and **not** a `/תודה/` pageview conversion: the
+old double-count warning becomes real the moment both are marked.
+
+**Accept:** a real form submission produces `lead_submit` in GA4 DebugView, and exactly one key event
+per lead.
 
 ---
 
@@ -315,8 +341,10 @@ to change the tag, not to widen the policy.
 
 - **[needs confirmation]** Which mailbox Web3Forms has registered against the access key. Lives in the
   Web3Forms dashboard only — a lead can "succeed" and reach nobody.
-- **[needs confirmation]** Whether GTM-KWGGH438's internal RegEx Table routes `hambabait.co.il` to a
-  live GA4 property. Checkable only in the GTM/GA4 consoles.
+- ✅ **Confirmed 2026-09-06 (owner, GTM console + Preview).** `hambabait.co.il` is listed in the
+  container's hostname routing variable and resolves to GA4 property **`G-RLE7LGPPX3`**; hits were
+  observed arriving. The manifest `ga4MeasurementId` stays `null` on purpose — routing is
+  container-side.
 - **[needs confirmation]** Whether the container counts **both** the `lead_submit` dataLayer event and
   the `/תודה/` pageview as conversions. If so, every lead is double-counted.
 - **[needs confirmation]** Whether exactly one `Content-Security-Policy-Report-Only` header comes back

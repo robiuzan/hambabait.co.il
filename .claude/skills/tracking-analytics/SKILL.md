@@ -51,11 +51,16 @@ opposite of the USA fleet's per-site containers. Do not "fix" it by creating a h
 
 Consequences:
 
-- Measurement ids live in each manifest's `analytics.ga4MeasurementId`. **hambabait's repo manifest
-  has no such field at all**, and the hub copy has it `null`.
-- Whether the container's RegEx Table actually routes `hambabait.co.il` to a live GA4 property can
-  only be checked in the GTM/GA4 consoles — it is not knowable from this repo.
-- So: the snippet firing is **not** evidence that GA4 is receiving hambabait traffic. Verify in
+- Measurement ids live in each manifest's `analytics.ga4MeasurementId`. hambabait's repo manifest
+  carries the field as `null` (`site.config.json:49`), identical to the hub copy — the id is resolved
+  container-side, so `null` is correct and must not be "fixed".
+- ✅ **Confirmed 2026-09-06 by GTM Preview against the live site (owner).** The hostname routing
+  resolves to GA4 property **`G-RLE7LGPPX3`**. `GA4 — Per-site config` fired once and the
+  `GA4 - cta_click` tag sent its hits to that id, so the container→GA4 chain is proven end to end.
+  Record the id here only — it does **not** go in the manifest, where `null` remains correct.
+- Preview also confirmed **Consent Default fires as event 1**, ahead of Initialization and Container
+  Loaded — the same ordering `qa:gate` asserts statically in the built HTML, now verified at runtime.
+- Keep the rule anyway: the snippet firing is **not** evidence that GA4 is receiving traffic — that is why the above was verified rather than assumed. Re-verify in
   GA4 Realtime before reporting analytics as working.
 - The container is **shared across the fleet**. Any change to it affects other sites, which makes
   container edits an owner decision rather than an agent action.
