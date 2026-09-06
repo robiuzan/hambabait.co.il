@@ -1,6 +1,6 @@
 ---
 name: seo-metadata
-description: Per-route metadata for hambabait — the Hebrew title and description formulas, the layout template rule that keeps the brand suffix from doubling (a defect that once shipped on 24 of 33 pages, is fixed, and is now gated by qa:gate), self-referencing percent-escaped trailing-slash canonicals at 45/45 byte-identical parity with the sitemap, the 404 and /תודה/ that deliberately carry no canonical, OG/Twitter and the icon.svg favicon, the googleSiteVerification field that is now wired but unset, and deriving sitemap.ts and robots.ts from the data arrays instead of a hand-maintained list. Use when writing generateMetadata for a route, fixing duplicate or doubled titles, or auditing on-page SEO. Triggers: "set the metadata", "titles and descriptions", "canonical", "double brand suffix", "sitemap", "one H1", "404 metadata".
+description: Per-route metadata for hambabait — the Hebrew title and description formulas, the layout template rule that keeps the brand suffix from doubling (a defect that once shipped on 24 of 33 pages, is fixed, and is now gated by qa:gate), self-referencing percent-escaped trailing-slash canonicals at 45/45 byte-identical parity with the sitemap, the 404 and /תודה/ that deliberately carry no canonical, OG/Twitter and the icon.svg favicon, the googleSiteVerification field that is wired but correctly unset because DNS TXT is the chosen method — though that record was never added, so GSC ownership is still unverified, and deriving sitemap.ts and robots.ts from the data arrays instead of a hand-maintained list. Use when writing generateMetadata for a route, fixing duplicate or doubled titles, or auditing on-page SEO. Triggers: "set the metadata", "titles and descriptions", "canonical", "double brand suffix", "sitemap", "one H1", "404 metadata".
 ---
 
 # Per-route SEO metadata
@@ -143,7 +143,9 @@ source.
 verification meta is worse than none. The field existed for months with no block to consume it, so
 setting it in the roster silently did nothing; that is fixed.
 
-**The value stays unset on purpose.** As of 2026-09-03 ownership is verified by **DNS TXT on the
+**The value stays unset on purpose** — but ⚠️ **ownership is not verified.** The DNS TXT record was
+never added (checked 2026-09-06: only `v=spf1` is present), so `S2-2` is an open owner action. The
+chosen method remains **DNS TXT on the
 Cloudflare zone**, as a Domain property — which covers the apex, `www` (currently 200, not a
 redirect) and `hambabait.pages.dev` in one property. So the roster field is deliberately `null` and
 the block deliberately emits nothing; this is **not** an open action. See the `search-console-ops`

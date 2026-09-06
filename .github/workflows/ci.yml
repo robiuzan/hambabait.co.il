@@ -5,7 +5,7 @@
 # proved nothing about the public site. Retired 2026-08-17, past the roster's
 # 2026-08-09 rollback deadline for the old origins.
 #
-# A green run here means the full gate passed — nothing more.
+# A green run here means all five gate steps passed — nothing more.
 name: CI
 
 on:
@@ -30,3 +30,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run format:check
       - run: npm run build
+      # The fifth step. qa:gate asserts 28 invariants over out/, so it has to run
+      # after build. Until 2026-09-06 CI stopped at build and the gate was honoured
+      # only by a human remembering to run it locally.
+      - run: npm run qa:gate

@@ -280,9 +280,16 @@ See the `hebrew-rtl` skill for the full rule set.
 npm run lint && npm run typecheck && npm run format:check && npm run build && npm run qa:gate
 ```
 
-All **five** must pass before any deploy. `.github/workflows/ci.yml` runs the first four on every
-push and PR (since 2026-08-17 — before that, CI ran only `build` and a formatting or type error
-shipped silently).
+All **five** must pass before any deploy. `.github/workflows/ci.yml` runs **all five** on every push
+to `main` and on every PR (`qa:gate` added 2026-09-06; before that CI stopped at `build` and the gate
+was honoured only by a human remembering to run it locally).
+
+> ⚠️ **`ci.yml` had never executed once before 2026-09-06.** It lived only on
+> `seo/phase-1-environment` while its `push` trigger was scoped to `main`, where the file did not
+> exist — so GitHub never registered the workflow (`gh run list --workflow ci.yml` returned a 404 on
+> the default branch) and no PR was ever opened to fire the `pull_request` trigger. The 18 commits of
+> overhaul work reached production with **zero** CI verification. Fixed by merging the branch to
+> `main`. If you branch this repo again, remember a trigger only fires where the file lives.
 
 `npm run qa:gate` (`scripts/qa-gate.mjs`, added 2026-08-31) is the fifth: **28 assertions against
 `out/`** — page and indexable counts, JSON-LD / canonical / sitemap parity byte-for-byte, no

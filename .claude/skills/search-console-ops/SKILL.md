@@ -1,16 +1,28 @@
 ---
 name: search-console-ops
-description: Search Console operations for hambabait — ownership verified by DNS TXT as a Domain property (so googleSiteVerification stays null in the roster on purpose, and the guarded verification block in app/layout.tsx ships nothing), submitting the 45-URL sitemap whose Hebrew locs are percent-escaped and whose lastmod is emitted only for the 12 guides, the three hosts that serve byte-identical copies, triaging coverage against the emitted route tree, reading query data split by the four page types so the weak silos stay visible, and the four-week rule before attributing any ranking change to a deploy. Use when verifying ownership, submitting a sitemap, or diagnosing indexing. Triggers: "Search Console", "site verification", "submit sitemap", "not indexed", "coverage", "why isn't this page indexed", "GSC".
+description: Search Console operations for hambabait — ownership is NOT yet verified (DNS TXT as a Domain property is the chosen method and googleSiteVerification correctly stays null, but the record was never added, checked 2026-09-06, so this is an open owner action blocking the measurement baseline), submitting the 45-URL sitemap whose Hebrew locs are percent-escaped and whose lastmod is emitted only for the 12 guides, the three hosts that serve byte-identical copies, triaging coverage against the emitted route tree, reading query data split by the four page types so the weak silos stay visible, and the four-week rule before attributing any ranking change to a deploy. Use when verifying ownership, submitting a sitemap, or diagnosing indexing. Triggers: "Search Console", "site verification", "submit sitemap", "not indexed", "coverage", "why isn't this page indexed", "GSC".
 ---
 
 # Search Console operations — hambabait
 
-## Verification: DNS TXT is the chosen method — leave the manifest field alone
+## Verification: DNS TXT is the chosen method — and it has NOT been done
 
-> **Decision, 2026-09-03.** Ownership is verified by **DNS TXT on the Cloudflare zone**, as a
-> **Domain property**. `analytics.googleSiteVerification` therefore stays `null` in the roster on
-> purpose. It is **not an outstanding action** — do not "fix" it by chasing a token, and do not
-> reopen `S2-2` / `C5` on account of the null.
+> ❌ **Status, checked 2026-09-06: ownership is NOT verified.**
+> `nslookup -type=TXT hambabait.co.il 8.8.8.8` returns exactly one TXT record —
+> `v=spf1 include:_spf.mx.cloudflare.net ~all` — with no `google-site-verification` token. The
+> meta-tag route is unused too (`grep -rl 'google-site-verification' out` = 0) and
+> `/googlefile.html` 404s. A Domain property can be verified **only** by DNS TXT, so ownership rests
+> on neither mechanism. **`S2-2` is open, and it blocks `S1-1`, the measurement baseline.**
+>
+> **Decision, 2026-09-03 (still correct).** The **method** is **DNS TXT on the Cloudflare zone**, as
+> a **Domain property**, and `analytics.googleSiteVerification` therefore stays `null` in the roster
+> on purpose. Do not "fix" the null by chasing a meta token — the null is right; the missing record
+> is the problem.
+>
+> ⚠️ **How this went wrong is the lesson.** Between 2026-09-03 and 2026-09-06 six documents and two
+> skills — including this one — stated the verification as an accomplished fact. Nobody had queried
+> DNS. The rule at the bottom of this section already said "never assume it was applied — check
+> DNS"; it was written and then not followed. **A decision recorded is not a change applied.**
 >
 > A Domain property is the right shape here because **three hosts serve byte-identical copies of all
 > 45 pages** — `hambabait.co.il`, `www.hambabait.co.il` (which returns **200, not a 301**) and
@@ -49,8 +61,8 @@ manifest carried the field with no block to consume it, so setting it in the ros
 nothing. That is fixed.
 
 **The value is `null` by design** — see the decision above. No `google-site-verification` meta ships,
-and none needs to. This section documents the path only in case a second, tag-based owner token is
-ever wanted alongside the DNS record.
+and none needs to; the missing piece is the **DNS record**, not the manifest field. This section
+documents the meta path only in case a second, tag-based owner token is ever wanted alongside it.
 
 Were a token to be added, the path is: put it in the **roster** manifest
 (`Israeli services sites/roster/sites/hambabait.json`), run `ops/sync-manifest.ps1` with `-DryRun` then
