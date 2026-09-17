@@ -130,10 +130,12 @@ claim there becomes structured data.
 - **Guides — informational.** The reader is diagnosing, comparing or learning, and is not yet ready
   to call. Every guide routes to the commercial page that resolves the fault; a guide that does not
   is a dead end.
-- **`/מחירון/` — commercial research.** Ranks for price queries while honestly publishing no price
-  list. Serve the intent with _how pricing works_, never with an invented figure — and note that the
-  pricing approach itself is an **unconfirmed roster assumption**, so even the approach must not be
-  stated as settled fact. See [manifest-assumptions.md](manifest-assumptions.md).
+- **`/מחירון/` — commercial research, and since 2026-09-17 a real commercial target.** The owner
+  reversed the no-price-list policy and approved VAT-inclusive price **ranges**, so the page now
+  answers the money question with figures instead of describing an approach. It carries a price
+  table, an answer block and the "no call-out fee, no surcharges" statement. Every figure traces to
+  [business-facts.md](business-facts.md) §1a — quote nothing from anywhere else, change nothing
+  without fresh owner sign-off, and never republish a range ex-VAT (Consumer Protection Law §17א).
 
 ---
 
@@ -189,7 +191,9 @@ city page links a guide, so the "depth flows both ways" rule in
 [topical-map.md](topical-map.md) §5 is currently satisfied in one direction only. A new guide inherits
 that defect on day one.
 
-⚠️ **No prices in a comparison guide.** The business publishes no price list; any figure is invented.
+⚠️ **No prices in a comparison guide** — the rule survived the 2026-09-17 price reversal, only the
+reason changed. Figures live on `/מחירון/` and nowhere else, so a guide that repeats a range drifts
+out of sync the moment a range moves. Compare qualitatively and link to `/מחירון/` for the numbers.
 
 ---
 
@@ -230,4 +234,4 @@ because the visible difference is one line. Each now asks something only that ci
 grep -ho 'question: "[^"]*"' lib/content.ts lib/guides.ts | sort | uniq -d
 ```
 
-Currently: 36 answer blocks, **0 duplicate questions and 0 duplicate bodies**.
+Currently: 37 answer blocks, **0 duplicate questions and 0 duplicate bodies**.

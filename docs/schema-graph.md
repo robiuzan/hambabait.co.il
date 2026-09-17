@@ -223,14 +223,14 @@ grep -rEo '"(aggregateRating|review|ratingValue|reviewCount|foundingDate|warrant
 `npm run qa:gate` asserts every row below over `out/` on each release, so a regression fails the gate
 rather than reaching a validator.
 
-| Property                                                  | Why barred                                                                                                                                                                   |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Review`, `AggregateRating`, `ratingValue`, `reviewCount` | **There are no reviews.** Fabricated review markup is a Google policy violation with manual-action risk. The site is currently clean; that state is deliberate and verified. |
-| `foundingDate`                                            | `foundedYear` is `null`. The kit already omits it, and `lib/site-config.ts` keeps `founded` at `null` rather than falling back to `0`.                                       |
-| `warrantyPromise`                                         | The warranty is asserted with **no term, scope or document anywhere**. See [business-facts.md](business-facts.md) §3.1.                                                      |
-| `Offer` with a `price`                                    | The business publishes no price table and no shekel figure appears on the site. Any number is invented.                                                                      |
-| `potentialAction` / `SearchAction`                        | There is no site search. See §1.                                                                                                                                             |
-| per-city `LocalBusiness`                                  | Fabricates branches.                                                                                                                                                         |
+| Property                                                  | Why barred                                                                                                                                                                                                          |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Review`, `AggregateRating`, `ratingValue`, `reviewCount` | **There are no reviews.** Fabricated review markup is a Google policy violation with manual-action risk. The site is currently clean; that state is deliberate and verified.                                        |
+| `foundingDate`                                            | `foundedYear` is `null`. The kit already omits it, and `lib/site-config.ts` keeps `founded` at `null` rather than falling back to `0`.                                                                              |
+| `warrantyPromise`                                         | The warranty is asserted with **no term, scope or document anywhere**. See [business-facts.md](business-facts.md) §3.1.                                                                                             |
+| `Offer` with a `price`                                    | The site publishes ranges on `/מחירון/`, and keeping them out of schema is a **deliberate choice**, not an absence of data. A range is easy to express wrongly in schema and can surface directly in SERPs. See §7. |
+| `potentialAction` / `SearchAction`                        | There is no site search. See §1.                                                                                                                                                                                    |
+| per-city `LocalBusiness`                                  | Fabricates branches.                                                                                                                                                                                                |
 
 ### ✅ The one claim that used to reach schema — closed 2026-08-31
 
@@ -256,18 +256,23 @@ the only fix is a roster edit plus a sync — never an edit to `site.config.json
 
 ## 7. Pricing — the honest position
 
-`/מחירון/` emits `BreadcrumbList` and nothing else, and that is **partly by design**: the business
-deliberately publishes no fixed price list.
+`/מחירון/` emits `BreadcrumbList` and nothing else — and since 2026-09-17 that is a **deliberate
+choice rather than an empty cupboard**. The page publishes eight owner-approved VAT-inclusive ranges
+([business-facts.md](business-facts.md) §1a) and carries an answer block stating them. The figures
+are on the page; they are kept out of the graph on purpose.
 
-Defensible options: an `Offer` with `priceCurrency: "ILS"` and **no** price, or no `Offer` at all.
-Prefer the latter unless there is a concrete reason — `qa:gate` fails any `Offer` carrying a `price`.
-`priceRange: "₪₪"` already ships on the business node — itself unsourced, but a band rather than a
-number.
+**Why they stay out.** A range is awkward to express correctly — `Offer.price` wants one figure, and
+`AggregateOffer` wants `lowPrice`/`highPrice` plus currency — and whatever ships can surface directly
+in a search result, where a reader reads it as a quote rather than as a range. A wrong price in a
+SERP is worse than no price in a SERP. `qa:gate` fails any `Offer` carrying a `price` and **that
+assertion stays** until someone reverses it deliberately, with the owner.
 
-Note that the **pricing approach itself is one of the roster's unconfirmed assumptions**
-(`_needsConfirmation` in the hub manifest, stripped from `site.config.json` and recorded in
-[manifest-assumptions.md](manifest-assumptions.md)). So `/מחירון/` must not gain an answer block, an
-FAQ or a schema node that states how pricing works as settled fact.
+If it is ever reversed: `AggregateOffer` per service, `priceCurrency: "ILS"`, `lowPrice` and
+`highPrice` copied verbatim from §1a — כולל מע״מ, because §17א applies to a rich result exactly as it
+applies to the page — and the `qa:gate` assertion changed in the same commit. Never a bare `price`.
+
+`priceRange: "₪₪"` already ships on the business node — a band rather than a number, and now
+consistent with a page that states the real ones.
 
 ---
 

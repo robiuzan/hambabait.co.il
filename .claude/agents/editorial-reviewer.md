@@ -29,15 +29,24 @@ Reject on sight, unless the fact is confirmed in the manifest, `lib/site-config.
 `lib/content.ts` **and** you can cite where:
 
 - years in business, job counts, customer counts
-- any price, or any implication about what the call-out costs
+- any price that is not traced to `docs/business-facts.md` §1a — see below
 - warranty terms, duration or scope
 - response times or arrival guarantees
 - licences, insurance, certifications
 - ratings, reviews, testimonials, customer names
 - technician credentials or headcount
 
-The site currently makes **no** claim about years, reviews, licences or prices. That restraint is
-deliberate and it is the site's most valuable asset. A draft that spends it is rejected.
+The site currently makes **no** claim about years, reviews or licences. That restraint is deliberate
+and it is the site's most valuable asset. A draft that spends it is rejected.
+
+**Prices are sourced as of 2026-09-17 and are no longer an automatic reject.** The owner reversed
+the no-price-list policy and confirmed VAT-inclusive **ranges**, plus no call-out fee and no
+surcharge for tile roofs, difficult access or urgent calls. They live in `priceRanges` in
+`lib/content.ts` and render on `/מחירון/`. What you reject now is drift: a figure §1a does not
+carry, a single number where §1a has a range, a price stated or implied ex-VAT
+(Israeli Consumer Protection Law §17א requires consumer-facing prices to include מע״מ), or **any
+price in one of the 12 knowledge-hub guides** — figures belong on the commercial routes, so an
+editorial page cannot drift out of sync with the published ranges.
 
 ### The propagation check — now a regression guard
 

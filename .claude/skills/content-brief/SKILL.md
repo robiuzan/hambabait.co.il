@@ -1,6 +1,6 @@
 ---
 name: content-brief
-description: The brief every hambabait page must have before a word of Hebrew is written — intent and cluster across the four page types (service, location, guide, static), the cannibalisation guard sentence naming what the page does and does not own, required sections including the self-contained answer block, the must-not-contain claims list, exact internal link targets, and the title/description formulas that must not append the brand. Use before deepening a service or city page, writing a new guide, or filling one of the nine static routes that still has no answer block. Triggers: "content brief", "what should this page cover", "brief the copywriter", "outline this page", "before we write".
+description: The brief every hambabait page must have before a word of Hebrew is written — intent and cluster across the four page types (service, location, guide, static), the cannibalisation guard sentence naming what the page does and does not own, required sections including the self-contained answer block, the must-not-contain claims list, exact internal link targets, and the title/description formulas that must not append the brand. Use before deepening a service or city page, writing a new guide, or filling one of the eight static routes that still has no answer block. Triggers: "content brief", "what should this page cover", "brief the copywriter", "outline this page", "before we write".
 ---
 
 # Content brief — the gate before writing

@@ -110,13 +110,16 @@ naive week-one read.**
 
 Five items that did not exist yesterday. Three are owner actions and one of them is urgent:
 
-- **The GTM container is behind the repo** — 27 `data-cta` values now ship and three changed
-  meaning. Until the container is updated it records less than it did before. **N-1**, below.
-- **`lead_submit_blocked` fires into nothing** until a tag and trigger exist. **N-2**.
+- ✅ **The GTM container is updated** (2026-09-17). 28 `data-cta` values ship and are tracked by one
+  attribute-reading tag; the "container is behind" framing was wrong — it held no CTA triggers at
+  all. **N-1** closed.
+- ✅ **`lead_submit` reaches GA4** (2026-09-17). `lead_submit_failed` and `lead_submit_blocked` are
+  captured too, by one regex Custom Event trigger. **N-2** closed.
 - **The header reaches 0 of the 6 service pages in one hop.** A submenu was considered and
   deliberately deferred as a design decision. **N-3**.
 - **The mobile menu does not trap focus.** **N-4**, folded into Sprint 3.
-- **Nine URLs have no answer block** — the static routes. **N-5**, folded into Sprint 4.
+- **Eight URLs have no answer block** — the static routes. `/מחירון/` closed its half on
+  2026-09-17. **N-5**, folded into Sprint 4.
 
 ---
 
@@ -248,14 +251,14 @@ contrast work is computed rather than rendered.
 **Why now:** with risk closed and measurement live, this is the surface still genuinely ours to win.
 The local pack is not available to us (Sprint 6); the answer layer is.
 
-| #        | Item                                                                                                          | Owner | Effort | Status                                                                                                                                                                                                                           |
-| -------- | ------------------------------------------------------------------------------------------------------------- | ----- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **S4-1** | Deepen the three weakest city pages — `rehovot`, `raanana`, `kfar-saba` ([city-briefs.md](city-briefs.md) §6) | Us    | M      | ⬜ ≥2 paragraphs per city that could not be written about any other                                                                                                                                                              |
-| **S4-2** | Extend the guide cluster into the symptom long-tail. **Brief before writing** (`content-brief`)               | Us    | L      | ⬜ Each guide: question-form H2 + self-contained answer + `Article` + `FAQPage`; no cannibalisation of an existing URL                                                                                                           |
-| **S4-3** | Answer-block audit across all 45 URLs                                                                         | Us    | M      | ✅ **audited.** 36 of 45 carry one; bodies run **32–47 words** (mean 38.8), every question and body unique. The 40–60 band is **guidance, not a gate** — see below                                                               |
-| **N-5**  | Answer blocks for `/מחירון/`, `/שירותים/`, `/איזורי-שירות/`                                                   | Us    | M      | ⬜ **deferred, not rejected** — needs a content brief and a decision about which component renders it. ⚠️ **A `/מחירון/` block may not state a price or a pricing approach** — that is one of the unconfirmed roster assumptions |
-| **S4-4** | Orphan and mesh check after every addition; keep `public/llms.txt` in sync                                    | Us    | S      | ✅ **done, and permanently re-openable.** Zero orphans; `llms.txt` at 45/45. It is hand-maintained and nothing fails the build if it drifts                                                                                      |
-| **S4-5** | Stand up the refresh cycle — `dateModified` moves **only** on a real substantive edit                         | Us    | S      | ⬜ A written cadence in [measurement.md](measurement.md); no date bumped for freshness theatre                                                                                                                                   |
+| #        | Item                                                                                                          | Owner | Effort | Status                                                                                                                                                                                                                                                                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------- | ----- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **S4-1** | Deepen the three weakest city pages — `rehovot`, `raanana`, `kfar-saba` ([city-briefs.md](city-briefs.md) §6) | Us    | M      | ⬜ ≥2 paragraphs per city that could not be written about any other                                                                                                                                                                                                                                                                                     |
+| **S4-2** | Extend the guide cluster into the symptom long-tail. **Brief before writing** (`content-brief`)               | Us    | L      | ⬜ Each guide: question-form H2 + self-contained answer + `Article` + `FAQPage`; no cannibalisation of an existing URL                                                                                                                                                                                                                                  |
+| **S4-3** | Answer-block audit across all 45 URLs                                                                         | Us    | M      | ✅ **audited.** 37 of 45 carry one (36 at the 2026-08-31 audit, plus `/מחירון/` on 2026-09-17); bodies run **32–47 words** (mean 38.8), every question and body unique. The 40–60 band is **guidance, not a gate** — see below                                                                                                                          |
+| **N-5**  | Answer blocks for `/מחירון/`, `/שירותים/`, `/איזורי-שירות/`                                                   | Us    | M      | 🟡 **one of three done.** `/מחירון/` shipped `pricingAnswer` on 2026-09-17, once the owner approved published ranges. The two indexes remain deferred, not rejected — each needs a content brief and a decision about which component renders it. ⚠️ **Every figure must trace to [business-facts.md](business-facts.md) §1a, and is always כולל מע״מ** |
+| **S4-4** | Orphan and mesh check after every addition; keep `public/llms.txt` in sync                                    | Us    | S      | ✅ **done, and permanently re-openable.** Zero orphans; `llms.txt` at 45/45. It is hand-maintained and nothing fails the build if it drifts                                                                                                                                                                                                             |
+| **S4-5** | Stand up the refresh cycle — `dateModified` moves **only** on a real substantive edit                         | Us    | S      | ⬜ A written cadence in [measurement.md](measurement.md); no date bumped for freshness theatre                                                                                                                                                                                                                                                          |
 
 > **On S4-3's original acceptance bar.** It asked for a 40–60 word answer on every page. The measured
 > reality is 32–47 words, and the blocks are self-contained and they work. Rewriting sound Hebrew to
@@ -264,7 +267,7 @@ The local pack is not available to us (Sprint 6); the answer layer is.
 > and stop treating it as a gate.
 
 **Exit:** every cluster in [topical-map.md](topical-map.md) has a home, and every page worth quoting
-is quotable. The 9 URLs without an answer block are the 9 static routes; the two legal pages and
+is quotable. The 8 URLs without an answer block are static routes; the two legal pages and
 `/צור-קשר/` do not need one.
 
 ---
@@ -357,7 +360,7 @@ anything.
 | **N-2** | 🔴 **Tag + trigger for the whole `lead_submit` family** — not just the honeypot | **Owner** | S      | **Upgraded 2026-09-06.** No tag consumes `lead_submit`, `lead_submit_failed` or `lead_submit_blocked`, so **the lead form has never been measured**. One regex Custom Event trigger covers all three. Mark only `lead_submit` as the key event. See backlog P1-2                                  |
 | **N-3** | **Header services submenu — a design decision, deliberately deferred**          | **Owner** | S      | The header reaches **0 of 6** service pages in one hop. The footer links all 6 and all 18 cities on every page, so orphan insurance is met and this is a reach improvement, not a defect. A six-item dropdown on a nav whose mobile job is to stay out of the call button's way is not free       |
 | **N-4** | Mobile-menu focus trap — folded into Sprint 3                                   | Us        | S      | Escape and focus return already work; nothing holds focus inside the panel                                                                                                                                                                                                                        |
-| **N-5** | Answer blocks for the three commercial static routes — folded into Sprint 4     | Us        | M      | ⚠️ No price and no pricing approach on `/מחירון/`                                                                                                                                                                                                                                                 |
+| **N-5** | Answer blocks for the three commercial static routes — folded into Sprint 4     | Us        | M      | 🟡 `/מחירון/` **done 2026-09-17** (`pricingAnswer`, real ranges). `/שירותים/` and `/איזורי-שירות/` remain. No figure that is not in [business-facts.md](business-facts.md) §1a, and never ex-VAT                                                                                                  |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: tracking-analytics
-description: GTM, GA4 and conversion events for hambabait on the shared Israeli fleet container GTM-KWGGH438 — head placement via the site-kit helpers, hostname-based GA4 routing inside the container, the 27-value data-cta inventory and the three values that changed meaning (so the container triggers are now behind the repo), the lead_submit family including lead_submit_blocked, Consent Mode v2 which has shipped, Search Console verification which is now wired, and the mandatory gtm.js 200-check whenever a container id changes. Use when turning on analytics or when conversions are not being recorded. Triggers: "set up GTM", "GA4", "track calls", "conversion tracking not firing", "Search Console", "container id", "dataLayer".
+description: GTM, GA4 and conversion events for hambabait on the shared Israeli fleet container GTM-KWGGH438 — head placement via the site-kit helpers, hostname-based GA4 routing inside the container, the 28-value data-cta inventory, tracked since 2026-09-17 by one attribute-reading GA4 tag so a new value needs no container change, the lead_submit family including lead_submit_blocked, Consent Mode v2 which has shipped, Search Console ownership which is verified by DNS TXT as of 2026-09-16, and the mandatory gtm.js 200-check whenever a container id changes. Use when turning on analytics or when conversions are not being recorded. Triggers: "set up GTM", "GA4", "track calls", "conversion tracking not firing", "Search Console", "container id", "dataLayer".
 ---
 
 # Tracking & analytics
@@ -106,7 +106,7 @@ volume as measured until that exists.
 
 `trackEvent` pushes to `window.dataLayer` and is a safe no-op when GTM is absent.
 
-### `data-cta` placements — 27 values in the built output
+### `data-cta` placements — 28 values in the built output
 
 Every call, WhatsApp and form CTA carries a `data-cta` attribute naming its placement. Click tracking
 is configured in the container against that attribute, which is why:
@@ -116,13 +116,13 @@ is configured in the container against that attribute, which is why:
   appearance-based (`green-button`), because a redesign must not break the tag config;
 - when a value's meaning changes, that is a **container migration**, not a rename.
 
-The 27 values present in `out/`:
+The 28 values present in `out/`:
 
 ```
 contact-call, contact-email, contact-form-submit, contact-form-whatsapp, contact-whatsapp,
 finalcta-call, finalcta-whatsapp, footer-call, footer-email, header-call, header-call-icon,
 hero-call, hero-form-submit, hero-form-whatsapp, hero-whatsapp, location-form-submit,
-location-form-whatsapp, mobile-menu-call, notfound-call, pricing-quote, service-call,
+location-form-whatsapp, mobile-menu-call, notfound-call, pricing-quote · pricing-table-quote, service-call,
 service-form-submit, service-form-whatsapp, service-whatsapp, sticky-call, sticky-whatsapp,
 thanks-call
 ```

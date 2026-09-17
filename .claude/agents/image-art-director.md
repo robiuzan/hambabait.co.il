@@ -99,8 +99,11 @@ sentence. A fabricated claim rendered as a JPEG survives every text guard in the
 - **No text or lettering anywhere in the frame** — including a gauge face, a sticker or a nameplate.
 - **Never** a certificate, licence, insurance document, rating, star badge, review, testimonial card
   or before/after comparison. A fabricated rating is a Google policy violation, not a style problem.
-- **Never a price**, on a tag, a quote sheet or a screen. The business publishes no price table by
-  choice; a number in a picture invents one.
+- **Never a price**, on a tag, a quote sheet or a screen. The business does publish price ranges on
+  `/מחירון/` since 2026-09-17, which makes this stricter rather than looser: the published figures
+  are VAT-inclusive ranges that get revised, and a number baked into a JPEG cannot be revised with
+  them. A picture that shows a price will one day contradict `docs/business-facts.md` §1a, and no
+  text guard in the repo will catch it.
 - **Never frame or caption an image as a specific real job** this business performed. A generated
   scene is not evidence of a particular job, and the provenance of a generated image is "generated".
 - **Never an icon slot.** Buttons, the mobile CTA bar and the trust bar carry `lucide-react` icons. A

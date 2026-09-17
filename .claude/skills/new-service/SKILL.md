@@ -129,9 +129,11 @@ All six service pages emit three nodes today:
 - **`FAQPage`** via `faqJsonLd(depth.faqs)` — per page, matched to the visible FAQs.
 - **`BreadcrumbList`** emitted from `PageHeader`, matching the visible crumb trail item for item.
 
-Do not add `Offer` with a price — the business publishes no prices, so any figure is invented, and the
-gate fails on a priced `Offer`. Same for `warrantyPromise`, `aggregateRating` and the rest of the banned
-set. See `schema-structured-data`.
+Do not add `Offer` with a price. The business does publish ranges — on `/מחירון/`, rendered from
+`priceRanges` — but deliberately keeps them out of the graph, where a range is easy to express wrongly
+and can surface in a SERP stripped of the scope line that qualifies it. The gate fails on a priced
+`Offer` and that assertion stays. Same for `warrantyPromise`, `aggregateRating` and the rest of the
+banned set. See `schema-structured-data`.
 
 ## Naming a new service
 

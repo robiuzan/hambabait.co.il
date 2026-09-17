@@ -6,13 +6,21 @@ import { pricingApproach, pricingNote } from "@/lib/content";
 
 const icons = [ClipboardCheck, Coins, ShieldCheck];
 
-export function PricingTeaser() {
+/**
+ * The three "how we price" cards.
+ *
+ * `standalone` controls the trailing note and CTA: true on the homepage, where this is
+ * the only pricing content on the page; false on /מחירון/, where PriceTable already
+ * renders both and a second copy would duplicate the note and put the `pricing-quote`
+ * data-cta on one page twice.
+ */
+export function PricingTeaser({ standalone = true }: { standalone?: boolean }) {
   return (
     <Section id="pricing" tone="white">
       <SectionHeading
         eyebrow="מחירון"
         title="מחירים הוגנים ושקופים"
-        subtitle="אנחנו לא עובדים עם מחירון 'עיוור'. המחיר נקבע לפי סוג הדוד והתקלה — תמיד בשקיפות ולפני תחילת העבודה."
+        subtitle="טווחי המחיר מפורסמים מראש. המחיר הסופי נקבע לפי סוג הדוד והתקלה — תמיד בשקיפות ולפני תחילת העבודה."
       />
 
       <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-3">
@@ -35,16 +43,20 @@ export function PricingTeaser() {
         })}
       </div>
 
-      <p className="mx-auto mt-6 max-w-2xl text-center text-sm text-gray-500">
-        {pricingNote}
-      </p>
+      {standalone ? (
+        <>
+          <p className="mx-auto mt-6 max-w-2xl text-center text-sm text-gray-500">
+            {pricingNote}
+          </p>
 
-      <div className="mt-8 flex justify-center">
-        <Button href="/צור-קשר" data-cta="pricing-quote" variant="accent" size="lg">
-          <ClipboardCheck className="h-5 w-5" aria-hidden />
-          קבלו הצעת מחיר
-        </Button>
-      </div>
+          <div className="mt-8 flex justify-center">
+            <Button href="/צור-קשר" data-cta="pricing-quote" variant="accent" size="lg">
+              <ClipboardCheck className="h-5 w-5" aria-hidden />
+              קבלו הצעת מחיר
+            </Button>
+          </div>
+        </>
+      ) : null}
     </Section>
   );
 }

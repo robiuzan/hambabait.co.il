@@ -27,8 +27,8 @@ are close to nil. Editorial depth is the one lever fully inside the repo's contr
 owner to confirm no business fact at all.
 
 Technical explanation is also the **only safe citation surface**: how a solar boiler works, why an
-element fails, what an anode does. None of it touches the unsourced warranty/speed/price claims in
-`docs/business-facts.md` §3. See `aeo-answer-content`.
+element fails, what an anode does. None of it touches the unsourced warranty/speed claims in
+`docs/business-facts.md` §3, or the published prices in §1a. See `aeo-answer-content`.
 
 That is also why the guides are the only pages on the site carrying a date and an author — they are
 the natural home for freshness and authorship signals, and they carry them honestly.
@@ -140,8 +140,9 @@ This is home equipment involving **water, electricity and pressure**. Two hard l
 - **Say when to stop and call someone.** Every guide that touches a fault needs an explicit "at this
   point, call a technician" line. The `callout` block exists for exactly this.
 
-And the standing rule: no warranty terms, no response times, no prices, no technician credentials.
-Domain knowledge only.
+And the standing rule: no warranty terms, no response times, no technician credentials. Domain
+knowledge only. **No prices either** — the published ranges live on `/מחירון/` and nowhere else, so a
+guide can never drift out of sync with them. Link to the price page instead of quoting a figure.
 
 ## Schema
 

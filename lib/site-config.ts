@@ -102,7 +102,7 @@ export const siteConfig = {
     (manifest.contact as { formAccessKey?: string | null }).formAccessKey ?? null,
   serviceArea: manifest.schema.areaServed ?? "",
 
-  /** Business hours (authored — confirm with client). */
+  /** Business hours — owner-confirmed 2026-09-17. See docs/business-facts.md §1. */
   hours: {
     weekday: "ראשון–חמישי 08:00–18:00",
     friday: "שישי 08:00–14:00",

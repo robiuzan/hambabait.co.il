@@ -561,8 +561,9 @@ export const trustStats = [
 ] as const;
 
 /**
- * How pricing works (indicative approach — we deliberately do NOT publish a fixed price
- * table; the final price is set only after the technician diagnoses the fault on site).
+ * How pricing works. The site DOES publish price ranges — see `priceRanges` below — and
+ * the final figure inside a range is set after the technician diagnoses the fault on site.
+ * Any doc or comment still saying this business publishes no prices predates 2026-09-17.
  */
 export const pricingApproach = [
   {
@@ -574,14 +575,131 @@ export const pricingApproach = [
     body: "עלות התיקון נקבעת לפי סוג הדוד (שמש / חשמל / משולב) והחלק שדורש טיפול — תרמוסטט, אלמנט, גומיות או צנרת.",
   },
   {
-    title: "שקיפות, בלי הפתעות",
-    body: "מאשרים איתכם את המחיר לפני שמתחילים. משלמים על מה שסוכם — בלי תוספות מפתיעות בסוף.",
+    // Both facts owner-confirmed 2026-09-17 — see docs/business-facts.md.
+    title: "בלי דמי ביקור, בלי תוספות",
+    body: "אין תשלום על עצם ההגעה, ואין תוספת על גג רעפים, גישה מורכבת או קריאה דחופה. מאשרים איתכם את המחיר לפני שמתחילים.",
   },
 ] as const;
 
-/** Indicative pricing note (no fabricated figures). */
+/** Pricing note shown under the table. */
 export const pricingNote =
-  "המחיר הסופי נקבע רק לאחר אבחון הדוד בפועל, ומשתנה בהתאם לסוג הדוד, מהות התקלה והחלקים הנדרשים. נשמח לתת הערכה טלפונית ראשונית ולתאם ביקור טכנאי לאבחון מדויק.";
+  "המחירים כוללים מע״מ. אין דמי ביקור, ואין תוספת תשלום על גג רעפים, גישה מורכבת או קריאה דחופה. המחיר הסופי נקבע לאחר אבחון הדוד בפועל — ותמיד מאושר איתכם לפני תחילת העבודה.";
+
+export interface PriceRange {
+  /** Hebrew label as shown in the table. */
+  label: string;
+  /** Lower bound in ₪, VAT included. */
+  low: number;
+  /** Upper bound in ₪, VAT included. */
+  high: number;
+  /** What the figure covers, and what pushes a job to the top of the band. */
+  scope: string;
+}
+
+/**
+ * PUBLISHED PRICE RANGES — ₪, כולל מע״מ.
+ *
+ * ⚠️ OWNER-CONFIRMED 2026-09-17. These are real business facts, not estimates.
+ * Ranges were derived from Israeli market research (מידרג real-jobs aggregations
+ * dated June–July 2025, המקצוענים, דפי זהב, B144 and five trade price lists), then
+ * approved by the owner as VAT-INCLUSIVE display prices. See docs/business-facts.md.
+ *
+ * Israeli Consumer Protection Law §17א requires the price shown to a consumer to be
+ * the TOTAL price including מע״מ — so these must never be re-published ex-VAT.
+ *
+ * Do NOT change any figure without fresh owner sign-off, and do not add a figure for
+ * a service the owner has not priced. The owner also confirmed: no call-out fee, and
+ * no surcharge for tile roofs, difficult access or urgent calls.
+ *
+ * 🔶 confirm — the `scope` text is NOT owner-confirmed. The owner approved the NUMBERS.
+ * Every `scope` line below was written from the same market research and describes what
+ * the price covers — "כולל החלק והעבודה", "פינוי הדוד הישן" — which is a commercial
+ * commitment of the same weight as the figure itself. Each is marked below. Until the
+ * owner confirms them, they must not be treated as settled. See docs/business-facts.md §1a.
+ */
+export const priceRanges: readonly PriceRange[] = [
+  {
+    label: "תיקון דוד שמש",
+    low: 250,
+    high: 850,
+    scope:
+      "אבחון, פירוק והרכבה והחלפת החלק התקול — תרמוסטט, גוף חימום, ווסת או אטם. הצד הגבוה של הטווח מתייחס לתקלה שמחייבת עבודה על הגג או החלפת פלאנג׳.",
+  },
+  {
+    label: "תיקון דוד חשמל",
+    low: 250,
+    high: 850,
+    scope:
+      "אבחון והחלפת החלק התקול — תרמוסטט, גוף חימום או אטם. הצד הגבוה מתייחס לדוד עם אבנית כבדה שמחייב ניקוי לפני ההרכבה.",
+  },
+  {
+    label: "החלפת תרמוסטט",
+    low: 250,
+    high: 500,
+    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
+    scope: "תרמוסטט אנלוגי סטנדרטי, כולל החלק והעבודה, לדוד שמש או דוד חשמל.",
+  },
+  {
+    label: "החלפת אלמנט חימום",
+    low: 300,
+    high: 800,
+    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
+    scope:
+      "גוף חימום חדש, כולל החלק והעבודה. הצד הגבוה מתייחס לדוד שנדרש בו גם ניקוי אבנית.",
+  },
+  {
+    label: "תיקון נזילות בדוד",
+    low: 300,
+    high: 880,
+    scope:
+      "נזילה שניתנת לתיקון: שסתום ביטחון, צנרת, מחברים או אטם פלאנג׳. מכל חלוד אינו ניתן לתיקון ומחייב החלפת דוד.",
+  },
+  {
+    label: "החלפת דוד חשמל",
+    low: 1300,
+    high: 3300,
+    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
+    scope: "דוד חדש, התקנה מלאה ופינוי הדוד הישן.",
+  },
+  {
+    label: "החלפת מיכל של דוד שמש",
+    low: 1700,
+    high: 3500,
+    scope: "החלפת המיכל בלבד, כשהקולטים הקיימים תקינים ונשארים במקומם.",
+  },
+  {
+    label: "החלפת מערכת סולארית מלאה",
+    low: 2475,
+    high: 5900,
+    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
+    scope: "מיכל וקולטים חדשים, התקנה מלאה ופינוי המערכת הישנה.",
+  },
+] as const;
+
+/** Copy for the price table. Kept out of JSX per CLAUDE.md §5. */
+export const pricingTableCopy = {
+  eyebrow: "טווחי מחיר",
+  // Deliberately NOT "כמה עולה תיקון דוד" — that question is the answer block H2 above it,
+  // and two H2s differing only by a question mark is a templated-heading defect.
+  title: "טווחי מחיר לפי סוג העבודה",
+  subtitle:
+    "הטווח מכסה את רוב המקרים. המיקום בתוך הטווח תלוי בסוג הדוד, בחלק שמוחלף ובמצב המערכת.",
+  caption: "טווחי מחיר לתיקון והחלפת דודים, בשקלים, כולל מע״מ",
+  scrollLabel: "טווחי מחיר לתיקון והחלפת דודים",
+  colService: "השירות",
+  // VAT status travels with the figure, so a single lifted row still carries it.
+  colPrice: "טווח מחיר · כולל מע״מ",
+  cta: "קבלו הצעת מחיר מדויקת",
+} as const;
+
+/**
+ * Answer block for /מחירון/ — question-form H2 + a self-contained answer carrying real
+ * figures. This route had no answer block until prices existed to state (backlog P1-4).
+ */
+export const pricingAnswer = {
+  question: "כמה עולה תיקון דוד?",
+  body: "תיקון דוד עולה בדרך כלל בין ₪250 ל-₪880 כולל מע״מ, לפי סוג התקלה והחלק שמוחלף: החלפת תרמוסטט בין ₪250 ל-₪500, גוף חימום בין ₪300 ל-₪800, ותיקון נזילה בין ₪300 ל-₪880. החלפת דוד חשמל בין ₪1,300 ל-₪3,300. אין דמי ביקור ואין תוספות.",
+} as const;
 
 /** Homepage FAQ (authored for water-heater repair). */
 export const faqs = [
@@ -609,8 +727,11 @@ export const faqs = [
     a: "אם הדוד ישן מאוד, חלוד, דולף מגוף הדוד עצמו או שעלות התיקון גבוהה ביחס לערכו — לרוב משתלם יותר להחליף. נמליץ לכם בכנות מה עדיף במקרה שלכם.",
   },
   {
+    // Kept deliberately different from `pricingAnswer` on /מחירון/: the same question
+    // answered twice, identically, is a templated-question defect. This is the short
+    // version with the headline envelope; the pricing page carries the full breakdown.
     q: "כמה עולה תיקון דוד?",
-    a: "המחיר נקבע לפי סוג הדוד, מהות התקלה והחלק שדורש החלפה. הטכנאי מאבחן את התקלה ונותן הצעת מחיר ברורה מראש, לפני תחילת העבודה.",
+    a: "תיקון דוד עולה בדרך כלל בין ₪250 ל-₪880 כולל מע״מ, לפי סוג התקלה והחלק שמוחלף. אין דמי ביקור. המחיר המדויק בתוך הטווח נקבע לאחר אבחון, ומאושר איתכם לפני תחילת העבודה — המחירון המלא נמצא בעמוד המחירון.",
   },
   {
     // 🔶 confirm — same-day arrival is unsourced and repeated across all 18 city pages.

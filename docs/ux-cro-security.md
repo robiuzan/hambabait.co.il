@@ -54,14 +54,14 @@ Anchor text is descriptive and Hebrew: `תיקון דוד שמש`, never `לחצ
 
 ### 2.1 The CTA inventory
 
-**27 distinct `data-cta` values ship today, in 492 occurrences.** The naming convention is
+**28 distinct `data-cta` values ship today, in 492 occurrences.** The naming convention is
 **`placement-action`** — `hero-call`, `sticky-whatsapp`, `service-form-whatsapp`, `footer-email`.
 Keep it: the analytics segmentation in
 [data-tracking-infrastructure.md](data-tracking-infrastructure.md) depends on placement being
 parseable from the value.
 
 ```bash
-grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u   # 27 values
+grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u   # 28 values
 ```
 
 > ⚠️ **The inventory changed, and three values changed meaning. The GTM container must be updated —

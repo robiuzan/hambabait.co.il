@@ -1,6 +1,6 @@
 ---
 name: local-seo-il
-description: Israeli local-SEO doctrine for חם בבית — NAP byte-identical across site, schema and Google עסק שלי, and the six unconfirmed roster assumptions in docs/manifest-assumptions.md that gate publishing any of it externally; the 6-service × 18-location matrix and its expansion cap; Hebrew ב+city grammar; the no-address/no-geo reality of a mobile trade and the areaServed field that names a place that does not exist; GBP as the top lever; and the doorway-page policy the 18 city pages now clear on content but must keep clearing. Use when populating locations or services for local ranking, or auditing local visibility. Triggers: "local SEO", "NAP", "city pages", "Google עסק שלי", "doorway pages", "areaServed", "add a city", "why don't the city pages rank".
+description: Israeli local-SEO doctrine for חם בבית — NAP byte-identical across site, schema and Google עסק שלי, and the unconfirmed roster assumptions in docs/manifest-assumptions.md that gate publishing any of it externally; the 6-service × 18-location matrix and its expansion cap; Hebrew ב+city grammar; the no-address/no-geo reality of a mobile trade and the areaServed field that names a place that does not exist; GBP as the top lever; and the doorway-page policy the 18 city pages now clear on content but must keep clearing. Use when populating locations or services for local ranking, or auditing local visibility. Triggers: "local SEO", "NAP", "city pages", "Google עסק שלי", "doorway pages", "areaServed", "add a city", "why don't the city pages rank".
 ---
 
 # Local SEO — Israel
@@ -50,14 +50,17 @@ Rules:
 The sync **deliberately strips** the roster's `_needsConfirmation` array, because `site.config.json` is
 imported by `lib/site-config.ts` and therefore **bundled into the client JavaScript** — internal notes
 must not ship to visitors. The assumptions are preserved instead in
-**`docs/manifest-assumptions.md`**, which the sync generates. Six items are outstanding, and four of
-them are NAP:
+**`docs/manifest-assumptions.md`**, which the sync generates — read it for the live list. Three of the
+recurring items are NAP:
 
 - the **phone** is the shared fleet lead line — routing unconfirmed;
 - the **email** is assumed (it fixes a typo on the previous live site);
 - the **opening hours** are authored, not supplied;
-- the **pricing approach** (indicative only, no price table) is unconfirmed;
 - plus: the site was rebuilt from scratch rather than migrated, and `foundedYear` is `null`.
+
+**Pricing is no longer one of them.** The owner confirmed VAT-inclusive ranges on 2026-09-17 and they
+are published on `/מחירון/` (`docs/business-facts.md` §1a). Off-site surfaces still link to that page
+rather than restating a figure — a citation nothing keeps in sync goes stale silently.
 
 > **Manifest-sourced is not client-confirmed.** Reading `site.config.json` alone shows a clean, complete
 > NAP and invites exactly the wrong conclusion. Read `docs/manifest-assumptions.md` before printing any

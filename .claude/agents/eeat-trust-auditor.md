@@ -20,10 +20,22 @@ unsourced". Verified absent across `app/`, `components/`, `lib/` and the built `
   in the shipped JSON-LD
 - **no licence, insurance, certification, ח.פ. or עוסק מורשה claim**
 - **no 24/7 claim**
-- **no numeric price anywhere** — the business deliberately publishes no price table
+- **no numeric price outside `/מחירון/`** — see the next paragraph; prices are now published, and
+  they are published in exactly one place
 
 `lib/content.ts` records this as deliberate policy. That restraint is an asset. Open every report by
 confirming it still holds, and treat any regression as a top-severity finding.
+
+**Prices are sourced now — do not report `/מחירון/` as a violation.** On 2026-09-17 the owner
+reversed the no-price-list policy and confirmed VAT-inclusive price **ranges**, plus "no call-out
+fee" and "no surcharge for tile roofs, difficult access or urgent calls". They live in
+`lib/content.ts` `priceRanges`, render through `components/marketing/PriceTable.tsx`, and repeat in
+`pricingAnswer` and the `/מחירון/` meta description. The register is `docs/business-facts.md` §1a —
+every figure must trace to it. What you audit here is **drift**, not existence: a figure on the site
+that §1a does not carry, a range restated ex-VAT (Israeli Consumer Protection Law §17א requires
+consumer-facing prices to include מע״מ), a price that has leaked into one of the 12 guides, or a
+priced `Offer` in the JSON-LD. The schema bar and the guides bar both still stand — see
+`schema-auditor`.
 
 ## Then: the laundering trap
 
@@ -74,9 +86,12 @@ exposure:
    qualitative; that one slipped through and has since been softened out (`lib/content.ts` keeps the
    `// 🔶 confirm` marker at the site). Watch for it returning — a duration is the claim a copywriter
    reaches for first when a page feels vague.
-5. **Free call-out ambiguity** — "ללא התחייבות" appears beside "ביקור, אבחון והצעה שקופה" while the
-   site **never states whether the diagnostic visit is chargeable**. A reader can reasonably infer a
-   free call-out. Both the pricing page and the pricing copy dodge it.
+5. **Call-out charge — closed 2026-09-17.** The site used to leave "ללא התחייבות" beside
+   "ביקור, אבחון והצעה שקופה" without ever saying whether the visit was chargeable. The owner has
+   since confirmed **no call-out fee and no surcharge** for tile roofs, difficult access or urgent
+   calls, and `pricingNote` now states it outright. Do not re-report the old ambiguity; check
+   instead that the wording still matches `docs/business-facts.md` §1a and has not been widened into
+   a promise the owner did not make.
 6. **Technician experience and staffing** — "טכנאים מנוסים ומקצועיים", "הטכנאים שלנו מתמחים…".
    Nothing establishes that any technician exists, is employed, or is trained.
 7. **Per-city local presence** — the 18 city pages now carry genuinely per-city technical material

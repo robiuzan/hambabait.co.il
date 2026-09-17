@@ -125,18 +125,21 @@ text. That holds today across all 37: the homepage set, the per-service sets, th
 the per-guide sets each render from the same array they mark up. Do not attach `FAQPage` to a page
 whose FAQs are absent.
 
-## Offer and pricing — the honest position
+## Offer and pricing — the deliberate position
 
-The business deliberately publishes **no price table** (`app/מחירון/page.tsx`, `lib/content.ts`), and
-no shekel figure appears anywhere on the site. The pricing _approach_ is itself one of the
-unconfirmed roster assumptions (`docs/manifest-assumptions.md`). Therefore:
+Since 2026-09-17 the site **does** publish prices: owner-confirmed VAT-inclusive ranges on `/מחירון/`,
+from `priceRanges` in `lib/content.ts` (`docs/business-facts.md` §1a). They stay out of the graph
+anyway, and that is now a choice rather than an absence of data:
 
-- **Any `Offer` with a `price` would be fabricated.** Do not add one. `qa:gate` fails the build if a
-  priced `Offer` appears in any parsed JSON-LD block.
+- **No priced `Offer` and no `AggregateOffer`.** A range is easy to express wrongly in schema
+  (`price` vs `lowPrice`/`highPrice`, VAT, what the figure covers), and a wrong figure can surface
+  directly in a SERP detached from the `scope` line that qualifies it — where the visible table always
+  carries it. `qa:gate` fails the build if a priced `Offer` appears in any parsed JSON-LD block, and
+  **that assertion stays.**
 - The defensible options are an `Offer` with `priceCurrency: "ILS"` and no price, or no `Offer` at
   all. Prefer no `Offer` unless there is a concrete reason.
-- `priceRange: "₪₪"` already ships on the business node. It is itself unsourced
-  (`docs/business-facts.md` §1) but it is at least a band, not a number.
+- `priceRange: "₪₪"` already ships on the business node. It is a band rather than a number, and it is
+  now defensible from the published ranges (`docs/business-facts.md` §1a) instead of a guess.
 
 ## The absolute bar
 

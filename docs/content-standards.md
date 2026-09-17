@@ -60,7 +60,7 @@ grep -ho 'question: "[^"]*"' lib/content.ts lib/guides.ts | sort | uniq -d
 grep -ho 'question: "[^"]*"' lib/content.ts | sed 's/ב[^ ]*?"$//' | sort | uniq -c | sort -rn | head
 ```
 
-Currently: 36 answer blocks, **0 duplicate questions, 0 duplicate bodies**.
+Currently: 37 answer blocks, **0 duplicate questions, 0 duplicate bodies**.
 
 ---
 
@@ -71,15 +71,20 @@ Before depth, accuracy. **Read [business-facts.md](business-facts.md) before wri
 Never write, without a source outside the repo:
 
 - years in business, job counts, customer counts
-- prices, or any implication about what the call-out costs
 - warranty terms, duration or scope
 - response times or arrival guarantees
 - licences, insurance, certifications
 - ratings, reviews, testimonials
 - technician credentials or headcount
 
-The site makes **no** claim about years, reviews, licences or prices. That restraint is deliberate
-and it is the site's most valuable asset. Do not spend it.
+**Prices are the one item that moved.** Since 2026-09-17 the owner publishes eight price ranges, and
+"no call-out fee, no surcharge for tile roofs, difficult access or urgency" is confirmed alongside
+them — that is the source, and it is [business-facts.md](business-facts.md) §1a. A figure that
+appears in §1a is writable; a figure that does not is invented. Israeli Consumer Protection Law
+**§17א** means every figure shown to a reader is **כולל מע״מ** — never republish one ex-VAT.
+
+The site still makes **no** claim about years, reviews, licences or credentials. That restraint is
+deliberate and it is the site's most valuable asset. Do not spend it.
 
 Several claims **are** already unsourced — chiefly the warranty. The sitewide assertion was softened
 down to a single defensible sentence (warranty terms are given with the quote, before work begins),
@@ -89,9 +94,10 @@ back into new copy.** Rewriting a page containing one is an opportunity to softe
 restate it.
 
 Note also that **"manifest-sourced" is not "client-confirmed."** The roster carries a
-`_needsConfirmation` array — phone routing, email, hours, pricing approach — that `site.config.json`
-strips. Those values look settled and are not. See [manifest-assumptions.md](manifest-assumptions.md)
-before treating any of them as fact in copy.
+`_needsConfirmation` array — phone routing, email, hours — that `site.config.json` strips. Those
+values look settled and are not. See [manifest-assumptions.md](manifest-assumptions.md) before
+treating any of them as fact in copy. **Pricing is no longer on that list**: it was retired on
+2026-09-17 when the owner confirmed the ranges in [business-facts.md](business-facts.md) §1a.
 
 Unsourced claim you cannot avoid? Placeholder + `// 🔶 confirm` + a row in `business-facts.md`, in the
 same change. The content layer already carries a handful of these on reasoned-but-unsourced city
@@ -117,14 +123,15 @@ The reader usually has **no hot water right now**, is mildly stressed, and is on
 ### The answer block — what it is, and what it is not
 
 Every service page, city page and guide opens with one: the page's question as a heading, then a
-self-contained answer immediately below it.
+self-contained answer immediately below it. Since 2026-09-17 `/מחירון/` carries one too.
 
 **Self-contained is the requirement. Word count is guidance, not a gate.** The block must answer its
 own question without the reader needing the next paragraph — an answer that depends on what follows
 gets skipped entirely by the thing lifting it. That is the property to check.
 
-Measured across the 36 blocks that ship today: **32 to 47 words**, mean 38.8, median 39. Twenty-two
-sit below 40 and fourteen sit in the 40–60 band. They are self-contained and they work.
+Measured across the 36 blocks at the 2026-08-31 baseline: **32 to 47 words**, mean 38.8, median 39.
+Twenty-two sat below 40 and fourteen in the 40–60 band. The 37th — `/מחירון/`'s, added 2026-09-17 —
+is 41 words. They are self-contained and they work.
 
 An earlier version of this document set a hard 40–60 floor, and the honest read is that it was a
 self-imposed number rather than a property of good answers. Rewriting sound Hebrew to clear it would
@@ -219,23 +226,28 @@ one. Never a photograph of a technician or a job: that is a staffing claim rende
 
 Minimum ~700 Hebrew words. Comparison guides may be shorter if the table carries the weight.
 
-⚠️ **No prices in a comparison.** The business publishes no price list; any figure is invented. Compare
-on qualitative axes — running cost _relative_ to the alternative, weather dependence, maintenance,
-lifespan.
+⚠️ **No prices in a guide, comparisons included.** The published ranges live on `/מחירון/` and
+nowhere else, so a guide can never drift out of sync with them and an owner re-pricing touches one
+page. Compare on qualitative axes — running cost _relative_ to the alternative, weather dependence,
+maintenance, lifespan.
 
 ### Static pages
 
 `/אודות/` carries the trust burden without fabricating — what the business does, how it works, what
-the reader can expect. `/מחירון/` explains the quote-after-diagnosis approach honestly and **must not
-introduce a number** — and must not state the pricing approach as settled fact either, because the
-approach is one of the roster's unconfirmed assumptions.
+the reader can expect. `/מחירון/` publishes the eight owner-approved ranges and explains what moves a
+job inside its range. The bar it must clear: **every figure traces to
+[business-facts.md](business-facts.md) §1a**, every figure is **כולל מע״מ** as §17א requires, and no
+service the owner has not priced gets a number. A figure that is not in §1a is still invented — the
+policy changed, the fabrication rule did not. Re-pricing edits `priceRanges`, `pricingAnswer` and the
+page's meta description in one change, or the page contradicts itself.
 
-**Nine of the 45 indexable pages carry no answer block**, and all nine are static: the homepage, the
-three indexes, `/מחירון/`, `/אודות/`, `/צור-קשר/` and the two legal pages. Three of those would
-genuinely benefit from one — `/מחירון/`, `/שירותים/` and `/איזורי-שירות/`, each of which fields a
-real question a reader arrives with. That work is **open and deferred**: it needs a content brief and
-a decision about which component renders the block. The two legal pages and `/צור-קשר/` do not need
-one, and the homepage already carries a six-question `FAQPage`.
+**Eight of the 45 indexable pages carry no answer block**, and all eight are static: the homepage,
+the three indexes, `/אודות/`, `/צור-קשר/` and the two legal pages. `/מחירון/` gained one on
+2026-09-17, once there were prices to state. Two of the eight would genuinely benefit from one —
+`/שירותים/` and `/איזורי-שירות/`, each of which fields a real question a reader arrives with. That
+work is **open and deferred**: it needs a content brief and a decision about which component renders
+the block. The two legal pages and `/צור-קשר/` do not need one, and the homepage already carries a
+six-question `FAQPage`.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: cro-ux-auditor
-description: Read-only conversion and UX audit for חם בבית — whether a visitor mid-fault on a phone can reach a call in one tap from any of the 45 pages, the 27-value data-cta inventory against what actually ships in out/, the sticky mobile bar and its stacking with the consent banner, the LeadForm's per-field validation and its never-silent failure path, the consent notice above the submit button and the deliberately absent consent checkbox, funnel friction, thumb-zone placement, and trust signals that must stay honest. Invoke with "CRO audit", "why aren't we converting", "audit the funnel", "check the CTAs", or "UX review". Reports only; never edits, and never proposes a trust signal the business cannot support.
+description: Read-only conversion and UX audit for חם בבית — whether a visitor mid-fault on a phone can reach a call in one tap from any of the 45 pages, the 28-value data-cta inventory against what actually ships in out/, the sticky mobile bar and its stacking with the consent banner, the LeadForm's per-field validation and its never-silent failure path, the consent notice above the submit button and the deliberately absent consent checkbox, funnel friction, thumb-zone placement, and trust signals that must stay honest. Invoke with "CRO audit", "why aren't we converting", "audit the funnel", "check the CTAs", or "UX review". Reports only; never edits, and never proposes a trust signal the business cannot support.
 model: opus
 tools: Read, Grep, Glob, Bash, WebFetch
 ---
@@ -49,7 +49,7 @@ before reporting. Verified state: [docs/README.md](../../docs/README.md) §0.
 grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u
 ```
 
-**27 distinct values ship today, 492 occurrences.** Report:
+**28 distinct values ship today, 492 occurrences.** Report:
 
 - Any CTA with **no** `data-cta` — it is invisible to measurement and can never be proven to work.
 - Any value breaking the **`placement-action`** convention; the container segments on it.

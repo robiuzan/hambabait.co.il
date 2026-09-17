@@ -453,8 +453,9 @@ export const guides: Guide[] = [
   },
 
   // ── Comparison cluster ─────────────────────────────────────────────────────
-  // NOTE: no prices anywhere in this cluster. The business publishes no price
-  // list, so any figure would be invented. Compare on qualitative axes only.
+  // NOTE: no prices anywhere in this cluster. Published ranges live on /מחירון/
+  // (`priceRanges`) and only there, so a guide can never drift out of sync with
+  // them. Compare on qualitative axes only and link to the price page instead.
   {
     slug: "solar-vs-electric",
     title: "דוד שמש או דוד חשמל — מה מתאים לכם",

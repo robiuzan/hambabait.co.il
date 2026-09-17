@@ -144,9 +144,11 @@ lifted by answer engines far more reliably than prose, and it feeds the service 
 
 Comparison tables are the most extractable format that exists, and both are built as real tables.
 
-⚠️ **Neither contains a price, and neither may gain one.** The business publishes no price list; any
-figure is invented. Compare on qualitative axes. This is also why the comparison sub-cluster has
-little expansion room left — most further comparisons a reader wants are cost comparisons.
+⚠️ **Neither contains a price, and neither may gain one.** The site does publish price ranges since
+2026-09-17, but on `/מחירון/` only — a guide repeating a range drifts out of sync the moment a range
+moves. Compare on qualitative axes and link to `/מחירון/` for the figures. This is also why the
+comparison sub-cluster has little expansion room left — most further comparisons a reader wants are
+cost comparisons, and those now have a home that is not here.
 
 ### 4.3 Definition sub-cluster — 3 guides
 
@@ -211,9 +213,9 @@ Re-derived 2026-08-31. Coverage is done; this list is now about mesh and long ta
    and it is pure content-layer work with zero claims risk.
 2. **Symptom long-tail guides** — the largest remaining topical gap and the safest content spend on
    the site.
-3. **Answer blocks for `/מחירון/`, `/שירותים/` and `/איזורי-שירות/`** — three of the nine static
-   routes that carry none, each fielding a real question. Needs a brief and a rendering decision
-   first, and the `/מחירון/` one must not state a price **or** a pricing approach.
+3. **Answer blocks for `/שירותים/` and `/איזורי-שירות/`** — two of the eight static routes that
+   still carry none, each fielding a real question. Needs a brief and a rendering decision first.
+   `/מחירון/` is done: it got one on 2026-09-17 (`pricingAnswer`) and it states the real ranges.
 4. **The three remaining definition guides** — אלמנט חימום, ווסת, ברז ביטחון. Cheap, entity-building,
    and each has a service page waiting to link it.
 5. **Header navigation depth** — owner decision, see §5.1.

@@ -1,6 +1,6 @@
 ---
 name: gbp-local-listings
-description: Google עסק שלי and citation mechanics for חם בבית as a service-area business with no storefront — the exact NAP string and why the six roster assumptions in docs/manifest-assumptions.md must be settled before anything is published, service-area setup that hides a non-existent address, categories and services mirroring the 6 service pages, photo and post cadence, Israeli directory citations, and adding the verified profile URL to the manifest sameAs so it becomes an on-site entity signal. Use when setting up or auditing the profile or any external listing. Triggers: "Google Business Profile", "עסק שלי", "GBP", "citations", "directory listing", "NAP consistency", "service area business".
+description: Google עסק שלי and citation mechanics for חם בבית as a service-area business with no storefront — the exact NAP string and why the outstanding roster assumptions in docs/manifest-assumptions.md must be settled before anything is published, service-area setup that hides a non-existent address, categories and services mirroring the 6 service pages, photo and post cadence, Israeli directory citations, and adding the verified profile URL to the manifest sameAs so it becomes an on-site entity signal. Use when setting up or auditing the profile or any external listing. Triggers: "Google Business Profile", "עסק שלי", "GBP", "citations", "directory listing", "NAP consistency", "service area business".
 ---
 
 # Google עסק שלי and citations — חם בבית
@@ -22,14 +22,15 @@ whole into the client JS, so internal project notes would ship to every visitor 
 **`docs/manifest-assumptions.md`** instead. Read that file; it is the current list, regenerated on
 every sync.
 
-As of the last sync (2026-08-30) it lists **six outstanding items**:
+Pricing came **off** that list on 2026-09-17, when the owner approved published ranges. The rest of
+the snapshot (read the generated file for the live list):
 
 | Field / topic      | Value                                      | Status                                          |
 | ------------------ | ------------------------------------------ | ----------------------------------------------- |
 | Phone              | 055-6601006 · +972556601006                | ⬜ **shared fleet lead line** — confirm routing |
 | Email              | info@hambabait.co.il                       | ⬜ assumed (fixes a live typo); not proven live |
 | Hours              | ראשון–חמישי 08:00–18:00 · שישי 08:00–14:00 | ⬜ authored, not client-confirmed               |
-| Pricing approach   | indicative only, no price table published  | ⬜ confirm approach                             |
+| Pricing            | VAT-inclusive ranges on `/מחירון/`         | ✅ owner-confirmed 2026-09-17 (§1a)             |
 | Founded year       | `null`                                     | ⬜ unknown — **no year fabricated**             |
 | Content provenance | all copy freshly authored in the rebuild   | ⬜ recorded, not a business claim               |
 
@@ -108,7 +109,10 @@ service page or knowledge-hub guide — there are 12 guides at `/מדריכים/
 natural post targets. Not filler, not daily.
 
 Q&A: seed the questions real customers actually ask, and answer them the way the site does — honestly,
-without a price or a timing promise. This surface is public and quotable; treat it as site copy.
+without a timing promise. On price, **link to `/מחירון/` rather than typing a figure into Google**: an
+off-site copy of a range has nothing keeping it in step with `priceRanges`, and a stale price on a
+public profile is the version a customer will hold you to. This surface is quotable; treat it as site
+copy.
 
 ## Citations
 

@@ -40,12 +40,18 @@ three map results is wasted until the owner acts on §4.
 The subject decomposes into four intent clusters. The **one-intent-one-URL** rule is absolute:
 two pages competing for one query cannibalise and neither ranks.
 
-| Cluster                  | Query shape                                 | Owner route          | Count | Depth today                                              |
-| ------------------------ | ------------------------------------------- | -------------------- | ----- | -------------------------------------------------------- |
-| **Commercial — service** | `תיקון דוד שמש`, `החלפת אלמנט`              | `/services/<slug>/`  | 6     | answer block · symptom→cause table · steps · 3 FAQs each |
-| **Commercial — local**   | `תיקון דודים ב<עיר>`                        | `/locations/<slug>/` | 18    | answer block · 2 city-specific paragraphs · 1–2 FAQs     |
-| **Informational**        | `למה הדוד לא מתחמם`, `דוד שמש מול דוד חשמל` | `/מדריכים/<slug>/`   | 12    | Article + FAQPage, 4 clusters covered                    |
-| **Commercial research**  | `מחיר תיקון דוד`                            | `/מחירון/`           | 1     | pricing _approach_, deliberately no price table          |
+| Cluster                  | Query shape                                 | Owner route          | Count | Depth today                                                   |
+| ------------------------ | ------------------------------------------- | -------------------- | ----- | ------------------------------------------------------------- |
+| **Commercial — service** | `תיקון דוד שמש`, `החלפת אלמנט`              | `/services/<slug>/`  | 6     | answer block · symptom→cause table · steps · 3 FAQs each      |
+| **Commercial — local**   | `תיקון דודים ב<עיר>`                        | `/locations/<slug>/` | 18    | answer block · 2 city-specific paragraphs · 1–2 FAQs          |
+| **Informational**        | `למה הדוד לא מתחמם`, `דוד שמש מול דוד חשמל` | `/מדריכים/<slug>/`   | 12    | Article + FAQPage, 4 clusters covered                         |
+| **Commercial research**  | `מחיר תיקון דוד`                            | `/מחירון/`           | 1     | answer block · 8 VAT-inclusive price ranges · no call-out fee |
+
+**The commercial-research cluster stopped being a token.** Until 2026-09-17 `/מחירון/` explained an
+_approach_ and named no figure. The owner then reversed that policy, so the page publishes eight
+VAT-inclusive ranges, an answer block carrying them, and the no-call-out-fee statement.
+`מחיר תיקון דוד` is now a query we answer instead of one we deflected. Source of truth for figures:
+[business-facts.md](business-facts.md) §1a.
 
 **The expansion cap.** 6 services × 18 cities is **not** 108 pages. The matrix is deliberately kept
 at 24, because 108 intersections cannot each carry unique, checkable material and would be doorway
@@ -77,15 +83,17 @@ Every page that wants to be quoted carries, near the top:
    and pasted into a chat window, it must still be a complete answer.
 3. Only then the supporting detail.
 
-**What ships: 36 answer blocks across 45 URLs** — all 6 service pages, all 18 city pages and all 12
-guides (`answer: { question, body }` in `lib/content.ts` and `lib/guides.ts`). Every `question` is
-unique and every `body` is unique; there is no duplicated block anywhere.
+**What ships: 37 answer blocks across 45 URLs** — all 6 service pages, all 18 city pages, all 12
+guides (`answer: { question, body }` in `lib/content.ts` and `lib/guides.ts`) and `/מחירון/`
+(`pricingAnswer`, added 2026-09-17). Every `question` is unique and every `body` is unique; there is
+no duplicated block anywhere.
 
-**The 9 URLs without one are the static routes.** `/מחירון/`, `/שירותים/` and `/איזורי-שירות/` are
+**The 8 URLs without one are the remaining static routes.** `/שירותים/` and `/איזורי-שירות/` are
 worth adding one to and it is deferred, not rejected — it needs a content brief and a decision about
 which component renders it (§5). The two legal pages and `/צור-קשר/` do not need one; nobody asks an
-answer engine what a privacy policy says. ⚠️ A `/מחירון/` answer block **may not state a price or a
-pricing approach** — the pricing approach is one of the six unconfirmed roster assumptions.
+answer engine what a privacy policy says. The `/מחירון/` block is the one that states figures: it
+quotes the published VAT-inclusive ranges and it must stay byte-consistent with `priceRanges` and
+the page's meta description — [business-facts.md](business-facts.md) §1a governs all three.
 
 **On the word count: the 40–60 band is guidance, not a gate.** Measured across all 36 blocks the
 bodies run **32–47 words** (mean 38.8, median 39): 22 sit under 40, 14 land in the 40–60 band, none
@@ -160,10 +168,11 @@ linking, city→city neighbour links, breadcrumbs, and byte-identical canonical/
 **The owner's, and blocking:** Google עסק שלי. Nothing in this repo substitutes for it.
 
 > ⛔ **Do not publish a Business Profile or a single citation yet.** The roster
-> (`Israeli services sites/roster/sites/hambabait.json:60-67`) flags the phone routing, the email,
-> the hours and the pricing approach as **assumptions**, and the repo's `site.config.json` drops that
-> array — which makes them look settled. A citation corpus built on a wrong phone number must be
-> unwound directory by directory, and the inconsistency period actively hurts. **Confirm first.**
+> (`Israeli services sites/roster/sites/hambabait.json:60-67`) flags the phone routing, the email and
+> the hours as **assumptions**, and the repo's `site.config.json` drops that array — which makes them
+> look settled. (Pricing left that list on 2026-09-17 — the ranges are owner-confirmed.) A citation
+> corpus built on a wrong phone number must be unwound directory by directory, and the
+> inconsistency period actively hurts. **Confirm first.**
 > [entity-profile.md](entity-profile.md) holds the exact strings; `gbp-local-listings` holds the
 > procedure.
 
@@ -182,10 +191,9 @@ a matcher. One string, byte-identical, everywhere.
    `SearchAction`, because the site has no search and marking one up is a false capability claim.
    Nothing in [schema-graph.md](schema-graph.md) is unbuilt. Remaining schema work is depth, not
    coverage.
-3. **Give the three commercial static routes an answer block.** `/מחירון/`, `/שירותים/` and
-   `/איזורי-שירות/` are the only URLs with real query demand and no extractable answer (§3.1).
-   ⚠️ A `/מחירון/` answer block **may not state a price or a pricing approach** — the pricing
-   approach is one of the six unconfirmed roster assumptions.
+3. **Give the two remaining commercial static routes an answer block.** `/שירותים/` and
+   `/איזורי-שירות/` are the only URLs left with real query demand and no extractable answer (§3.1).
+   `/מחירון/` is done — it got `pricingAnswer` on 2026-09-17, quoting the published ranges.
 4. **Extend the informational cluster.** The 12 guides cover the four clusters but the symptom
    long-tail is nowhere near exhausted, and this is the surface where we can still win outright.
 5. **Deepen the three weakest city pages** (`rehovot`, `raanana`, `kfar-saba` — see
@@ -215,7 +223,9 @@ Tied to [measurement.md](measurement.md) — do not restate KPIs here.
 - **Invented volume, difficulty, or ranking numbers.** See §2.
 - **`Review` / `AggregateRating` markup.** Zero real reviews exist. This is a Google policy
   violation, not a style preference. See `review-acquisition`.
-- **A priced `Offer`.** The business deliberately publishes no price table; any figure is invented.
+- **A priced `Offer` or `AggregateOffer`.** The ranges are published on `/מחירון/` but stay out of
+  structured data **by choice**: a range is easy to express wrongly in schema and can surface raw in
+  a SERP. `qa:gate` asserts "no priced Offer node" and that assertion stays.
 - **Copying a competitor's claims.** Their warranty, their years, their certifications are theirs and
   are probably unverified too.
 - **Keyword-stuffed `ב+city` repetition.** The grammar rule exists to read naturally, not to hit a

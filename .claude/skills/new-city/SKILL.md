@@ -119,8 +119,8 @@ node via `provider.@id`, plus a **`BreadcrumbList`** matching the visible `PageH
 city inherits both from the route — nothing to wire, but confirm they appear in `out/`.
 
 **Never emit a per-city `LocalBusiness`.** There is one business and one `@id`; 18 of them would
-fabricate 18 branches. And no priced `Offer` — the business publishes no prices, so any figure is
-invented. See `schema-structured-data`.
+fabricate 18 branches. And no priced `Offer` — prices are published on `/מחירון/` only, never in
+schema and never per city, so no page can imply a city-specific rate. See `schema-structured-data`.
 
 ## Checklist
 

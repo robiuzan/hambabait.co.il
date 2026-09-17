@@ -114,21 +114,32 @@ execute in document order, so `<head>` is unambiguous. **Never move the default 
 
 ### 3.2 CTA tagging
 
-**27 distinct `data-cta` values ship, in 492 occurrences.** The convention is **`placement-action`**:
+**28 distinct `data-cta` values ship, in 492 occurrences.** The convention is **`placement-action`**:
 
 ```
 contact-call · contact-email · contact-form-submit · contact-form-whatsapp · contact-whatsapp
 finalcta-call · finalcta-whatsapp · footer-call · footer-email · header-call · header-call-icon
 hero-call · hero-form-submit · hero-form-whatsapp · hero-whatsapp · location-form-submit
-location-form-whatsapp · mobile-menu-call · notfound-call · pricing-quote · service-call
+location-form-whatsapp · mobile-menu-call · notfound-call · pricing-quote · pricing-table-quote
+service-call
 service-form-submit · service-form-whatsapp · service-whatsapp · sticky-call · sticky-whatsapp
 thanks-call
 ```
 
-> ## ⚠️ The container is behind the repo. Until it is updated, some of these record nothing.
+> ## ✅ Resolved 2026-09-17 — and the original diagnosis was wrong.
 >
-> This inventory grew from 21 to 27 **and three values changed meaning**, which is the more dangerous
-> half:
+> This block used to warn that the container held literal per-value triggers that the repo had
+> outgrown. **The container held no CTA triggers at all** — two tags, neither touching `data-cta`.
+> Nothing was silently zeroed, because nothing was ever tracked. The inventory history below is still
+> useful context, but it never cost a measurement.
+>
+> **What ships now:** one GA4 tag, `GA4 - cta_click`, fired by a trigger matching the CSS selector
+> `[data-cta], [data-cta] *` and reading the value through a Custom JavaScript variable that walks
+> `closest('[data-cta]')`. Because it reads the attribute instead of matching strings, **a new CTA
+> starts reporting with no container change** — `pricing-table-quote` (added 2026-09-17) proved it.
+> Verified live: hits reach GA4 property `G-RLE7LGPPX3`.
+>
+> The inventory grew from 21 to 28 **and three values changed meaning** — history, not a live risk:
 >
 > - **`header-call` used to tag three different elements on every page** — the desktop bar button,
 >   the compact icon link and the link inside the mobile panel. Its number was an uninterpretable
@@ -252,7 +263,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' "https://www.googletagmanager.com/gtm.
 grep -o 'consent-default\|gtm-init' out/index.html          # consent-default must appear first
 
 # 3. The CTA inventory that actually ships.
-grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u | wc -l   # 27 (492 occurrences)
+grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u | wc -l   # 28 (492 occurrences)
 
 # 4. Live robots policy (the zone can override what app/robots.ts declares).
 curl -sS -H 'Cache-Control: no-cache' "https://hambabait.co.il/robots.txt?cb=$RANDOM"

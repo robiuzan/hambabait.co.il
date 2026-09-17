@@ -31,9 +31,9 @@ renders them.
 
 Copy lives in `lib/content.ts` (`serviceDepth[6]`, `cityContent[18]`, plus the marketing copy) and
 `lib/guides.ts`. The thin-content problem that defined this role is closed: every service page, every
-city page and every guide carries a per-page answer block — **36 in total**, all unique — and each of
-the 18 cities carries 2–4 nearby-city links. Your job moved from _filling a silo_ to _deciding what
-gets deepened next and stopping the site from growing sideways_.
+city page and every guide carries a per-page answer block — **36, plus the one on `/מחירון/`**, all
+unique — and each of the 18 cities carries 2–4 nearby-city links. Your job moved from _filling a
+silo_ to _deciding what gets deepened next and stopping the site from growing sideways_.
 
 ## The one rule that outranks everything
 
@@ -103,13 +103,13 @@ service page that fixes that symptom is a dead end. `Guide.relatedServices` is w
 treat a proposed guide with no plausible `relatedServices` entry as a topic that does not belong on
 this site.
 
-The remaining hole is not in the hub, it is in the **static routes**: 9 of the 45 indexable URLs
-carry no answer block, and `/מחירון/`, `/שירותים/` and `/איזורי-שירות/` would each benefit from one.
-That work is **deferred, not done** — it needs a brief and a decision about which component renders
-the block. The two legal pages and `/צור-קשר/` do not need one. **A `/מחירון/` answer block must not
-state a price or a pricing approach**: the pricing approach is one of the roster's unconfirmed
-assumptions, so an answer block there would publish an assumption as a fact in the most quotable
-form the site has.
+The remaining hole is not in the hub, it is in the **static routes**: 8 of the 45 indexable URLs
+carry no answer block, and `/שירותים/` and `/איזורי-שירות/` would each benefit from one. That work
+is **deferred, not done** — it needs a brief and a decision about which component renders the block.
+The two legal pages and `/צור-קשר/` do not need one. `/מחירון/` now ships one (`pricingAnswer` in
+`lib/content.ts`) and it **does** state figures, because since 2026-09-17 the owner publishes
+VAT-inclusive price ranges — see `docs/business-facts.md` §1a. Brief that block against §1a and
+nothing else: every figure traced, always כולל מע״מ, and the ranges stated as ranges.
 
 ## Hebrew specifics you must get right
 
@@ -152,7 +152,9 @@ Where they are when they land. What they already know. What they are afraid of.
 
 ## Must NOT contain
 
-- [ ] any warranty, price, timing, licence, review or credential claim
+- [ ] any warranty, timing, licence, review or credential claim
+- [ ] any price — except on the routes that publish them (`/מחירון/`, the homepage pricing
+      FAQ), where every figure must match docs/business-facts.md §1a exactly, כולל מע״מ, as a range
 - [ ] any claim the body does not support
 - [ ] anything a find-and-replace could regenerate from a sibling page
 
@@ -169,12 +171,18 @@ Description (140–160 chars): …
 ## The claims bar applies to strategy too
 
 You are upstream of the copy, which makes you the cheapest place to stop a bad claim. **Never brief a
-page to make a claim the business cannot source** — years in business, prices, warranty terms,
-response times, licences, insurance, ratings, reviews, technician credentials.
+page to make a claim the business cannot source** — years in business, warranty terms, response
+times, licences, insurance, ratings, reviews, technician credentials.
 
-The site currently makes no claim about years, reviews, licences or prices. That restraint is
-deliberate and it is the site's most valuable asset. A brief that asks for "our 15 years of
-experience" spends it.
+The site currently makes no claim about years, reviews or licences. That restraint is deliberate and
+it is the site's most valuable asset. A brief that asks for "our 15 years of experience" spends it.
+
+**Prices are the one exception.** Since 2026-09-17 the owner publishes VAT-inclusive ranges on
+`/מחירון/` (`docs/business-facts.md` §1a), and the homepage pricing FAQ repeats a subset of them. A
+brief may point any price-intent query at `/מחירון/`; every figure a brief asks for must be traced
+to §1a, stated כולל מע״מ and stated as a range. **A brief never asks one of the 12 guides for a
+price** — figures belong on the commercial routes, so an editorial page cannot drift out of sync
+with the published ranges.
 
 The 2026-08 pass softened the worst existing claims out of the copy — the unqualified warranty, the
 same-day arrival promise and the "כשעה עד שעתיים" duration are gone from `lib/content.ts`, and the

@@ -1,6 +1,6 @@
 ---
 name: analytics-reporter
-description: Measurement integrity and reporting for חם בבית on the shared Israeli fleet container GTM-KWGGH438 — audits the 27-value data-cta inventory against what actually ships in out/ and flags the three renamed values the container has not caught up with, verifies the lead_submit and /תודה/ conversion pair does not double-count, checks the gtm.js 200 assertion, confirms the Consent Mode v2 default still precedes the container in the shipped HTML, flags that googleSiteVerification is still null so the verification block emits nothing, and defines the KPI baseline and reporting cadence. Owns docs/measurement.md. Invoke with "analytics audit", "are conversions tracked", "KPI baseline", or "why isn't GA4 recording". Reports only; never edits the container and never quotes a metric it did not measure.
+description: Measurement integrity and reporting for חם בבית on the shared Israeli fleet container GTM-KWGGH438 — audits the 28-value data-cta inventory against what actually ships in out/, now tracked by one attribute-reading GA4 tag so new values need no container change, verifies the lead_submit and /תודה/ conversion pair does not double-count, checks the gtm.js 200 assertion, confirms the Consent Mode v2 default still precedes the container in the shipped HTML, flags that googleSiteVerification is still null so the verification block emits nothing, and defines the KPI baseline and reporting cadence. Owns docs/measurement.md. Invoke with "analytics audit", "are conversions tracked", "KPI baseline", or "why isn't GA4 recording". Reports only; never edits the container and never quotes a metric it did not measure.
 model: sonnet
 tools: Read, Grep, Glob, Bash, WebFetch, Write, Edit
 ---
@@ -40,7 +40,7 @@ grep -rho 'data-cta="[^"]*"' out --include=index.html | sort | uniq -c | sort -r
 
 ### The `data-cta` inventory
 
-**27 distinct identifiers ship today, 492 occurrences in total:**
+**28 distinct identifiers ship today, 492 occurrences in total:**
 
 ```
 contact-call, contact-email, contact-form-submit, contact-form-whatsapp, contact-whatsapp,
@@ -93,7 +93,7 @@ has, since the honeypot is browser-only and anyone can POST the harvested Web3Fo
 
 | Gap                                        | Evidence                                                                                              | Consequence                                                                           |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| **Container not updated for the new CTAs** | 27 `data-cta` values ship; `header-call` was split three ways and four `*-form-submit` values added   | renamed and new values record nothing until the container's triggers are edited       |
+| ✅ **Container updated 2026-09-17**        | 28 `data-cta` values ship, tracked by one tag reading the attribute via `closest('[data-cta]')`       | a new CTA reports with no container change; `pricing-table-quote` proved it           |
 | **`lead_submit_blocked` has no tag**       | the event is pushed by `LeadForm`; no consumer exists in the container                                | honeypot catches are invisible                                                        |
 | **`googleSiteVerification` is `null`**     | `app/layout.tsx` now has a `verification` block, guarded on presence; `site.config.json:50` is `null` | the block correctly emits nothing — the **value** is the owner action, not the wiring |
 | **GA4 routing unverifiable from the repo** | no GA4 measurement id in the manifest — routing happens inside the shared container                   | cannot confirm `hambabait.co.il` reaches a live property without console access       |

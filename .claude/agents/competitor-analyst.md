@@ -110,12 +110,15 @@ Look for what nobody in the result set does well. On this vertical the recurring
   decision query still has no home_, not whether the silo exists.
 - **Comparison tables** — דוד שמש vs דוד חשמל, repair vs replace — in real `<table>` markup. Ours
   ship; check whether the competitor's do.
-- **Honest pricing explanation** without a fabricated price list.
+- **Published pricing.** Since 2026-09-17 `/מחירון/` carries VAT-inclusive ranges plus an explicit
+  "no call-out fee, no surcharge" statement (`docs/business-facts.md` §1a). Most competitors publish
+  either nothing or a bare "החל מ-" teaser, so a real range table is now **our** advantage — check
+  what the competitor actually discloses and whether their figure is ex-VAT.
 - **Genuinely local city content** rather than templated pages. **Most competitors still have the
   doorway problem; we no longer do**, and that is a live advantage worth naming in the report rather
   than a shared weakness.
 - **Answer-block structure** that AI Overviews and assistants can lift cleanly. 36 blocks ship across
-  the services, cities and guides; the 9 static routes are the remaining hole.
+  the services, cities and guides, plus one on `/מחירון/`; 8 static routes are the remaining hole.
 
 Rank the gaps by _our_ ability to fill them **without inventing a business fact**. A gap we can only
 fill with a fake credential is not a gap, it is a trap.
@@ -123,7 +126,12 @@ fill with a fake credential is not a gap, it is a trap.
 ## ⚠️ The claims trap — the reason this agent has a hard rule
 
 Competitor pages are **full of claims we cannot make**: "20 שנות ניסיון", "אחריות ל-5 שנים",
-"החל מ-₪250", "טכנאי מוסמך ומבוטח", "דירוג 4.9".
+"טכנאי מוסמך ומבוטח", "דירוג 4.9".
+
+**Prices are not on that list any more, and that is not a licence to copy one.** We publish our own
+ranges from `docs/business-facts.md` §1a. A competitor's "החל מ-₪250" is still a number about their
+business: never import it, never use it to argue a range should move, and never recommend
+undercutting. A price change is an **owner decision** and reaches the site through §1a only.
 
 **You must never recommend matching a claim.** Not "consider adding a warranty term", not "competitors
 show years of experience, we should too". If the business has not confirmed it, it does not go on the

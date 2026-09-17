@@ -1,6 +1,6 @@
 ---
 name: aeo-answer-content
-description: Answer-engine and LLM-citability layer for hambabait — the answer block that already ships on 36 of 45 indexable pages and the nine that still lack one, question-form H2s with a self-contained extractable answer first, definition and comparison blocks for דוד שמש vs דוד חשמל, symptom-to-cause tables, the hand-maintained llms.txt at full sitemap coverage, entity clarity with an empty sameAs and no address, and the freshness/authorship signals that exist on the guides and nowhere else. Use when optimizing a page to be quoted by AI Overviews, ChatGPT or Perplexity. Triggers: "AEO", "GEO", "AI Overviews", "llms.txt", "will an LLM cite this", "answer block", "AI crawlers", "featured snippet".
+description: Answer-engine and LLM-citability layer for hambabait — the answer block that already ships on 37 of 45 indexable pages and the eight that still lack one, question-form H2s with a self-contained extractable answer first, definition and comparison blocks for דוד שמש vs דוד חשמל, symptom-to-cause tables, the hand-maintained llms.txt at full sitemap coverage, entity clarity with an empty sameAs and no address, and the freshness/authorship signals that exist on the guides and nowhere else. Use when optimizing a page to be quoted by AI Overviews, ChatGPT or Perplexity. Triggers: "AEO", "GEO", "AI Overviews", "llms.txt", "will an LLM cite this", "answer block", "AI crawlers", "featured snippet".
 ---
 
 # Answer-engine optimization
@@ -14,9 +14,9 @@ The extractability work is largely done; the entity work is not.
 
 **Built:**
 
-- **36 of the 45 indexable pages carry an answer block** — 6 services (`serviceDepth[].answer`),
-  18 cities (`cityContent[].answer`) and 12 guides (`Guide.answer`), all `{ question, body }` in the
-  content layer. Zero duplicate questions, zero duplicate bodies.
+- **37 of the 45 indexable pages carry an answer block** — 6 services (`serviceDepth[].answer`),
+  18 cities (`cityContent[].answer`), 12 guides (`Guide.answer`) and `/מחירון/` (`pricingAnswer`),
+  all `{ question, body }` in the content layer. Zero duplicate questions, zero duplicate bodies.
 - **Editorial content exists.** `/מדריכים/` ships 12 guides across symptom, comparison, definition and
   seasonal clusters — the explanatory shape answer engines quote.
 - **Structured data is complete.** All 45 indexable pages emit JSON-LD; only the 404 and `/תודה/` are
@@ -31,14 +31,15 @@ The extractability work is largely done; the entity work is not.
 - **Entity.** No address, no geo, `sameAs` is `[]`, no Google Business Profile, no reviews. An answer
   engine has almost nothing to bind "חם בבית" to as a real-world entity, and no corroborating source
   anywhere else on the web. **This is now the binding constraint, not extractability.**
-- **Nine indexable pages carry no answer block** — the nine static routes. `/מחירון/`, `/שירותים/` and
+- **Eight indexable pages carry no answer block** — eight of the nine static routes. `/מחירון/` got
+  one on 2026-09-17, the moment there were published figures to state. `/שירותים/` and
   `/איזורי-שירות/` would each benefit from one and are a deliberate open item (they need a content
   brief and a decision about which component renders it). The two legal pages and `/צור-קשר/` do not
   need one.
 - **Dates and authorship outside the hub.** Service and location pages carry neither, which is a
   defensible choice for commercial pages — see `content-refresh`.
 
-Fix order from here: entity clarity → the three missing answer blocks → depth on what exists.
+Fix order from here: entity clarity → the two missing answer blocks → depth on what exists.
 
 ## The answer block — the core pattern
 
@@ -60,8 +61,7 @@ Rules that make the difference:
 
 ### On length
 
-The 36 shipped bodies run **32–47 words** (mean 38.8, median 39): 22 under 40, 14 in the 40–60 band,
-none over 60.
+The 37 shipped bodies run **32–47 words**: 22 under 40, 15 in the 40–60 band, none over 60.
 
 An earlier version of this skill imposed a hard 40–60 word floor. That floor was **deliberately
 widened** — the shipped bodies are self-contained, they answer their question completely, and
@@ -99,12 +99,16 @@ An answer block is a _factual assertion_ in the most quotable form available. Th
 possible place for an unsourced claim.
 
 **Do not write answer blocks that assert:** warranty terms, response times, same-day arrival, repair
-duration, prices, technician credentials, years in business. All of those are currently unsourced —
-see `docs/business-facts.md` §3.
+duration, technician credentials, years in business. All of those are currently unsourced — see
+`docs/business-facts.md` §3.
 
-This applies with particular force to any future `/מחירון/` answer block: **it must not state a price
-or a pricing approach.** The pricing approach is one of the six unconfirmed roster assumptions
-recorded in `docs/manifest-assumptions.md`.
+**Prices are the one exception, and only on `/מחירון/`.** Since 2026-09-17 the site publishes
+owner-confirmed VAT-inclusive ranges (`docs/business-facts.md` §1a), and `pricingAnswer` states them
+in the most quotable form on the site. Two rules follow: a figure in an answer block must be **copied
+from `priceRanges`**, never composed or rounded; and no other page's answer block carries a price, so
+a service or city block cannot drift out of sync with the price page. The `כולל מע״מ` qualifier travels
+with every figure — an extracted answer loses its surrounding page, and a VAT-exclusive quote breaks
+Israeli Consumer Protection Law §17א.
 
 **Do write answer blocks about the domain**: how a solar boiler works, why an element fails, what an
 anode does, what a thermostat fault looks like, when repair beats replacement, what a city's housing
@@ -176,7 +180,7 @@ they must reflect a real substantive edit — and **never invent an author**. Se
 - [ ] The page has ≥1 question-form H2 with a self-contained answer first
 - [ ] The answer quotes cleanly with zero surrounding context; roughly 30–60 words
 - [ ] Comparisons are real tables with a caption
-- [ ] No unsourced claim inside any answer block — and no price or pricing approach on `/מחירון/`
+- [ ] No unsourced claim inside any answer block — a price only on `/מחירון/`, copied from `priceRanges`
 - [ ] FAQ blocks match visible content and carry `FAQPage`
 - [ ] Any new route has a line in `public/llms.txt`
 - [ ] NAP consistent; `sameAs` updated in the roster the moment a profile exists

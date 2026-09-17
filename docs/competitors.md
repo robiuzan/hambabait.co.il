@@ -10,21 +10,22 @@
 
 ## 0. Our position — state this before describing anyone else
 
-| Signal                      | State                                                                         |
-| --------------------------- | ----------------------------------------------------------------------------- |
-| Address / geo               | **none** — the `Plumber` node likely does not qualify for a local rich result |
-| Google Business Profile     | **none**                                                                      |
-| Reviews                     | **zero, anywhere**                                                            |
-| `sameAs`                    | **empty** → pruned from the JSON-LD                                           |
-| Phone                       | **shared fleet line**, not business-owned                                     |
-| Location pages              | 18, all rendered from **one template**                                        |
-| Images                      | **zero**                                                                      |
-| JSON-LD coverage            | **45 of 45 indexable pages** ✅                                               |
-| Canonicals / sitemap parity | **45 / 45** byte-identical ✅ (asserted by `qa:gate`)                         |
-| Titles                      | clean, no doubled brand ✅                                                    |
+| Signal                      | State                                                                            |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| Address / geo               | **none** — the `Plumber` node likely does not qualify for a local rich result    |
+| Google Business Profile     | **none**                                                                         |
+| Reviews                     | **zero, anywhere**                                                               |
+| `sameAs`                    | **empty** → pruned from the JSON-LD                                              |
+| Phone                       | **shared fleet line**, not business-owned                                        |
+| Location pages              | 18, all rendered from **one template**                                           |
+| Images                      | **zero**                                                                         |
+| Published prices            | **8 VAT-inclusive ranges + no call-out fee** on `/מחירון/` ✅ (since 2026-09-17) |
+| JSON-LD coverage            | **45 of 45 indexable pages** ✅                                                  |
+| Canonicals / sitemap parity | **45 / 45** byte-identical ✅ (asserted by `qa:gate`)                            |
+| Titles                      | clean, no doubled brand ✅                                                       |
 
-> **The honest read: we can compete on depth, structure and answer quality. We cannot compete on
-> local-pack signals until a profile and reviews exist.**
+> **The honest read: we can compete on depth, structure, answer quality and — since 2026-09-17 —
+> price transparency. We cannot compete on local-pack signals until a profile and reviews exist.**
 
 Every recommendation in this file must respect that split. A recommendation to tune copy on a query
 where the local pack owns the screen is telling the reader what they want to hear.
@@ -96,7 +97,11 @@ Recurring gaps in this vertical, to confirm or refute with research:
 - **Symptom-first content.** Most competitors write "we fix boilers"; few answer "למה הדוד לא מתחמם"
   properly. This is the knowledge hub's thesis.
 - **Comparison tables** — דוד שמש vs דוד חשמל, repair vs replace — in real `<table>` markup.
-- **Honest pricing explanation** without a fabricated price list.
+- **Published price ranges — no longer a gap, an asset.** Since 2026-09-17 `/מחירון/` carries eight
+  owner-approved VAT-inclusive ranges plus "no call-out fee, no surcharges"
+  ([business-facts.md](business-facts.md) §1a). The research behind those figures found a
+  ₪150–₪350 call-out fee itemised by nearly every competitor. **Verify how competitors present
+  price** — `החל מ-` teaser, full list, or nothing — and defend the range format, do not copy theirs.
 - **Genuinely local city content.** Most competitors have the same doorway problem we do.
 - **Answer-block structure** that AI Overviews and assistants can lift cleanly.
 
@@ -108,7 +113,12 @@ with a fake credential is not a gap — it is a trap.
 ## 5. ⚠️ The claims trap
 
 Competitor pages are full of claims we cannot make: `20 שנות ניסיון` · `אחריות ל-5 שנים` ·
-`החל מ-₪250` · `טכנאי מוסמך ומבוטח` · `דירוג 4.9`.
+`טכנאי מוסמך ומבוטח` · `דירוג 4.9`.
+
+**Price is no longer on that list — but `החל מ-₪250` still is.** We publish ranges because the owner
+approved specific figures ([business-facts.md](business-facts.md) §1a), choosing ranges over a fixed
+list and over starting-from pricing. A competitor's teaser price is not a format to copy, and no
+figure of ours moves without fresh owner sign-off.
 
 > **Never recommend matching a claim.** Not "consider adding a warranty term". Not "competitors show
 > years of experience, we should too". If the business has not confirmed it, it does not go on the

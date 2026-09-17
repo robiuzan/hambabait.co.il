@@ -5,17 +5,22 @@
 > Authoring copy is not a source. The roster manifest is only a source for identity fields the
 > business supplied — see the warning in §0.
 
-Last audited: **2026-08-31.** (§0 partly closed — the laundered warranty claim is out of the JSON-LD
+Last audited: **2026-09-17.** (§0 partly closed — the laundered warranty claim is out of the JSON-LD
 and the assumptions array now has a home in the repo. §3.7 added. §4.1 and §4.2 closed.)
 
 ---
 
 ## 0. The laundering trap — read this first
 
-`Israeli services sites/roster/sites/hambabait.json` carries a `_needsConfirmation` array flagging
-**six** values — the phone routing, the email address, the opening hours, the pricing approach,
-`foundedYear`, and that all content is freshly authored — as **assumptions made during the Phase 4
-rebuild**, not as facts from the business.
+`Israeli services sites/roster/sites/hambabait.json` carries a `_needsConfirmation` array. It flagged
+**six** values during the Phase 4 rebuild; **three were confirmed by the owner on 2026-09-17** — the
+phone routing, the email address and the opening hours — and a fourth, the pricing approach, was
+**reversed**: the owner rejected the no-price-list policy and approved published price ranges (§1a).
+
+**Two remain assumptions** in the roster: `foundedYear`, and that all content is freshly authored.
+
+**Separately, and not in the roster array:** the price _figures_ are owner-confirmed (§1a), but the
+_scope_ wording beside each — what the price includes — is **not**. See §1a.
 
 `site.config.json` still does not contain that array, and **that is now deliberate**: the file is
 `import`ed by `lib/site-config.ts`, so webpack bundles it whole into the client JS (verified — the
@@ -48,29 +53,29 @@ kept shipping for six days. That gap is why `ops/sync-manifest.ps1` now exists. 
 These are settled in the sense that they are deliberate, single-sourced configuration. Where the
 hub manifest flags them for confirmation, the Status column says so.
 
-| Fact               | Value                                                                      | Source                       | Status                                                                                        |
-| ------------------ | -------------------------------------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
-| Brand (Hebrew)     | חם בבית                                                                    | `site.config.json:5`         | ✅                                                                                            |
-| Brand (English)    | Cham BaBait                                                                | `site.config.json:6`         | ✅ (JSON-LD `alternateName` only)                                                             |
-| Legal name         | חם בבית                                                                    | `site.config.json:7`         | ⬜ no registered entity confirmed                                                             |
-| Domain / URL       | hambabait.co.il · https://hambabait.co.il                                  | `site.config.json:3-4`       | ✅                                                                                            |
-| Locale / dir       | he-IL · rtl                                                                | `site.config.json:8-9`       | ✅                                                                                            |
-| Phone (display)    | 055-6601006                                                                | `site.config.json:14`        | ⬜ **shared fleet line** — `phoneOverride: false`, routing unconfirmed                        |
-| Phone (E.164)      | +972556601006                                                              | `site.config.json:15`        | ⬜ same                                                                                       |
-| WhatsApp           | +972556601006                                                              | `site.config.json:16`        | ⬜ same number as the phone line                                                              |
-| Email              | info@hambabait.co.il                                                       | `site.config.json:17`        | ⬜ **assumed** — fixes a live `chambait.co.il` typo; mailbox not proven provisioned           |
-| Hours              | ראשון–חמישי 08:00–18:00 · שישי 08:00–14:00                                 | `site.config.json:33-52`     | ⬜ **authored** — `lib/site-config.ts:40` says "confirm with client", yet it ships as JSON-LD |
-| Schema type        | `Plumber`                                                                  | `site.config.json:30`        | ✅                                                                                            |
-| Price range        | `₪₪`                                                                       | `site.config.json:31`        | ⬜ no source for the banding                                                                  |
-| Area served        | שירות בכל הארץ                                                             | `site.config.json:32`        | ⬜ authored SEO surface, not verified coverage                                                |
-| `sameAs`           | _(empty)_                                                                  | `site.config.json:53`        | ✅ no profile is claimed                                                                      |
-| GTM container      | GTM-KWGGH438                                                               | `site.config.json:56`        | ✅ verified HTTP 200                                                                          |
-| GA4 measurement id | `null`                                                                     | `site.config.json` analytics | ✅ correctly null — synced from the roster                                                    |
-| Search Console     | `null`                                                                     | `site.config.json:57`        | ⬜ ownership unverified                                                                       |
-| Founded year       | `null`                                                                     | `site.config.json:10`        | ✅ correctly null — never give it a numeric fallback                                          |
-| Services           | 6 — solar, electric, thermostat, leak-repair, replacement, heating-element | `lib/site-config.ts:60-67`   | ✅                                                                                            |
-| Locations          | 18 cities                                                                  | `lib/site-config.ts:75-94`   | ✅ as a page inventory                                                                        |
-| Lead delivery      | Web3Forms key `37b27cbc-…`                                                 | `site.config.json:18`        | ✅ public-by-design key; delivery inbox unverifiable from repo                                |
+| Fact               | Value                                                                      | Source                       | Status                                                                                                                                |
+| ------------------ | -------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Brand (Hebrew)     | חם בבית                                                                    | `site.config.json:5`         | ✅                                                                                                                                    |
+| Brand (English)    | Cham BaBait                                                                | `site.config.json:6`         | ✅ (JSON-LD `alternateName` only)                                                                                                     |
+| Legal name         | חם בבית                                                                    | `site.config.json:7`         | ⬜ no registered entity confirmed                                                                                                     |
+| Domain / URL       | hambabait.co.il · https://hambabait.co.il                                  | `site.config.json:3-4`       | ✅                                                                                                                                    |
+| Locale / dir       | he-IL · rtl                                                                | `site.config.json:8-9`       | ✅                                                                                                                                    |
+| Phone (display)    | 055-6601006                                                                | `site.config.json:14`        | ✅ **owner-confirmed 2026-09-17** — routing verified. Was `⬜ **shared fleet line** — `phoneOverride: false`, routing unconfirmed     |
+| Phone (E.164)      | +972556601006                                                              | `site.config.json:15`        | ⬜ same                                                                                                                               |
+| WhatsApp           | +972556601006                                                              | `site.config.json:16`        | ⬜ same number as the phone line                                                                                                      |
+| Email              | info@hambabait.co.il                                                       | `site.config.json:17`        | ✅ **owner-confirmed 2026-09-17**. Was `⬜ **assumed** — fixes a live `chambait.co.il` typo; mailbox not proven provisioned           |
+| Hours              | ראשון–חמישי 08:00–18:00 · שישי 08:00–14:00                                 | `site.config.json:33-52`     | ✅ **owner-confirmed 2026-09-17**. Was `⬜ **authored** — `lib/site-config.ts:40` says "confirm with client", yet it ships as JSON-LD |
+| Schema type        | `Plumber`                                                                  | `site.config.json:30`        | ✅                                                                                                                                    |
+| Price range        | `₪₪`                                                                       | `site.config.json:31`        | ✅ now defensible from §1a (₪250–₪5,900 published). Previously: ⬜ no source for the banding                                          |
+| Area served        | שירות בכל הארץ                                                             | `site.config.json:32`        | ⬜ authored SEO surface, not verified coverage                                                                                        |
+| `sameAs`           | _(empty)_                                                                  | `site.config.json:53`        | ✅ no profile is claimed                                                                                                              |
+| GTM container      | GTM-KWGGH438                                                               | `site.config.json:56`        | ✅ verified HTTP 200                                                                                                                  |
+| GA4 measurement id | `null`                                                                     | `site.config.json` analytics | ✅ correctly null — synced from the roster                                                                                            |
+| Search Console     | `null`                                                                     | `site.config.json:57`        | ⬜ ownership unverified                                                                                                               |
+| Founded year       | `null`                                                                     | `site.config.json:10`        | ✅ correctly null — never give it a numeric fallback                                                                                  |
+| Services           | 6 — solar, electric, thermostat, leak-repair, replacement, heating-element | `lib/site-config.ts:60-67`   | ✅                                                                                                                                    |
+| Locations          | 18 cities                                                                  | `lib/site-config.ts:75-94`   | ✅ as a page inventory                                                                                                                |
+| Lead delivery      | Web3Forms key `37b27cbc-…`                                                 | `site.config.json:18`        | ✅ public-by-design key; delivery inbox unverifiable from repo                                                                        |
 
 ### ✅ Closed: `founded` no longer has a numeric fallback
 
@@ -87,6 +92,57 @@ The manifest is also now validated at module load by `assertManifest()`, so a ma
 
 ---
 
+## 1a. ✅ Confirmed — published prices (added 2026-09-17)
+
+**Owner-approved 2026-09-17. These are real business facts and the site now publishes them.**
+
+Ranges live in `lib/content.ts` → `priceRanges`, render via `components/marketing/PriceTable.tsx`,
+and are repeated in the `/מחירון/` answer block and meta description.
+
+| Service                  | Published range (כולל מע״מ) |
+| ------------------------ | --------------------------- |
+| תיקון דוד שמש            | ₪250–₪850                   |
+| תיקון דוד חשמל           | ₪250–₪850                   |
+| החלפת תרמוסטט            | ₪250–₪500                   |
+| החלפת אלמנט חימום        | ₪300–₪800                   |
+| תיקון נזילות בדוד        | ₪300–₪880                   |
+| החלפת דוד חשמל           | ₪1,300–₪3,300               |
+| החלפת מיכל של דוד שמש    | ₪1,700–₪3,500               |
+| החלפת מערכת סולארית מלאה | ₪2,475–₪5,900               |
+
+**Provenance.** Figures were derived from Israeli market research — מידרג real-jobs aggregations
+dated June–July 2025 (customer-reported prices actually paid, the strongest evidence class found),
+המקצוענים, דפי זהב, B144 and five trade price lists — then **approved by the owner**, who chose
+ranges over a fixed list and over starting-from pricing. They were **not** invented, and they were
+**not** published until the owner approved them.
+
+**⚠️ VAT is a legal constraint, not a preference.** Israeli Consumer Protection Law **§17א** requires
+the price displayed to a consumer to be the **total** price, including מע״מ and every mandatory
+charge. The owner's internal quoting is ex-VAT; the **displayed** figures above are VAT-inclusive,
+which is what the law requires. **Never re-publish these ex-VAT**, and never add a mandatory charge
+that is not inside the range.
+
+**🔶 The `scope` column is NOT owner-confirmed.** The owner approved the **figures**. The wording
+beside each row — "כולל החלק והעבודה", "התקנה מלאה ופינוי הדוד הישן" — was written from the same
+market research and states what each price **includes**. That is a commercial commitment of the same
+weight as the number, and nobody has confirmed it. The four inclusion claims carry `// 🔶 confirm`
+markers in `lib/content.ts`. **Owner question: does the quoted price include the part, the labour,
+full installation and removal of the old unit?** Until answered, do not deepen or repeat these
+claims anywhere else.
+
+**Rules for changing any figure**
+
+1. A price change needs **fresh owner sign-off**, recorded here with a date. Market drift is not
+   sign-off.
+2. Update `priceRanges` **and** `pricingAnswer` **and** the `/מחירון/` meta description together —
+   the figures are repeated in all three and a partial edit ships a contradiction.
+3. **No priced `Offer` in structured data.** `qa:gate` asserts this and the assertion stays until
+   someone decides deliberately otherwise; a range is easy to express wrongly in schema and can
+   surface directly in search results.
+4. Do not price a service the owner has not priced.
+
+---
+
 ## 2. ✅ Confirmed — what the site correctly does NOT claim
 
 This section exists so nobody "helpfully" adds these back. Verified absent across `app/`,
@@ -97,8 +153,9 @@ This section exists so nobody "helpfully" adds these back. Verified absent acros
   node in the shipped JSON-LD.
 - **No licence, insurance, certification, ח.פ. or עוסק מורשה number.**
 - **No 24/7 or round-the-clock claim.**
-- **No numeric price anywhere.** The business deliberately publishes no price table
-  (`app/מחירון/page.tsx:24-27`, `lib/content.ts:144-161`).
+- ~~**No numeric price anywhere.**~~ **No longer true as of 2026-09-17** — the owner rejected the
+  no-price-list policy and approved published VAT-inclusive ranges. Moved to **§1a**. What still
+  holds: no price appears in **structured data**, and `qa:gate` asserts "no priced Offer node".
 
 `lib/content.ts:1-8` and `:132` record this as a deliberate policy. **Adding any of the above without
 a source is a Google policy violation, not a style choice.**
@@ -148,14 +205,19 @@ Everything else was deliberately kept qualitative; this one quantitative claim s
 the single highest-risk sentence for a consumer complaint. **Owner question:** is 1–2 hours accurate
 for element/thermostat/leak work?
 
-### 3.4 Free call-out ambiguity
+### 3.4 ✅ Free call-out — RESOLVED 2026-09-17
 
-"ללא התחייבות" appears at `Hero.tsx:67`, `FinalCta.tsx:15`, `app/services/[service]/page.tsx:116`,
-`app/צור-קשר/page.tsx:20`, beside "ביקור, אבחון והצעה שקופה". The site **never states whether the
-diagnostic visit itself is chargeable** (`lib/content.ts:144-157` and `app/מחירון/page.tsx:24-27`
-both dodge it). A reader can reasonably infer a free call-out.
+Previously the site never stated whether the diagnostic visit was chargeable, and a reader could
+reasonably infer a free call-out that nobody had confirmed.
 
-**Owner question:** is the call-out free, credited against the repair, or charged?
+**Owner confirmed 2026-09-17: there is no call-out fee, and no surcharge for tile roofs, difficult
+access or urgent calls.** This is now stated explicitly rather than left to inference — in
+`pricingNote`, in the "בלי דמי ביקור, בלי תוספות" card, and in the `/מחירון/` answer block.
+
+It is also a genuine differentiator worth protecting: the market research behind §1a found a
+call-out fee of **₪150–₪350** itemised by nearly every competitor, plus tile-roof surcharges of
+₪150–₪500 and difficult-access surcharges of ₪500–₪800. **If this ever stops being true, the copy
+must change in the same commit.**
 
 ### 3.5 Capability and staffing
 

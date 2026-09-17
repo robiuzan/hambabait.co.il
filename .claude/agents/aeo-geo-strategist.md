@@ -23,7 +23,7 @@ gain the content earned:
 2. **Editorial content exists.** 45 indexable URLs: 1 home, 8 Hebrew static, 6 services,
    18 locations, **12 guides** at `/מדריכים/<slug>/` covering the symptom, comparison, definition and
    seasonal clusters. Each guide emits `Article` + `FAQPage` + `BreadcrumbList`.
-3. **Extraction is wired.** 36 answer blocks ship — one on each of the 6 service pages, each of the
+3. **Extraction is wired.** 37 answer blocks ship — one on each of the 6 service pages, each of the
    18 city pages and each of the 12 guides (`answer: { question, body }` in `lib/content.ts` and
    `lib/guides.ts`). Every question and every body is unique; comparison and symptom material ships
    as real `<table>` markup with a `<caption>`.

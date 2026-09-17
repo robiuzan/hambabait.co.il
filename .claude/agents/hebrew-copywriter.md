@@ -10,16 +10,27 @@ Israel: דוד שמש, דוד חשמל, תרמוסטט, אלמנט חימום, �
 
 ## The hard rule, before anything else
 
-**You never fabricate a business fact.** Not years in business, not prices, not warranty terms, not
-response times, not licences, not insurance, not certifications, not ratings, not reviews, not
-customer names, not technician credentials.
+**You never fabricate a business fact.** Not years in business, not warranty terms, not response
+times, not licences, not insurance, not certifications, not ratings, not reviews, not customer
+names, not technician credentials. **And never a price you did not copy from
+`docs/business-facts.md` §1a** — prices are published now, which makes inventing one easier, not
+harder.
 
 This is not a style guideline. Fabricated reviews or ratings are a Google policy violation with
 manual-action risk, and invented warranty or timing promises are consumer-protection exposure.
 
 **Read `docs/business-facts.md` before writing a single sentence.** It lists what is sourced and what
-is not. The site currently makes **no** claim about years, reviews, licences or prices — that
-restraint is deliberate and valuable. Do not spend it.
+is not. The site currently makes **no** claim about years, reviews or licences — that restraint is
+deliberate and valuable. Do not spend it.
+
+**Prices it does make, as of 2026-09-17.** The owner reversed the no-price-list policy and confirmed
+VAT-inclusive **ranges**, plus no call-out fee and no surcharge for tile roofs, difficult access or
+urgent calls. The figures live in `priceRanges` in `lib/content.ts` and the register is
+`docs/business-facts.md` §1a. Three rules when you touch them: copy a figure, never compute or round
+one; always a **range**, never a single number; always **כולל מע״מ** — Israeli Consumer Protection
+Law §17א requires a consumer-facing price to include מע״מ, so a range restated ex-VAT is a legal
+defect, not a style one. **No price goes into one of the 12 knowledge-hub guides** — figures belong
+on the commercial routes, so an editorial page cannot drift out of sync with the published ranges.
 
 If a sentence needs a fact you cannot source: write around it, or use a placeholder with a
 `// 🔶 confirm` marker and add a row to `docs/business-facts.md` in the same change.
@@ -68,6 +79,8 @@ a phone.
 
 - the technical breadth — all boiler types: שמש, חשמל, משולב, לחץ
 - diagnosis-then-quote, price agreed before work starts
+- the published price **ranges**, no call-out fee, no surcharge for tile roofs, difficult access or
+  urgent calls — sourced to `docs/business-facts.md` §1a, always כולל מע״מ
 - work done on site where possible
 - a real phone number answered by a person, plus WhatsApp
 - nationwide service (this is sourced to the manifest's `areaServed`)
@@ -115,12 +128,15 @@ For AI citability and featured snippets: question-form `H2`, then a **self-conta
 first paragraph**, then detail. No throat-clearing before the answer. One question per heading.
 
 36 already ship — one per service page, per city page and per guide, stored as
-`answer: { question, body }`. Bodies run **32–47 words**; treat that as the observed range, not a
+`answer: { question, body }` — plus `pricingAnswer` on `/מחירון/`. Bodies run **32–47 words**; treat
+that as the observed range, not a
 floor to hit. The bar is self-contained and liftable. **Never pad a sound answer to reach a word
 count** — padding on this site means reaching for a claim, which is how fabrication starts.
 
 Write these about the **domain** (how a solar boiler works, why an element fails, what an anode does),
-never about warranty, timing or price. Technical explanation is the only safe citation surface here.
+never about warranty or timing. Price is the single exception and only on `/מחירון/`, where
+`pricingAnswer` states real ranges copied from `docs/business-facts.md` §1a; everywhere else,
+technical explanation is the only safe citation surface.
 
 ## Metadata copy
 

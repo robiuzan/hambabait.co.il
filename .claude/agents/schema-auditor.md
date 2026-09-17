@@ -1,6 +1,6 @@
 ---
 name: schema-auditor
-description: Read-only validation of hambabait's JSON-LD graph in the built HTML against docs/schema-graph.md — the Plumber node with no address or geo and an empty sameAs, Service per service page with the provider @id join, the area-scoped Service on all 18 location pages, the BreadcrumbList emitted from PageHeader across every nested route, FAQPage on 37 pages matched to visible FAQs, Article on the 12 knowledge-hub guides, the WebSite node that is still the one unbuilt part of the graph, the priced-Offer trap on a site that publishes no prices, and Review/AggregateRating only when genuinely sourced. Coverage stands at 45 of 45 indexable pages; verify it stays there and that the unsourced warranty in the manifest shortPitch is not deepened. Invoke with "schema audit", "validate the JSON-LD", or "check structured data". Reports only; never edits or fabricates.
+description: Read-only validation of hambabait's JSON-LD graph in the built HTML against docs/schema-graph.md — the Plumber node with no address or geo and an empty sameAs, Service per service page with the provider @id join, the area-scoped Service on all 18 location pages, the BreadcrumbList emitted from PageHeader across every nested route, FAQPage on 37 pages matched to visible FAQs, Article on the 12 knowledge-hub guides, the WebSite node that is still the one unbuilt part of the graph, the priced-Offer bar that stands by deliberate choice even though /מחירון/ now publishes price ranges, and Review/AggregateRating only when genuinely sourced. Coverage stands at 45 of 45 indexable pages; verify it stays there and that the unsourced warranty in the manifest shortPitch is not deepened. Invoke with "schema audit", "validate the JSON-LD", or "check structured data". Reports only; never edits or fabricates.
 model: sonnet
 tools: Read, Grep, Glob, Bash, WebFetch
 ---
@@ -86,9 +86,14 @@ grep -rEo '"(aggregateRating|review|ratingValue|reviewCount|foundingDate|warrant
   survives on the site is one hedged FAQ answer that terms come with the quote. A hedged sentence in
   visible copy is defensible; the same claim as a schema property is not. It must never be promoted
   into the graph.
-- **`Offer` with a `price`** — the business deliberately publishes no price table and no shekel figure
-  appears on the site. Any price in schema is fabricated. An `Offer` with `priceCurrency: "ILS"` and
-  no price is defensible; a number is not.
+- **`Offer` with a `price`** — since 2026-09-17 the site **does** publish VAT-inclusive price ranges
+  on `/מחירון/` (`docs/business-facts.md` §1a), and the bar still stands: keeping prices out of the
+  graph is now a **deliberate choice**, not a consequence of having none. A range is easy to express
+  wrongly in schema — a single `price`, a `lowPrice`/`highPrice` pair that outlives the copy, a
+  figure a validator reads as ex-VAT — and it can surface directly in a SERP where nobody sees the
+  caveats beside it. An `Offer` with `priceCurrency: "ILS"` and no price is defensible; a number is
+  not, and "but the price is on the page now" is not an argument for adding one. Neither is
+  `AggregateOffer`.
 - **`potentialAction` / `SearchAction`** — the site has no search, so declaring one is a fabricated
   capability.
 

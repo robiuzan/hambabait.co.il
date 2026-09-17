@@ -82,12 +82,31 @@ accessibility defect, not just a cosmetic one: a user reads and dials the wrong 
 ## Israeli formats
 
 - **Phone:** `0XX-XXX-XXXX` for display; `+972…` for `tel:` and schema.
-- **Currency:** `₪`, symbol before the number, wrapped as an LTR island. (No price appears anywhere on
-  this site today, and none may be introduced — see the claims rules.)
+- **Currency:** `₪`, symbol before the number, wrapped as an LTR island. Thousands take a comma
+  (`₪1,300`). The site publishes VAT-inclusive ranges on `/מחירון/`, so this is a live rule, not a
+  hypothetical — see **Price ranges** below.
 - **Dates:** `dd/mm/yyyy`.
 - **Hours:** `08:00–18:00` with an en-dash, days written in Hebrew
   (`ראשון–חמישי`, `שישי`). Saturday absent means closed — do not write "סגור" as a row unless the
   design calls for it.
+
+### Price ranges — the ₪ trap
+
+A range is two LTR islands joined by a neutral dash, so in RTL prose the bidi algorithm reorders it:
+`₪250–₪850` can render with the bounds or the shekel signs in the wrong place. The reader sees the
+wrong price, and nothing in the source looks wrong. Two shipped answers:
+
+- **In a cell:** assemble the whole string in JS and emit it as **one** text node inside
+  `<span className="ltr" dir="ltr">` — `PriceRangeCell` in `components/marketing/PriceTable.tsx`.
+  Interpolating `₪{low}–₪{high}` inline makes React emit `₪<!-- -->250<!-- -->–…`: invisible in a
+  browser, but it fragments the figure for anything parsing the raw HTML.
+- **In prose:** drop the dash entirely — `בין ₪250 ל-₪880`, or `₪250 עד ₪500`. The Hebrew words carry
+  the direction, so no neutral character is left to reorder. `pricingAnswer` and the `/מחירון/` meta
+  description both do this, and a meta description has no `dir` attribute available at all, so there
+  the prose form is the **only** safe one.
+
+`כולל מע״מ` stays attached to the figure wherever it appears — Consumer Protection Law §17א, and it
+survives extraction into a snippet.
 
 ## Hebrew punctuation
 
@@ -136,16 +155,17 @@ codepoint range.
 Second person plural (אתם/אתן), warm and plain. The reader usually has no hot water right now — lead
 with what happens next, not with brand adjectives. No exclamation marks. No hard sell.
 
-Before adding any sentence that makes a factual promise (warranty, timing, price, coverage), check
+Before adding any sentence that makes a factual promise (warranty, timing, coverage), check
 `docs/business-facts.md` and `docs/manifest-assumptions.md`. Much of this site's speed and warranty
-language is already unsourced, and the pricing approach, hours, email and phone routing are recorded
-as **assumptions, not confirmed facts**. Do not add more.
+language is already unsourced, and the hours, email and phone routing are recorded as **assumptions,
+not confirmed facts**. Do not add more. Prices are the exception — owner-confirmed since 2026-09-17
+(§1a) — but a figure is still never typed into JSX: it comes from `priceRanges` in `lib/content.ts`.
 
 ## Review checklist
 
 - [ ] No banned physical utility (source grep, then `qa:gate` on the built HTML)
 - [ ] No `flex-row-reverse` added to "fix" ordering
-- [ ] Every phone/email/URL/price is an LTR island
+- [ ] Every phone/email/URL/price is an LTR island; every ₪ range is one text node, or prose form
 - [ ] Hebrew abbreviations use `׳`/`״`
 - [ ] City names take the `ב` prefix
 - [ ] Any new Hebrew route is reachable, escaped in the sitemap, and canonical-matched

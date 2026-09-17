@@ -37,7 +37,7 @@ The only two pages without JSON-LD are `out/404/index.html` and `out/תודה/in
 correct by design.**
 
 **Technical SEO, schema, content depth, consent and accessibility truthfulness are all done.** What
-remains is the internal link mesh, three static-route answer blocks, images, and a set of owner
+remains is the internal link mesh, two static-route answer blocks, images, and a set of owner
 actions that no amount of repo work can close.
 
 ---
@@ -207,24 +207,25 @@ part it replaces. Zero claims risk.
 
 ---
 
-### P1-4 · Nine static routes carry no answer block · M
+### P1-4 · Eight static routes carry no answer block · 🟡 one of three closed · M
 
-**Evidence:** 36 answer blocks ship (24 in `lib/content.ts` — 6 services + 18 cities — and 12 in
-`lib/guides.ts`), against 45 indexable URLs. The nine without one are all static: the homepage, the
-three indexes, `/מחירון/`, `/אודות/`, `/צור-קשר/` and the two legal pages.
+**Evidence:** 37 answer blocks ship (25 in `lib/content.ts` — 6 services + 18 cities + `/מחירון/` —
+and 12 in `lib/guides.ts`), against 45 indexable URLs. The eight without one are all static: the
+homepage, the three indexes, `/אודות/`, `/צור-קשר/` and the two legal pages.
 
-**Impact:** three of those nine field a real question a reader arrives with and currently answer it
-nowhere extractable: `/מחירון/`, `/שירותים/` and `/איזורי-שירות/`.
+**Impact:** two of those eight field a real question a reader arrives with and currently answer it
+nowhere extractable: `/שירותים/` and `/איזורי-שירות/`.
 
-**Deferred, not missed.** It needs a content brief and a decision about which component renders the
-block — none of the three static routes uses the service/city/guide rendering path. The two legal
+✅ **`/מחירון/` closed 2026-09-17.** It gained `pricingAnswer` — "כמה עולה תיקון דוד?", 41 words —
+once the owner approved published ranges, so the page now answers the question it is named for, with
+real figures. Source: [business-facts.md](business-facts.md) §1a.
+
+**The remaining two are deferred, not missed.** They need a content brief and a decision about which
+component renders the block — neither index uses the service/city/guide rendering path. The two legal
 pages and `/צור-קשר/` do not need one; the homepage already carries a six-question `FAQPage`.
 
-⚠️ **The `/מחירון/` block must not state a price _or_ a pricing approach.** The pricing approach is
-one of the roster's unconfirmed assumptions — see [manifest-assumptions.md](manifest-assumptions.md).
-
-**Accept:** three new answer blocks, each self-contained, each with a question only that page's
-answer resolves, none containing a number or an unconfirmed claim.
+**Accept:** two new answer blocks, each self-contained, each with a question only that page's answer
+resolves, and no figure that does not trace to [business-facts.md](business-facts.md) §1a.
 
 ---
 
@@ -351,7 +352,7 @@ to change the tag, not to widen the policy.
   from the live apex after the next deploy. Two policies do not merge — both apply, and the browser
   enforces the intersection. The zone-level headers on record are HSTS, X-Frame-Options and
   Permissions-Policy; CSP is not among them, but that list has not been re-checked.
-- **[needs confirmation]** The roster's `_needsConfirmation` items — phone routing, email, hours,
-  pricing approach. These block any Business Profile or citation work (see `gbp-local-listings`) and
-  they constrain what `/מחירון/` may say. Tracked in
-  [manifest-assumptions.md](manifest-assumptions.md).
+- **[needs confirmation]** The roster's `_needsConfirmation` items — phone routing, email, hours.
+  These block any Business Profile or citation work (see `gbp-local-listings`). Tracked in
+  [manifest-assumptions.md](manifest-assumptions.md). **Pricing left this list on 2026-09-17**, when
+  the owner approved the published ranges — see [business-facts.md](business-facts.md) §1a.
