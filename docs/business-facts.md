@@ -122,13 +122,15 @@ charge. The owner's internal quoting is ex-VAT; the **displayed** figures above 
 which is what the law requires. **Never re-publish these ex-VAT**, and never add a mandatory charge
 that is not inside the range.
 
-**🔶 The `scope` column is NOT owner-confirmed.** The owner approved the **figures**. The wording
-beside each row — "כולל החלק והעבודה", "התקנה מלאה ופינוי הדוד הישן" — was written from the same
-market research and states what each price **includes**. That is a commercial commitment of the same
-weight as the number, and nobody has confirmed it. The four inclusion claims carry `// 🔶 confirm`
-markers in `lib/content.ts`. **Owner question: does the quoted price include the part, the labour,
-full installation and removal of the old unit?** Until answered, do not deepen or repeat these
-claims anywhere else.
+**✅ The `scope` column is owner-confirmed too (2026-09-17).** Asked directly — "does the quoted
+price include the part, the labour, full installation and taking away the old boiler?" — the owner
+answered **yes**. All four inclusions hold for every row, so the claim is stated once globally in
+`pricingNote` rather than repeated per row, and the `// 🔶 confirm` markers were removed.
+
+**This is a commercial commitment of the same weight as the figures.** A quote that excludes any of
+the four — part, labour, installation, disposal — contradicts the published page. Do not narrow it,
+and do not widen it into anything the owner did not say (it does **not** cover a new boiler unit in
+a repair job, or work beyond the boiler itself).
 
 **Rules for changing any figure**
 

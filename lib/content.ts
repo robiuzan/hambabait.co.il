@@ -583,7 +583,7 @@ export const pricingApproach = [
 
 /** Pricing note shown under the table. */
 export const pricingNote =
-  "המחירים כוללים מע״מ. אין דמי ביקור, ואין תוספת תשלום על גג רעפים, גישה מורכבת או קריאה דחופה. המחיר הסופי נקבע לאחר אבחון הדוד בפועל — ותמיד מאושר איתכם לפני תחילת העבודה.";
+  "המחירים כוללים מע״מ, וכוללים את החלק, את העבודה, את ההתקנה ואת פינוי הדוד הישן. אין דמי ביקור, ואין תוספת תשלום על גג רעפים, גישה מורכבת או קריאה דחופה. המחיר הסופי נקבע לאחר אבחון הדוד בפועל — ותמיד מאושר איתכם לפני תחילת העבודה.";
 
 export interface PriceRange {
   /** Hebrew label as shown in the table. */
@@ -611,11 +611,10 @@ export interface PriceRange {
  * a service the owner has not priced. The owner also confirmed: no call-out fee, and
  * no surcharge for tile roofs, difficult access or urgent calls.
  *
- * 🔶 confirm — the `scope` text is NOT owner-confirmed. The owner approved the NUMBERS.
- * Every `scope` line below was written from the same market research and describes what
- * the price covers — "כולל החלק והעבודה", "פינוי הדוד הישן" — which is a commercial
- * commitment of the same weight as the figure itself. Each is marked below. Until the
- * owner confirms them, they must not be treated as settled. See docs/business-facts.md §1a.
+ * The `scope` wording is ALSO owner-confirmed (2026-09-17): every quoted price includes the
+ * part, the labour, full installation and removal of the old unit. That is a commercial
+ * commitment of the same weight as the figure — do not narrow or widen it without fresh
+ * sign-off, and do not quote a price that excludes any of the four.
  */
 export const priceRanges: readonly PriceRange[] = [
   {
@@ -636,14 +635,12 @@ export const priceRanges: readonly PriceRange[] = [
     label: "החלפת תרמוסטט",
     low: 250,
     high: 500,
-    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
     scope: "תרמוסטט אנלוגי סטנדרטי, כולל החלק והעבודה, לדוד שמש או דוד חשמל.",
   },
   {
     label: "החלפת אלמנט חימום",
     low: 300,
     high: 800,
-    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
     scope:
       "גוף חימום חדש, כולל החלק והעבודה. הצד הגבוה מתייחס לדוד שנדרש בו גם ניקוי אבנית.",
   },
@@ -658,7 +655,6 @@ export const priceRanges: readonly PriceRange[] = [
     label: "החלפת דוד חשמל",
     low: 1300,
     high: 3300,
-    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
     scope: "דוד חדש, התקנה מלאה ופינוי הדוד הישן.",
   },
   {
@@ -671,7 +667,6 @@ export const priceRanges: readonly PriceRange[] = [
     label: "החלפת מערכת סולארית מלאה",
     low: 2475,
     high: 5900,
-    // 🔶 confirm — states what the price INCLUDES. Owner approved the figure only.
     scope: "מיכל וקולטים חדשים, התקנה מלאה ופינוי המערכת הישנה.",
   },
 ] as const;
