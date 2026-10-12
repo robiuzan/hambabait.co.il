@@ -40,8 +40,11 @@
 # components/forms/LeadForm.tsx). font-src is 'self' because next/font self-hosts — the woff2
 # files sit in /_next/static/media/ and the fonts.googleapis.com / fonts.gstatic.com strings in
 # out/ live only inside Next's internal font-optimisation constant table in main-*.js, never in
-# a runtime request. imgquarry.com is NOT listed: it appears only as a preconnect hint (CSP does
-# not govern preconnect) and in og:image/twitter:image, which crawlers fetch, not the browser.
+# a runtime request. imgquarry.com is in connect-src ONLY (added 2026-10-11, fleet live-kit —
+# CLAUDE.md §13): public/assets/live.js reads the fleet status switch
+# https://imgquarry.com/status/fleet.json once per page view, credentials omitted. It is not in
+# img-src: elsewhere the host appears only as a preconnect hint (CSP does not govern preconnect)
+# and in og:image/twitter:image, which crawlers fetch, not the browser.
 # The google-analytics/doubleclick entries are the DOCUMENTED GA4 transports — they are not
 # observed in this repo, which is exactly why the header is report-only.
 #
@@ -54,4 +57,4 @@
 # Applied to /* rather than an enumerated list of the 47 built HTML routes: a CSP delivered on
 # a subresource response is inert, and enumerating routes here would rot on the next page added.
 /*
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://www.google.com https://www.google.co.il https://stats.g.doubleclick.net; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net; frame-src https://www.googletagmanager.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://www.google.com https://www.google.co.il https://stats.g.doubleclick.net; font-src 'self'; connect-src 'self' https://api.web3forms.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://imgquarry.com; frame-src https://www.googletagmanager.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'

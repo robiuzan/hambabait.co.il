@@ -114,7 +114,7 @@ execute in document order, so `<head>` is unambiguous. **Never move the default 
 
 ### 3.2 CTA tagging
 
-**28 distinct `data-cta` values ship, in 492 occurrences.** The convention is **`placement-action`**:
+**34 distinct `data-cta` values ship, in 963 occurrences.** The convention is **`placement-action`**:
 
 ```
 contact-call · contact-email · contact-form-submit · contact-form-whatsapp · contact-whatsapp
@@ -124,7 +124,15 @@ location-form-whatsapp · mobile-menu-call · notfound-call · pricing-quote · 
 service-call
 service-form-submit · service-form-whatsapp · service-whatsapp · sticky-call · sticky-whatsapp
 thanks-call
+popup-call · popup-link · popup-whatsapp · topbar-link · topbar-whatsapp · update-link
 ```
+
+The last row is the fleet live-kit's (2026-10-11, CLAUDE.md §13): the bar's six seasonal links
+(`topbar-link`, 6 per page) and its evergreen WhatsApp link, the seasonal card's three actions
+(every page), and the homepage updates strip's link — 471 of the 963 occurrences. They report
+through the tag below with no container change; only the card's `surface_view` /
+`surface_dismiss` events need the trigger `CE - popup events (3locksmiths)` widened to this
+hostname.
 
 > ## ✅ Resolved 2026-09-17 — and the original diagnosis was wrong.
 >
@@ -263,7 +271,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' "https://www.googletagmanager.com/gtm.
 grep -o 'consent-default\|gtm-init' out/index.html          # consent-default must appear first
 
 # 3. The CTA inventory that actually ships.
-grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u | wc -l   # 28 (492 occurrences)
+grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u | wc -l   # 34 (963 occurrences)
 
 # 4. Live robots policy (the zone can override what app/robots.ts declares).
 curl -sS -H 'Cache-Control: no-cache' "https://hambabait.co.il/robots.txt?cb=$RANDOM"

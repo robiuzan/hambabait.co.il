@@ -6,9 +6,11 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileCtaBar } from "@/components/layout/MobileCtaBar";
 import { ConsentBanner } from "@/components/layout/ConsentBanner";
-import { consentDefaultSnippet } from "@/lib/consent";
+import { CONSENT_STORAGE_KEY, consentDefaultSnippet } from "@/lib/consent";
 import { gtmHeadSnippet, gtmNoScriptSrc } from "@ishub/site-kit/analytics";
+import { LiveDialogs, LiveHead, LiveTopBar } from "@/components/live/Live";
 import "./globals.css";
+import "@/lib/live/live-core.css";
 
 // Body font — Heebo (clean, legible Hebrew). Heading font — Rubik (modern Hebrew).
 // Exposed as CSS variables consumed by the @theme block in app/globals.css
@@ -59,6 +61,16 @@ export const viewport: Viewport = {
   themeColor: manifest.brand?.themeColor ?? undefined,
 };
 
+/**
+ * The seasonal card (public/assets/live.js) never opens while anything carries
+ * `data-live-block`. The consent banner carries it — but the banner mounts only after hydration,
+ * and on a slow phone that lands after the card's 4 s timer: the 2026-10-12 review opened the
+ * card under a still-unmounted banner in 3 of 7 throttled runs. So the same mark goes on <html>
+ * before first paint whenever the question is unanswered; ConsentBanner removes it on a choice.
+ * Storage blocked: no mark, and live.js shows no card without storage anyway.
+ */
+const liveConsentBlock = `try{if(!localStorage.getItem(${JSON.stringify(CONSENT_STORAGE_KEY)}))document.documentElement.setAttribute("data-live-block","")}catch(e){}`;
+
 /** Shared GTM loader — inert (renders nothing) until analytics.gtmId is set in the manifest. */
 const gtmHead = gtmHeadSnippet(manifest.analytics?.gtmId);
 const gtmNoScript = gtmNoScriptSrc(manifest.analytics?.gtmId);
@@ -67,8 +79,22 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="he" dir="rtl" className={`${heebo.variable} ${rubik.variable}`}>
+    <html
+      lang="he"
+      dir="rtl"
+      className={`${heebo.variable} ${rubik.variable}`}
+      // The live head script sets data-live* on <html> before hydration (fleet live-kit).
+      suppressHydrationWarning
+    >
       <head>
+        {/* The live surfaces (fleet live-kit, CLAUDE.md §13) decide the line before first
+            paint — first in <head>. They push nothing to dataLayer from here; live.js is
+            deferred, so its events always queue after the Consent Mode default below. */}
+        <LiveHead />
+        <script
+          id="live-consent-block"
+          dangerouslySetInnerHTML={{ __html: liveConsentBlock }}
+        />
         {/* Consent Mode v2 default — everything denied until the visitor chooses.
             MUST stay ABOVE the container: the GTM loader below lives in <body>, and
             scripts run in document order, so a default emitted here is guaranteed to
@@ -117,6 +143,11 @@ export default function RootLayout({
         {gtmHead && (
           <script id="gtm-init" dangerouslySetInnerHTML={{ __html: gtmHead }} />
         )}
+        {/* The announcement bar: directly before the sticky header, NOT inside it — it scrolls
+            away, so the header's h-16 maths (the mobile panel's calc(100vh-4rem), the service
+            sidebar's top-24) hold once the page is scrolled. At the very top a visible line
+            pushes the open mobile panel 35px past the fold (CLAUDE.md §13). */}
+        <LiveTopBar />
         <Header />
         {/* tabIndex={-1} is what makes the skip link above actually work. Without it Safari
             (and other engines) move the URL fragment but leave focus in the header, so the
@@ -130,6 +161,8 @@ export default function RootLayout({
         {/* Spacer so the fixed mobile CTA bar never overlaps footer content. */}
         <div className="h-16 lg:hidden" aria-hidden />
         <MobileCtaBar />
+        {/* The seasonal card (a closed native <dialog>), last in <body>. */}
+        <LiveDialogs />
       </body>
     </html>
   );

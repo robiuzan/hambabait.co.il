@@ -1,0 +1,39 @@
+name: Weekly reminder
+
+# Fleet live-kit (CLAUDE.md §13). Reads PRODUCTION once a week and pushes a message to the owner's
+# phone (ntfy) ONLY when this site needs something: the homepage unreachable, the status switch
+# unreadable from THIS site's origin, deploy drift, the updates strip's age, the pre-written runway.
+# An all-good week is printed, never pushed. What is the same for every fleet site — the switch's
+# mode, quiet days and chag, the calendar's horizon — is printed here and pushed once, by the
+# 3locksmiths reminder. scripts/live/check-reminders.mjs says what each means.
+#
+# It never builds, never deploys and never writes — deploys stay human-only (owner decision 5 of
+# the 3locksmiths dynamic-presence plan). The one secret is the ntfy topic (NTFY_TOPIC; optional
+# NTFY_SERVER). Without NTFY_TOPIC the run prints the message and goes RED on purpose, so a
+# missing secret is never silent: gh secret set NTFY_TOPIC -R robiuzan/hambabait.co.il
+#
+# GitHub pauses scheduled workflows in a repository with no commits for 60 days; it emails the
+# owner first. Any push re-arms it — or run it by hand from the Actions tab.
+
+on:
+  schedule:
+    - cron: "0 5 * * 0" # Sunday 08:00 Israel summer time / 07:00 winter
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Read production and push the weekly message
+        run: node scripts/live/check-reminders.mjs
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_SERVER: ${{ secrets.NTFY_SERVER }}

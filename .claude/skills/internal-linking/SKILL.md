@@ -154,6 +154,16 @@ escape them by hand. Only the sitemap and canonicals are escaped.
 ```bash
 npm run build
 
+# The live surfaces (CLAUDE.md §13) are sitewide chrome: the announcement bar and the seasonal
+# card sit on every page, hidden until their season, so a page they link to would count every
+# built page as an inbound link (the guide a card points at reads 47, not 1). Count over a copy
+# with both regions stripped.
+rm -rf /tmp/out-nolive && mkdir -p /tmp/out-nolive
+(cd out && find . -name index.html -print0 | while IFS= read -r -d '' f; do
+  mkdir -p "/tmp/out-nolive/$(dirname "$f")"
+  perl -0777 -pe 's/<div class="live-topbar".*?<\/div><\/div>//gs; s/<div class="live-dialogs".*?<\/dialog><\/div>//gs' "$f" > "/tmp/out-nolive/$f"
+done)
+
 # every URL the sitemap claims (45)
 grep -o '<loc>[^<]*</loc>' out/sitemap.xml | sed 's/<[^>]*>//g' \
   | sed 's|https://hambabait.co.il||' > /tmp/urls.txt
@@ -162,7 +172,7 @@ grep -o '<loc>[^<]*</loc>' out/sitemap.xml | sed 's/<[^>]*>//g' \
 while read -r u; do
   [ -z "$u" ] && continue
   d=$(printf '%b' "$(printf '%s' "$u" | sed 's/%/\\x/g')")   # decode: hrefs are raw UTF-8
-  n=$(grep -rl "href=\"$d\"" out --include=index.html | wc -l)
+  n=$(grep -rl "href=\"$d\"" /tmp/out-nolive --include=index.html | wc -l)
   [ "$n" -le 1 ] && echo "in-degree $n: $u"
 done < /tmp/urls.txt
 ```

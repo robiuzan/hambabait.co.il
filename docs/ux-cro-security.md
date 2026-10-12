@@ -54,14 +54,17 @@ Anchor text is descriptive and Hebrew: `תיקון דוד שמש`, never `לחצ
 
 ### 2.1 The CTA inventory
 
-**28 distinct `data-cta` values ship today, in 492 occurrences.** The naming convention is
+**34 distinct `data-cta` values ship today, in 963 occurrences** — the site's own 28 (492
+occurrences) plus, since 2026-10-11, the six of the fleet live-kit's bar, card and homepage strip
+(`topbar-link` ×6 lines and `topbar-whatsapp`, `popup-call` / `popup-whatsapp` / `popup-link`
+on every page; `update-link` on the homepage — CLAUDE.md §13). The naming convention is
 **`placement-action`** — `hero-call`, `sticky-whatsapp`, `service-form-whatsapp`, `footer-email`.
 Keep it: the analytics segmentation in
 [data-tracking-infrastructure.md](data-tracking-infrastructure.md) depends on placement being
 parseable from the value.
 
 ```bash
-grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u   # 28 values
+grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u   # 34 values
 ```
 
 > ⚠️ **The inventory changed, and three values changed meaning. The GTM container must be updated —
@@ -82,6 +85,18 @@ grep -rho 'data-cta="[^"]*"' out --include=index.html | sort -u   # 28 values
 4. **Never interrupt the funnel.** No entry interstitials, no exit-intent popups, no chat widget that
    covers the call button. Google treats intrusive interstitials as a ranking problem, and on this
    site they would physically obstruct goal #1.
+   **One sanctioned exception — owner decision 2026-10-11, fleet live-kit** (CLAUDE.md §13): the
+   seasonal card, on the pilot's rules — never from search, 2nd page or 20 s + scroll, once per
+   14 days, never on calm / no-card pages, never over the unanswered consent banner or the open
+   mobile menu, and on a phone a bottom sheet that stops above the sticky call bar (rules in
+   [mobile-ux-and-personalization.md](mobile-ux-and-personalization.md) §3). Its CTAs carry
+   `popup-call` / `popup-whatsapp` / `popup-link`; the bar's carry `topbar-link` /
+   `topbar-whatsapp`, the homepage strip's `update-link`. These clicks report from the first
+   deploy through the existing `GA4 - cta_click` tag, which reads any `[data-cta]`
+   ([data-tracking-infrastructure.md](data-tracking-infrastructure.md) §3.2), consent
+   permitting. What stays inert until the owner widens the trigger `CE - popup events
+(3locksmiths)` to this hostname (shared container GTM-KWGGH438) is the card's own
+   `surface_view` / `surface_dismiss` events.
 5. **The phone number is text, never an image**, and always in a `dir="ltr"` island so RTL does not
    scramble it.
 

@@ -12,6 +12,7 @@ import { PricingTeaser } from "@/components/marketing/PricingTeaser";
 import { ServiceAreas } from "@/components/marketing/ServiceAreas";
 import { Faq } from "@/components/marketing/Faq";
 import { FinalCta } from "@/components/marketing/FinalCta";
+import { LiveUpdates } from "@/components/live/Live";
 
 // The kit exports no websiteJsonLd, so the WebSite node is assembled here — the same pattern
 // the guide route uses for its Article node, and with the same caveat: a proper builder belongs
@@ -46,6 +47,9 @@ export default function HomePage() {
       />
       <Hero />
       <TrustBar />
+      {/* The updates strip (fleet live-kit, content/live/_updates.mjs). Server-rendered and
+          hidden before first paint once its newest item is 45 days old — no layout shift. */}
+      <LiveUpdates />
       <ServicesGrid />
       <WhyUs />
       <Process />

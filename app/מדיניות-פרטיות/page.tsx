@@ -17,7 +17,9 @@ export const metadata: Metadata = {
  * every lead transited api.web3forms.com; per CLAUDE.md golden rule 8, the wording must
  * track the code. If a processor is added or removed, update this page in the same change.
  */
-const updated = "17/08/2026"; // dd/mm/yyyy — bump when the data flow changes.
+// 11/10/2026: the fleet live-kit (CLAUDE.md §13) — the status-switch read from imgquarry.com and
+// the browser-storage values public/assets/live.js keeps (ls-dlg-<line>, ls-pv, ls-status).
+const updated = "11/10/2026"; // dd/mm/yyyy — bump when the data flow changes.
 
 export default function PrivacyPage() {
   return (
@@ -45,8 +47,8 @@ export default function PrivacyPage() {
           </p>
           <p>
             <strong>נתוני שימוש:</strong> האתר אוסף נתוני שימוש סטטיסטיים (עמודים שנצפו,
-            לחיצות על כפתורי התקשרות) לצורך שיפור האתר והשירות. נתונים אלה אינם כוללים את
-            הפרטים שמסרתם בטופס.
+            לחיצות על כפתורי התקשרות, הצגה וסגירה של הודעות עונתיות) לצורך שיפור האתר
+            והשירות. נתונים אלה אינם כוללים את הפרטים שמסרתם בטופס.
           </p>
 
           <h2 className="font-heading text-lg font-bold text-primary">
@@ -65,6 +67,16 @@ export default function PrivacyPage() {
               <strong>WhatsApp (חברת Meta)</strong> — אם בחרתם לפנות אלינו בוואטסאפ, או אם
               שליחת הטופס נכשלה ובחרתם לשלוח את הפרטים בוואטסאפ במקום, תוכן הפנייה עובר
               דרך שירות WhatsApp.
+            </li>
+            {/* public/assets/live.js reads https://imgquarry.com/status/fleet.json once per page
+                load, credentials omitted — the fleet status switch (CLAUDE.md §13). */}
+            <li>
+              <strong>
+                שרת ההגדרות של האתר (<span dir="ltr">imgquarry.com</span>)
+              </strong>{" "}
+              — בכל טעינת עמוד הדפדפן קורא משם קובץ הגדרות קטן, שקובע אם ואילו הודעות
+              יוצגו בפס ההודעות שבראש האתר. הבקשה אינה כוללת עוגיות או פרטים שמסרתם; כמו
+              כל בקשה באינטרנט, השרת מקבל את כתובת הרשת של המכשיר ואת סוג הדפדפן.
             </li>
           </ul>
           <p>
@@ -95,6 +107,16 @@ export default function PrivacyPage() {
           <p>
             כדי לשנות את הבחירה, נקו את נתוני האתר בהגדרות הדפדפן וההודעה תוצג שוב. בכל
             מקרה ניתן גם לחסום או למחוק עוגיות בהגדרות הדפדפן — האתר ימשיך לעבוד כרגיל.
+          </p>
+          {/* Kept accurate on purpose, like the paragraph above: these are the values
+              public/assets/live.js stores (ls-dlg-<line> and ls-status in localStorage, ls-pv in
+              sessionStorage). If live.js stores anything else, this paragraph changes with it. */}
+          <p>
+            בנוסף, האתר שומר באחסון המקומי של הדפדפן כמה ערכים טכניים, שאינם עוגיות ואינם
+            נשלחים לשום מקום: מתי הוצגה לכם הודעה עונתית, כדי שלא תוצג שוב בשבועיים
+            הקרובים; כמה עמודים צפיתם בביקור הנוכחי, שנמחק כשסוגרים את הלשונית; ולפעמים גם
+            את מצב ההודעות שנקבע לאתר, שתוקפו עד חצי שעה. ניקוי נתוני האתר בהגדרות הדפדפן
+            מוחק גם אותם.
           </p>
 
           <h2 className="font-heading text-lg font-bold text-primary">הזכויות שלכם</h2>

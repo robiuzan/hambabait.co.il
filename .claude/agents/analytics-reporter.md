@@ -1,6 +1,6 @@
 ---
 name: analytics-reporter
-description: Measurement integrity and reporting for חם בבית on the shared Israeli fleet container GTM-KWGGH438 — audits the 28-value data-cta inventory against what actually ships in out/, now tracked by one attribute-reading GA4 tag so new values need no container change, verifies the lead_submit and /תודה/ conversion pair does not double-count, checks the gtm.js 200 assertion, confirms the Consent Mode v2 default still precedes the container in the shipped HTML, flags that googleSiteVerification is still null so the verification block emits nothing, and defines the KPI baseline and reporting cadence. Owns docs/measurement.md. Invoke with "analytics audit", "are conversions tracked", "KPI baseline", or "why isn't GA4 recording". Reports only; never edits the container and never quotes a metric it did not measure.
+description: Measurement integrity and reporting for חם בבית on the shared Israeli fleet container GTM-KWGGH438 — audits the 34-value data-cta inventory against what actually ships in out/, now tracked by one attribute-reading GA4 tag so new values need no container change, verifies the lead_submit and /תודה/ conversion pair does not double-count, checks the gtm.js 200 assertion, confirms the Consent Mode v2 default still precedes the container in the shipped HTML, flags that googleSiteVerification is still null so the verification block emits nothing, and defines the KPI baseline and reporting cadence. Owns docs/measurement.md. Invoke with "analytics audit", "are conversions tracked", "KPI baseline", or "why isn't GA4 recording". Reports only; never edits the container and never quotes a metric it did not measure.
 model: sonnet
 tools: Read, Grep, Glob, Bash, WebFetch, Write, Edit
 ---
@@ -40,16 +40,22 @@ grep -rho 'data-cta="[^"]*"' out --include=index.html | sort | uniq -c | sort -r
 
 ### The `data-cta` inventory
 
-**28 distinct identifiers ship today, 492 occurrences in total:**
+**34 distinct identifiers ship today, 963 occurrences in total:**
 
 ```
 contact-call, contact-email, contact-form-submit, contact-form-whatsapp, contact-whatsapp,
 finalcta-call, finalcta-whatsapp, footer-call, footer-email, header-call, header-call-icon,
 hero-call, hero-form-submit, hero-form-whatsapp, hero-whatsapp, location-form-submit,
-location-form-whatsapp, mobile-menu-call, notfound-call, pricing-quote, service-call,
-service-form-submit, service-form-whatsapp, service-whatsapp, sticky-call, sticky-whatsapp,
-thanks-call
+location-form-whatsapp, mobile-menu-call, notfound-call, pricing-quote, pricing-table-quote,
+service-call, service-form-submit, service-form-whatsapp, service-whatsapp, sticky-call,
+sticky-whatsapp, thanks-call,
+popup-call, popup-link, popup-whatsapp, topbar-link, topbar-whatsapp, update-link
 ```
+
+The last row is the fleet live-kit's (2026-10-11, CLAUDE.md §13) — 471 of the occurrences, since
+the bar and the card are on every page (`topbar-link` six times). They report through the
+attribute-reading tag with no container change; the card's `surface_view` / `surface_dismiss`
+events stay inert until `CE - popup events (3locksmiths)` is widened to this hostname.
 
 **⚠️ Three of those values changed meaning, and the container has not caught up.** `header-call` was
 previously reused for **three different elements on every page**, so the desktop bar button, the
@@ -91,13 +97,13 @@ has, since the honeypot is browser-only and anyone can POST the harvested Web3Fo
 
 ## Known gaps — report these every time until they close
 
-| Gap                                        | Evidence                                                                                              | Consequence                                                                           |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| ✅ **Container updated 2026-09-17**        | 28 `data-cta` values ship, tracked by one tag reading the attribute via `closest('[data-cta]')`       | a new CTA reports with no container change; `pricing-table-quote` proved it           |
-| **`lead_submit_blocked` has no tag**       | the event is pushed by `LeadForm`; no consumer exists in the container                                | honeypot catches are invisible                                                        |
-| **`googleSiteVerification` is `null`**     | `app/layout.tsx` now has a `verification` block, guarded on presence; `site.config.json:50` is `null` | the block correctly emits nothing — the **value** is the owner action, not the wiring |
-| **GA4 routing unverifiable from the repo** | no GA4 measurement id in the manifest — routing happens inside the shared container                   | cannot confirm `hambabait.co.il` reaches a live property without console access       |
-| **Web3Forms delivery inbox unknown**       | lives in the Web3Forms dashboard only                                                                 | a lead can "succeed" and reach nobody                                                 |
+| Gap                                        | Evidence                                                                                                                | Consequence                                                                           |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| ✅ **Container updated 2026-09-17**        | 34 `data-cta` values ship (28 + the live-kit's 6), tracked by one tag reading the attribute via `closest('[data-cta]')` | a new CTA reports with no container change; `pricing-table-quote` proved it           |
+| **`lead_submit_blocked` has no tag**       | the event is pushed by `LeadForm`; no consumer exists in the container                                                  | honeypot catches are invisible                                                        |
+| **`googleSiteVerification` is `null`**     | `app/layout.tsx` now has a `verification` block, guarded on presence; `site.config.json:50` is `null`                   | the block correctly emits nothing — the **value** is the owner action, not the wiring |
+| **GA4 routing unverifiable from the repo** | no GA4 measurement id in the manifest — routing happens inside the shared container                                     | cannot confirm `hambabait.co.il` reaches a live property without console access       |
+| **Web3Forms delivery inbox unknown**       | lives in the Web3Forms dashboard only                                                                                   | a lead can "succeed" and reach nobody                                                 |
 
 The last two are **[needs confirmation]**, not findings. Never present them as if you checked.
 

@@ -59,7 +59,8 @@
    A location or service page a find-and-replace could regenerate is a doorway page. All 18 city
    pages cleared that bar in the 2026-08-25 build-out — **keep them there.**
 8. **The two legal pages are code, not decoration.** `/מדיניות-פרטיות/` names its real processors —
-   Web3Forms, Google (Tag Manager / Analytics) and WhatsApp/Meta — and discloses cookie use. Keep it
+   Web3Forms, Google (Tag Manager / Analytics) and WhatsApp/Meta, plus the live-kit's status-switch
+   read from imgquarry.com and its browser-storage values (§13) — and discloses cookie use. Keep it
    true: any new data flow must land there in the same change. Consent Mode v2 now ships
    denied-by-default **above** the container (`lib/consent.ts`, `components/layout/ConsentBanner.tsx`)
    — never move the default below the loader, and note the container-side half is the owner's. **The
@@ -125,14 +126,19 @@ components/
   marketing/   Hero TrustBar ServicesGrid WhyUs Process PricingTeaser
                ServiceAreas Faq FinalCta GuideBody GuideDiagram
   forms/       LeadForm
+  live/        Live.tsx — the fleet live-kit surfaces (§13)
 lib/
   site-config.ts   # ⭐ NAP, services[6], locations[18], telHref, whatsappHref
   content.ts       # ⭐ Hebrew copy: serviceDepth[6], cityContent[18], faqs, nav
   guides.ts        # ⭐ the 12 knowledge-hub guides, as typed blocks
   consent.ts       # Consent Mode v2 default snippet — must run BEFORE the container
   utils.ts         # cn()
+  live/            # fleet live-kit copies — byte-locked, never edit (§13)
 scripts/
   qa-gate.mjs      # 28 assertions over out/ — `npm run qa:gate`, the 5th build-gate step
+  live/            # fleet live-kit gates (prebuild/postbuild, the weekly reminder) — locked
+content/live/      # ⭐ _campaigns.mjs + _updates.mjs (the live registers) + the synced calendar
+live.config.mjs    # ⭐ calm / no-card pages, this site's claim stems, pageOfSource (§13)
 site.config.json   # SiteManifest — SYNCED FROM THE ROSTER via ops/sync-manifest.ps1
 docs/              # the acceptance bars every agent cites — START AT docs/README.md
 ```
@@ -282,7 +288,9 @@ npm run lint && npm run typecheck && npm run format:check && npm run build && np
 
 All **five** must pass before any deploy. `.github/workflows/ci.yml` runs **all five** on every push
 to `main` and on every PR (`qa:gate` added 2026-09-06; before that CI stopped at `build` and the gate
-was honoured only by a human remembering to run it locally).
+was honoured only by a human remembering to run it locally). Since 2026-10-11 `build` also runs the
+live-kit gates through npm's `prebuild` / `postbuild` hooks (§13) — so a live register without the
+owner's `approved` stamp fails `npm run build` in CI and in `ops/deploy-site.ps1` alike.
 
 > ⚠️ **`ci.yml` had never executed once before 2026-09-06.** It lived only on
 > `seo/phase-1-environment` while its `push` trigger was scoped to `main`, where the file did not
@@ -343,10 +351,12 @@ still exists at the host and simply no longer receives deploys.
 | Format           | `npm run format`       |
 | Format check     | `npm run format:check` |
 | Output QA gate   | `npm run qa:gate`      |
+| Weekly reminder  | `npm run live:remind`  |
 
-Those are **all eight scripts that exist** (`dev`, `build`, `start`, `lint`, `format`,
-`format:check`, `typecheck`, `qa:gate`). There is no test script, no image script and no deploy
-script in this repo — deploys run from the hub's `ops/`.
+Those are **all eleven scripts that exist** (`dev`, `build`, `start`, `lint`, `format`,
+`format:check`, `typecheck`, `qa:gate`, plus the live-kit's `prebuild`, `postbuild` and
+`live:remind` — §13). There is no image script and no deploy script in this repo — deploys run
+from the hub's `ops/`.
 
 ---
 
@@ -364,3 +374,63 @@ script in this repo — deploys run from the hub's `ops/`.
   and `*.bak`, but still look before you `git add -A` in this repo.
 - Cloudflare zone settings (headers, cache rules, AI crawler policy) are **the owner's to change**.
   Document the exact toggle; never assume it was done.
+
+---
+
+## 13. Live surfaces — the announcement bar, the seasonal card, the updates strip
+
+Fleet live-kit (owner decision 2026-10-11; canonical in `../3locksmiths.co.il/fleet/live-kit/`,
+see its README). Every page carries a thin announcement bar above the sticky header (not sticky —
+it scrolls away, so the header's `h-16` maths hold once the page is scrolled; at the very top of a
+phone page a visible line pushes the open mobile panel 35px past the fold, which at 400% zoom
+hides the panel's own call button — the sticky bar's stays) whose line is chosen **before first paint**
+by the Israeli calendar — memorial days and fasts silence it, Shabbat and chag silence the seasonal
+lines — and by the fleet status switch (`https://imgquarry.com/status/fleet.json`: quiet / reduced /
+off; unreadable = fail closed). One seasonal card (a native `<dialog>`, the pilot's rules: 2nd page
+or 20 s + scroll, never from search, once per 14 days, never on calm or no-card pages, never over
+the open mobile menu or the **unanswered consent banner** — both carry `data-live-block`, and because the banner mounts
+only after hydration (later than the card's 4 s timer on a slow phone — review 2026-10-12),
+`app/layout.tsx` also sets `data-live-block` on `<html>` before first paint while the question is
+unanswered and `ConsentBanner` lifts it on a choice; on a phone
+a bottom sheet that stops above the sticky call bar). The homepage shows an updates strip after the
+trust bar; it hides itself 45 days after the newest item.
+
+- **Edit here:** `content/live/_campaigns.mjs` (lines, windows, the card) and
+  `content/live/_updates.mjs` — wording only from sentences the site already shows, each quoted in
+  `source` (the gate checks the quote is still in its file, and through `pageOfSource` that a tip
+  links to the page carrying it); nothing ⬜/🔶 from `docs/business-facts.md`, no price, warranty,
+  speed, availability, coverage or staffing word. Calm / no-card pages and this site's own ⛔
+  claim stems: `live.config.mjs`. The 404 page answers every unknown URL, so no path can name it:
+  `app/not-found.tsx` marks itself calm with `<div data-live-calm-page hidden />` (no seasonal
+  line, no card — kit README step 5a). Both registers need the owner's
+  `approved: "YYYY-MM-DD — who, how"`, or the build fails (`LIVE_DRAFT=1 npm run build` previews a
+  draft locally only).
+- **Never edit:** `lib/live/**`, `scripts/live/**`, `public/assets/live.js`,
+  `content/live/_calendar*.json`, `live-kit.lock.json` — byte-locked kit copies;
+  `scripts/live/check-live-copy.mjs` fails the build if they change. Fix the kit upstream and
+  re-sync (`node fleet/live-kit/sync.mjs ../hambabait.co.il` from 3locksmiths.co.il).
+- **The wiring:** `components/live/Live.tsx` (server components only — no sixth client component);
+  `<LiveHead/>` first in `<head>` (before `consent-default`; it pushes nothing to `dataLayer`, and
+  `live.js` is deferred, so `qa:gate`'s consent-before-GTM order holds), then
+  `<script id="live-consent-block">` (the before-paint consent mark above); `<LiveTopBar/>` directly
+  before `<Header/>`; `<LiveDialogs/>` last in `<body>`; `<LiveUpdates/>` after `<TrustBar/>`;
+  `suppressHydrationWarning` on `<html>`; the `--live-*` colours and the 992–1023px override (this
+  site's mobile layout runs to 1023px: the bar closes there on evergreen days, calm pages and the
+  self-marked 404, and the card stops above the sticky call bar) at the end of `app/globals.css`; `imgquarry.com` in the CSP
+  `connect-src`; the disclosure on `/מדיניות-פרטיות/`.
+- **Gates:** `prebuild` = check-live-copy → check-live-register → check-live-schedule;
+  `postbuild` = check-live-out (the built pages must carry exactly what the registers say). The
+  `internal-linking` skill's in-degree audit strips the bar and the card as chrome (they sit on
+  every page, so a page they link to would read every page as an inbound link). `remind.yml` runs
+  `scripts/live/check-reminders.mjs` every Sunday and goes red without the `NTFY_TOPIC` secret; it
+  pushes only when this site needs something (the fleet-wide switch mode, quiet days and calendar
+  horizon are pushed once, by the 3locksmiths reminder).
+- **The bar's and the card's links are plain `<a>`** (the markup is printed verbatim), so a click
+  on them is a full page load, not a client-side navigation — by design.
+- **Popups:** `docs/mobile-ux-and-personalization.md` §3, `docs/ux-cro-security.md` §2.2,
+  `.claude/agents/cro-ux-auditor.md` and the `geo-personalization` skill banned them; each now
+  records the owner's 2026-10-11 exception for this one card.
+- **Owner actions before the first deploy** (the kit README's order): approve the wording (and the
+  wartime line for this business); commit the kit upstream and re-sync; add the three origins to
+  the status switch's CORS list; widen the GTM trigger `CE - popup events (3locksmiths)` to this
+  hostname; `gh secret set NTFY_TOPIC -R robiuzan/hambabait.co.il`; then deploy.

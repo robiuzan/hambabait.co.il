@@ -61,6 +61,20 @@ All of these, or it does not ship:
 Note the client-component budget: there are **five** today (`Header`, `Faq`, `LeadForm`, `Reveal`,
 `ConsentBanner`). A sixth needs to justify itself against `docs/performance-guidelines.md` §4.
 
+> **The fleet live-kit is not personalization, and it is sanctioned — owner decision 2026-10-11**
+> (CLAUDE.md §13). The announcement bar, the seasonal card (a popup, overriding the site's
+> no-popup rule) and the homepage updates strip pick a pre-written line by **date** (the Israeli
+> calendar) and by the fleet status switch — never by the visitor's location, identity or
+> behaviour beyond a page-view count. How it sits against the envelope: additive; never touches the
+> H1, title, meta, canonical, JSON-LD or nav; decided **before** first paint by an inline head
+> script, so no space is reserved and CLS stays 0 (no client component — `public/assets/live.js`
+> is plain deferred JS); degrades to the evergreen line on desktop and nothing on a phone with
+> JavaScript off; the one network read (`imgquarry.com/status/fleet.json`) is after paint, 1.5 s at
+> most, and is disclosed on `/מדיניות-פרטיות/`; the gate `scripts/live/check-live-register.mjs`
+> rejects every business-fact claim (warranty, speed, availability, coverage, staffing — this
+> site's stems are in `live.config.mjs`); the card's dismissal is remembered in `localStorage`;
+> every link carries its own `data-cta`. It shows no "open now" and no countdown.
+
 ### Passes
 
 | Pattern                              | Note                                                                                                                                                                                                                                                             |

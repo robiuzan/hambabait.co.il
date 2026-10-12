@@ -273,6 +273,9 @@ itself is reasoned rather than sourced, so it is logged here.
 - **Google (Tag Manager / Analytics)** — measurement, and that it may set cookies (`:61-62`)
 - **WhatsApp (Meta)** — both the direct contact route and the lead-form hand-off (`:65-67`)
 - a cookies section explaining browser-level blocking (`:83-87`)
+- **imgquarry.com** — the fleet status-switch read on every page load, and a paragraph on the
+  browser-storage values the live surfaces keep (added 2026-10-11 with the fleet live-kit,
+  CLAUDE.md §13; ships with it, after the owner approves the wording)
 
 Its header comment records the page as a factual description of the site's actual data flow. **Keep it
 that way: any new data flow must land here in the same change.**

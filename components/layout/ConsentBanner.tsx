@@ -43,6 +43,8 @@ export function ConsentBanner() {
     } catch {
       // Nothing to persist. The update below still applies for this pageview.
     }
+    // Answered: lift the before-paint "no card yet" mark app/layout.tsx put on <html>.
+    document.documentElement.removeAttribute("data-live-block");
     if (choice === "granted") {
       window.gtag?.("consent", "update", {
         ad_storage: "granted",
@@ -61,6 +63,9 @@ export function ConsentBanner() {
       role="region"
       aria-label="הודעת עוגיות"
       className="fixed inset-x-0 bottom-16 z-50 border-t border-gray-200 bg-white shadow-lg lg:bottom-0"
+      // Rendered only while the question is unanswered: until then the seasonal card
+      // (public/assets/live.js, fleet live-kit) never opens over the banner.
+      data-live-block=""
     >
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm leading-relaxed text-gray-700">

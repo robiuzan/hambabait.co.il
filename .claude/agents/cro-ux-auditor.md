@@ -90,6 +90,13 @@ Flag on sight: entry interstitials, exit-intent popups, floating chat widgets co
 sticky bar, carousels, multi-step wizards, CAPTCHA before a first submit, required email or address,
 any field the business will not use.
 
+**Not a finding: the seasonal card** (`content/live/_campaigns.mjs`, `public/assets/live.js`) — owner
+decision 2026-10-11, fleet live-kit (CLAUDE.md §13), overriding the no-popup rule for this one
+surface. Flag it only when it breaks its own rules: it opens on a page reached from search, on the
+first page view before 20 s + a scroll, more than once per 14 days, on a calm or no-card page
+(`live.config.mjs`), over the unanswered consent banner or the open mobile menu, or — on a phone —
+anywhere but above the sticky call bar.
+
 ### 5. Navigation
 
 - **The header reaches 0 of the 6 service pages in one hop.** `navItems` carries the `/שירותים/`

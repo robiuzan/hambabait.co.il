@@ -73,6 +73,18 @@ holds focus inside. Any doc saying otherwise is wrong, and a real trap remains a
 
 - **Entry interstitials and exit-intent popups.** Google treats intrusive interstitials as a ranking
   problem, and here they would physically cover the call button.
+
+  > **Exception — owner decision 2026-10-11, fleet live-kit** (CLAUDE.md §13). The owner overrode
+  > this rule for one surface on every fleet site: the **seasonal card**, a small native `<dialog>`
+  > from `content/live/_campaigns.mjs`, with the 3locksmiths pilot's rules unchanged. It is never an
+  > entry interstitial: it never opens on a page reached from a search engine, opens only on the
+  > 2nd page of a visit (after 4 s) or after 20 s **and** a scroll on the first, at most once per
+  > 14 days, never on the calm pages (`/תודה/`, the legal pages, `/מדריכים/tripping-breaker/`), the
+  > lead-form page `/צור-קשר/` or the page it links to, never while the consent banner is
+  > unanswered, the mobile menu is open or a form field has focus, and never while the fleet status
+  > switch is unreadable. On a phone it is a bottom sheet that stops 16px **above** the sticky call
+  > bar. Exit-intent popups and anything else that interrupts the funnel stay banned.
+
 - **A floating chat widget.** It competes with the sticky bar for the same pixels and the same
   intent, and it adds unbounded third-party JS. If the business ever wants chat, WhatsApp already
   _is_ the chat — it is goal #2 and it is already in the bar.
