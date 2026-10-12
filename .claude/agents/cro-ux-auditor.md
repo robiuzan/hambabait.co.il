@@ -95,7 +95,8 @@ decision 2026-10-11, fleet live-kit (CLAUDE.md §13), overriding the no-popup ru
 surface. Flag it only when it breaks its own rules: it opens on a page reached from search, on the
 first page view before 20 s + a scroll, more than once per 14 days, on a calm or no-card page
 (`live.config.mjs`), over the unanswered consent banner or the open mobile menu, or — on a phone —
-anywhere but above the sticky call bar.
+anywhere but above the sticky call bar. Opening outside the published business hours is **not** a
+finding either: the owner decided 2026-10-12 that the card may open at all hours (fleet-wide).
 
 ### 5. Navigation
 

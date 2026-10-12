@@ -132,7 +132,9 @@ The last row is the fleet live-kit's (2026-10-11, CLAUDE.md §13): the bar's six
 (every page), and the homepage updates strip's link — 471 of the 963 occurrences. They report
 through the tag below with no container change; only the card's `surface_view` /
 `surface_dismiss` events need the trigger `CE - popup events (3locksmiths)` widened to this
-hostname.
+hostname. **Owner decision 2026-10-12** (the fleet wording sign-off page): **one shared trigger
+for the whole fleet** — that one trigger's hostname condition is widened to match every fleet
+site; it is never copied per site.
 
 > ## ✅ Resolved 2026-09-17 — and the original diagnosis was wrong.
 >

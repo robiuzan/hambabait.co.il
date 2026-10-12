@@ -83,7 +83,10 @@ holds focus inside. Any doc saying otherwise is wrong, and a real trap remains a
   > lead-form page `/צור-קשר/` or the page it links to, never while the consent banner is
   > unanswered, the mobile menu is open or a form field has focus, and never while the fleet status
   > switch is unreadable. On a phone it is a bottom sheet that stops 16px **above** the sticky call
-  > bar. Exit-intent popups and anything else that interrupts the funnel stay banned.
+  > bar. It may open **at all hours**, not only within the published business hours — owner
+  > decision 2026-10-12, fleet-wide (the fleet wording sign-off page); the calendar still keeps it
+  > off on Shabbat, chag, memorial days and fasts. Exit-intent popups and anything else that
+  > interrupts the funnel stay banned.
 
 - **A floating chat widget.** It competes with the sticky bar for the same pixels and the same
   intent, and it adds unbounded third-party JS. If the business ever wants chat, WhatsApp already

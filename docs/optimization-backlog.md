@@ -271,6 +271,58 @@ See [media-assets.md](media-assets.md).
 
 ---
 
+### P1-7 · On a phone the service pages are wider than the screen · owner-approved, separate change · S
+
+**Found 2026-10-12** during the fleet live-kit port, and **live in production before it** (the live
+site carried no live-kit when measured). **Owner decision 2026-10-12** (the fleet wording sign-off
+page): fix it, in a separate change — not in the live-kit port.
+
+**Evidence:** headless Chrome, phone emulation at 390×844, against `https://hambabait.co.il`,
+2026-10-12: `/services/solar/`, `/services/electric/` and `/services/thermostat/` lay out **496px**
+wide (`document.documentElement.scrollWidth` 496 against a `clientWidth` of 390) and open scrolled
+106px sideways. `/locations/tel-aviv/` and `/` measure 390. Hiding elements one at a time isolates
+the symptom→cause table: `table.min-w-[30rem]` (480px) sits in a `div.overflow-x-auto` meant to
+scroll it, but that wrapper's parent is the grid item `div.lg:col-span-2`, whose default
+`min-width: auto` grows to the table's 480px instead of letting the wrapper scroll — 16px of page
+padding + 480 = 496.
+
+**Impact:** the highest-intent pages on the site open scrolled sideways on a phone — the logo and
+the start of the text are cut off, and the sticky call bar is out of view.
+
+**Accept:** at 360 and 390px every service page measures `scrollWidth === clientWidth`, its table
+scrolls inside its own frame, and the sticky call bar is in view on load.
+
+---
+
+### P1-8 · On a Hebrew-address page every link click is a full reload that logs errors · owner-approved, separate change · M
+
+**Found 2026-10-12** during the fleet live-kit port, and **live in production before it.** **Owner
+decision 2026-10-12** (the fleet wording sign-off page): fix it separately — the sign-off suggested
+upgrading Next; choose the fix in that change.
+
+**Evidence:** Chrome console on `https://hambabait.co.il/צור-קשר/`, 2026-10-12 — one error for each
+link Next prefetches, the homepage included:
+
+```
+Failed to fetch RSC payload for https://hambabait.co.il/%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D/.
+Falling back to browser navigation. TypeError: Failed to execute 'fetch' on 'Window': Failed to
+read the 'headers' property from 'RequestInit': String contains non ISO-8859-1 code point.
+```
+
+A click on an internal link from that page then loads a whole new document instead of navigating in
+place. What fails is the **current** page's address, not the target's: a click from `/צור-קשר/` to
+`/`, and from `/מחירון/` to `/services/solar/`, reloads the page, while a click from `/` to
+`/services/solar/`, and from there to `/services/electric/`, navigates in place with no error (all
+four checked on the live site, 2026-10-12). Next.js is 14.2.35 here.
+
+**Impact:** no page is unreachable — the fallback is an ordinary page load — but every click from a
+Hebrew-address page pays a full reload, and the console fills with errors that hide real ones.
+
+**Accept:** on `/צור-קשר/` and on a guide under `/מדריכים/`, zero `Failed to fetch RSC payload`
+errors after load, and an internal link click keeps the same document.
+
+---
+
 ## P2 — depth that would pay next
 
 | Item                               | Why                                                                                                                                                                                                                                                                                                                                   | Effort |

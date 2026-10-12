@@ -430,7 +430,19 @@ trust bar; it hides itself 45 days after the newest item.
 - **Popups:** `docs/mobile-ux-and-personalization.md` §3, `docs/ux-cro-security.md` §2.2,
   `.claude/agents/cro-ux-auditor.md` and the `geo-personalization` skill banned them; each now
   records the owner's 2026-10-11 exception for this one card.
-- **Owner actions before the first deploy** (the kit README's order): approve the wording (and the
-  wartime line for this business); commit the kit upstream and re-sync; add the three origins to
-  the status switch's CORS list; widen the GTM trigger `CE - popup events (3locksmiths)` to this
-  hostname; `gh secret set NTFY_TOPIC -R robiuzan/hambabait.co.il`; then deploy.
+- **Owner sign-off 2026-10-12** (the fleet wording sign-off page; the record is
+  `docs/business-facts.md` §1b): ✅ the wording of both registers, approved fingerprint
+  `4e7ea9e801c4` (their `approved:` stamps); ✅ the wartime line ״פועלים בכפוף להנחיות פיקוד העורף״
+  is confirmed for this business; the card may open **at all hours**, not only within the
+  published hours (fleet decision — the calendar still keeps it off on Shabbat, chag, memorial days
+  and fasts); **one shared GTM trigger** for the whole fleet; the updates strip ships as is — no
+  new item, so it ships hidden (its one item, 25/08/2026, is past 45 days).
+- **Before the first deploy** (the kit README's order): ✅ approve the wording and the wartime line
+  (2026-10-12); ✅ commit the kit upstream and re-sync (kit `cf3a5460aa8b`); ⬜ add the three
+  origins to the status switch's CORS list; ⬜ widen the one shared trigger
+  `CE - popup events (3locksmiths)` so its hostname condition matches every fleet site;
+  ⬜ `gh secret set NTFY_TOPIC -R robiuzan/hambabait.co.il`; ⬜ deploy.
+- **Found during the port, not caused by it** — both live in production before the kit: the
+  service pages are wider than a phone screen, and every link click on a Hebrew-address page is a
+  full reload that logs `Failed to fetch RSC payload` (a Next 14 bug). The owner approved fixing
+  both **separately, later** (2026-10-12): `docs/optimization-backlog.md` P1-7 and P1-8.

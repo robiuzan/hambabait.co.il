@@ -7,6 +7,7 @@
 
 Last audited: **2026-09-17.** (§0 partly closed — the laundered warranty claim is out of the JSON-LD
 and the assumptions array now has a home in the repo. §3.7 added. §4.1 and §4.2 closed.)
+**2026-10-12:** §1b added — the owner's sign-off of the live surfaces (fleet live-kit).
 
 ---
 
@@ -145,6 +146,29 @@ a repair job, or work beyond the boiler itself).
 
 ---
 
+## 1b. ✅ Confirmed — the live surfaces (owner sign-off 2026-10-12)
+
+**Owner-approved 2026-10-12, on the fleet wording sign-off page** (Robi, owner). The approval covers
+the exact wording of both live registers — approved fingerprint `4e7ea9e801c4`, the sha256 of
+`content/live/_campaigns.mjs` + `content/live/_updates.mjs` as approved — and each register carries
+it in its `approved:` stamp. The build refuses a register without that stamp, so any wording change
+needs a new approval ([CLAUDE.md](../CLAUDE.md) §13).
+
+| Question on the sign-off page                                    | Owner's answer                                                                                                                                                                                                                                                                        | Scope          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Does חם בבית keep working under Home Front Command restrictions? | ✅ **Yes — keep the wartime line** ״פועלים בכפוף להנחיות פיקוד העורף״. It shows only while the fleet status switch is set to `reduced`, on every page                                                                                                                                 | this business  |
+| May the seasonal card open outside business hours?               | ✅ **Yes — at all hours.** Also on weekday evenings, Friday afternoon and Saturday night, outside the published hours (§1); its WhatsApp button still works then. The calendar still keeps it off on Shabbat, chag, memorial days and fasts, because it silences the card's line then | fleet decision |
+| How is the card counted in GTM?                                  | ✅ **One shared trigger for the whole fleet:** `CE - popup events (3locksmiths)` in GTM-KWGGH438 is widened to every fleet hostname, never copied per site                                                                                                                            | fleet decision |
+| Anything real and recent for the homepage updates strip?         | **No new item — the strip ships as is.** Its one item (25/08/2026) is past 45 days, so the strip ships hidden and stays hidden until a real, newer item is added; the weekly reminder asks                                                                                            | this business  |
+
+**Not business facts, recorded so they are not lost:** the same page asked about two defects found
+during the port, both live before it — the service pages are wider than a phone screen, and every
+link click on a Hebrew-address page reloads the whole page and logs errors (a Next 14 bug). The
+owner approved fixing both **in a separate change, later** — not in the live-kit port:
+[optimization-backlog.md](optimization-backlog.md) P1-7 and P1-8.
+
+---
+
 ## 2. ✅ Confirmed — what the site correctly does NOT claim
 
 This section exists so nobody "helpfully" adds these back. Verified absent across `app/`,
@@ -275,7 +299,7 @@ itself is reasoned rather than sourced, so it is logged here.
 - a cookies section explaining browser-level blocking (`:83-87`)
 - **imgquarry.com** — the fleet status-switch read on every page load, and a paragraph on the
   browser-storage values the live surfaces keep (added 2026-10-11 with the fleet live-kit,
-  CLAUDE.md §13; ships with it, after the owner approves the wording)
+  CLAUDE.md §13; ships with it — the owner approved the wording 2026-10-12, §1b)
 
 Its header comment records the page as a factual description of the site's actual data flow. **Keep it
 that way: any new data flow must land here in the same change.**
