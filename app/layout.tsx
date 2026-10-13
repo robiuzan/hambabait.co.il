@@ -9,6 +9,7 @@ import { ConsentBanner } from "@/components/layout/ConsentBanner";
 import { CONSENT_STORAGE_KEY, consentDefaultSnippet } from "@/lib/consent";
 import { gtmHeadSnippet, gtmNoScriptSrc } from "@ishub/site-kit/analytics";
 import { LiveDialogs, LiveHead, LiveTopBar } from "@/components/live/Live";
+import { NextUrlHeaderFix } from "@/components/NextUrlHeaderFix";
 import "./globals.css";
 import "@/lib/live/live-core.css";
 
@@ -91,6 +92,8 @@ export default function RootLayout({
             paint — first in <head>. They push nothing to dataLayer from here; live.js is
             deferred, so its events always queue after the Consent Mode default below. */}
         <LiveHead />
+        {/* Hebrew route paths would otherwise turn every link click into a full reload. */}
+        <NextUrlHeaderFix />
         <script
           id="live-consent-block"
           dangerouslySetInnerHTML={{ __html: liveConsentBlock }}
