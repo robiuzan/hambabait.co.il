@@ -97,7 +97,14 @@ export default function ServicePage({ params }: { params: { service: string } })
       />
 
       <Section tone="white">
-        <div className="grid gap-10 lg:grid-cols-3">
+        {/* grid-cols-1 is load-bearing. With no template below lg the single column is an
+            `auto` track, and an auto track never gets narrower than its items' min-content
+            width — which here includes the symptom table's min-w-[30rem]. On a phone that
+            made this column and the aside 480px wide and the whole page scroll sideways.
+            grid-cols-1 is minmax(0, 1fr): the column follows the screen and the table scrolls
+            inside its own frame, as lg:grid-cols-3 already does on desktop.
+            docs/optimization-backlog.md P1-7. */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <p className="text-lg leading-relaxed text-gray-700">{card.description}</p>
 

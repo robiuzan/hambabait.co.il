@@ -271,26 +271,53 @@ See [media-assets.md](media-assets.md).
 
 ---
 
-### P1-7 · On a phone the service pages are wider than the screen · owner-approved, separate change · S
+### P1-7 · ✅ FIXED IN THE REPO 2026-10-12 — on a phone the service pages were wider than the screen · S
 
 **Found 2026-10-12** during the fleet live-kit port, and **live in production before it** (the live
 site carried no live-kit when measured). **Owner decision 2026-10-12** (the fleet wording sign-off
-page): fix it, in a separate change — not in the live-kit port.
+page): fix it, in a separate change — not in the live-kit port. **Fixed in the repo the same day;
+visitors get it with the next deploy** — after deploying, re-measure the live URL at 390px.
 
-**Evidence:** headless Chrome, phone emulation at 390×844, against `https://hambabait.co.il`,
-2026-10-12: `/services/solar/`, `/services/electric/` and `/services/thermostat/` lay out **496px**
-wide (`document.documentElement.scrollWidth` 496 against a `clientWidth` of 390) and open scrolled
-106px sideways. `/locations/tel-aviv/` and `/` measure 390. Hiding elements one at a time isolates
-the symptom→cause table: `table.min-w-[30rem]` (480px) sits in a `div.overflow-x-auto` meant to
-scroll it, but that wrapper's parent is the grid item `div.lg:col-span-2`, whose default
-`min-width: auto` grows to the table's 480px instead of letting the wrapper scroll — 16px of page
-padding + 480 = 496.
+**Evidence (before):** headless Chrome, phone emulation, against the deployed build (byte-identical
+to `https://hambabait.co.il`), 2026-10-12: all **6** service pages lay out **496px** wide at 360,
+375, 390 and 414px (497 at 320) — `document.documentElement.scrollWidth` against a `clientWidth`
+equal to the screen — and open scrolled sideways (106px at 390). Chrome sizes the fixed layer to
+the content, so the sticky call bar stretched to 496px and left the screen, the logo sat wholly off
+it, and the seasonal card was cut off by 38px at the side and 161px at the bottom at 390 (its
+buttons out of sight). No other route overflowed, at any width.
 
-**Impact:** the highest-intent pages on the site open scrolled sideways on a phone — the logo and
-the start of the text are cut off, and the sticky call bar is out of view.
+**Impact:** the highest-intent pages on the site opened scrolled sideways on a phone — the logo and
+the start of the text cut off, and the sticky call bar out of view.
 
-**Accept:** at 360 and 390px every service page measures `scrollWidth === clientWidth`, its table
-scrolls inside its own frame, and the sticky call bar is in view on load.
+**Cause, proved one CSS property at a time:** below `lg` the grid that holds the main column and
+the aside had no column template, so its one column was an implicit `auto` track — and an `auto`
+track is never narrower than its items' automatic minimum width. For the main column
+(`min-width: auto`) that is its min-content width, which includes the symptom table's
+`min-w-[30rem]`. The track resolved to **480px inside a 358px grid**; the table's `overflow-x-auto`
+wrapper was handed all 480px, so it never scrolled; and the aside was stretched to 480px with it.
+Setting `grid-template-columns: minmax(0, 1fr)` alone restored 390px; hiding the aside alone
+changed nothing.
+
+**Fix:** `grid-cols-1` on that grid in `app/services/[service]/page.tsx` —
+`repeat(1, minmax(0, 1fr))`, the same track definition `lg:grid-cols-3` already gives desktop. The
+table keeps its 30rem and scrolls inside its own focusable frame (480px in a 358px frame at 390).
+In `out/` only the 6 service pages (one class) and the stylesheet (one rule) changed.
+
+**Verified:** every route in `out/` (48 HTML files) at 320, 360, 375, 390 and 414px (phone, DPR 2
+and 3), 768 and 1024px (touch and desktop) and 1366 and 1920px (desktop, real scrollbars) —
+**0 of 768 loads overflow**, and the call bar and logo are on screen on load everywhere. The card
+opens fully on screen on every service page at 320–414px; every announcement-bar line and the open
+mobile menu fit at 320. Desktop is unchanged: identical geometry for every element on every route
+from 768 to 1920px, and 771 of 771 screenshot tiles byte-identical at 768, 1024, 1366 and 1920px.
+
+**Accept — ✅ met in the build:** at 360 and 390px every service page measures
+`scrollWidth === clientWidth`, its table scrolls inside its own frame, and the sticky call bar is
+in view on load.
+
+**The same shape is still elsewhere, harmless today:** 13 other grids here have no base column
+template (`grid gap-* sm:…` / `lg:…`, and the guides hub's bare `grid gap-3`). They hold nothing
+wide, so none overflows — but a table, a diagram or a long unbreakable string placed in one would
+repeat this. Start any grid that might hold one with `grid-cols-1`.
 
 ---
 

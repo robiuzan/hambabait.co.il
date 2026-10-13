@@ -445,4 +445,5 @@ trust bar; it hides itself 45 days after the newest item.
 - **Found during the port, not caused by it** — both live in production before the kit: the
   service pages are wider than a phone screen, and every link click on a Hebrew-address page is a
   full reload that logs `Failed to fetch RSC payload` (a Next 14 bug). The owner approved fixing
-  both **separately, later** (2026-10-12): `docs/optimization-backlog.md` P1-7 and P1-8.
+  both **separately, later** (2026-10-12): `docs/optimization-backlog.md` P1-7 and P1-8. **P1-7
+  is fixed in the repo** (2026-10-12): `grid-cols-1` on the service-page grid.

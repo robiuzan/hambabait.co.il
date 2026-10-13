@@ -56,6 +56,13 @@ the easiest 15 % of the screen, on every one of the 45 pages.
 | No hover-only affordance                 | There is no hover on touch                                                                                                                                                                                               |
 | Tables scroll inside their own container | A wide table must never make the page scroll sideways — and the container is `tabIndex={0}`, or a keyboard user cannot scroll it                                                                                         |
 
+**A scroll frame only scrolls if its column can shrink.** A grid with no column template below its
+breakpoint has one implicit `auto` column, and that column grows to the min-content width of what it
+holds — a `min-w-[30rem]` table included — so the frame is handed the table's full width and never
+scrolls; the page does instead. Start such a grid with `grid-cols-1` (`minmax(0, 1fr)`). This is
+what made every service page 496px wide on a phone — fixed in the repo 2026-10-12
+([optimization-backlog.md](optimization-backlog.md) P1-7).
+
 **Where the site is under 44 px, and why that is fine:** the footer's dense service and city lists
 and its inline text CTAs run about 28 px tall (`inline-block py-1` on `text-sm`). They break no
 success criterion today and they clear the 24 px floor WCAG 2.2 AA will bring. **Report them as a
